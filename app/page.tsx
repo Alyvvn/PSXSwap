@@ -4,18 +4,12 @@ import type React from "react"
 
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { Copy, ExternalLink, Twitter, MessageCircle, BarChart3, DiscIcon as Discord, Menu, X } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { SwapWidget } from "@/components/swap-widget"
 import { StepModal } from "@/components/step-modal"
 import { MemeReel } from "@/components/meme-reel"
-import { MemeGenerator } from "@/components/meme-generator"
-import { PFPGenerator } from "@/components/pfp-generator"
-import { GamePortal } from "@/components/game-portal"
-import { InteractiveRoadmap } from "@/components/interactive-roadmap"
-import { GlizzyWorld } from "@/components/glizzy-world"
 
 export default function PSXLanding() {
   const [copied, setCopied] = useState(false)
@@ -26,12 +20,7 @@ export default function PSXLanding() {
   // Refs for scroll sections
   const homeRef = useRef<HTMLDivElement>(null)
   const swapRef = useRef<HTMLDivElement>(null)
-  const howToBuyRef = useRef<HTMLDivElement>(null)
   const storyRef = useRef<HTMLDivElement>(null)
-  const glizzyWorldRef = useRef<HTMLDivElement>(null)
-  const tokenomicsRef = useRef<HTMLDivElement>(null)
-  const roadmapRef = useRef<HTMLDivElement>(null)
-  const toolsRef = useRef<HTMLDivElement>(null)
 
   const contractAddress = "0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
 
@@ -58,17 +47,12 @@ export default function PSXLanding() {
     { id: "home", label: "Home", ref: homeRef },
     { id: "swap", label: "Swap", ref: swapRef },
     { id: "story", label: "Story", ref: storyRef },
-    { id: "glizzyworld", label: "Glizzy World", ref: glizzyWorldRef },
-    { id: "tokenomics", label: "Tokenomics", ref: tokenomicsRef },
-    { id: "roadmap", label: "Roadmap", ref: roadmapRef },
-    { id: "tools", label: "Tools", ref: toolsRef },
-    { id: "buy", label: "How to Buy", ref: howToBuyRef },
   ]
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">
       {/* Navigation Bar */}
-      <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-5xl px-4">
+      <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-4xl px-4">
         <div className="bg-black/95 backdrop-blur-md rounded-full p-1.5 flex items-center justify-center border border-gray-700/50 shadow-2xl">
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center justify-center w-full">
@@ -89,6 +73,16 @@ export default function PSXLanding() {
                   {item.label}
                 </button>
               ))}
+              <Link href="/glizzy-world">
+                <button className="px-5 py-2.5 rounded-full font-medium transition-all duration-300 text-sm whitespace-nowrap bg-gradient-to-r from-red-600 to-pink-600 text-white hover:from-red-700 hover:to-pink-700 shadow-lg border border-red-500/50 animate-pulse">
+                  🎰 Glizzy World
+                </button>
+              </Link>
+              <Link href="/meme-generator">
+                <button className="px-5 py-2.5 rounded-full font-medium transition-all duration-300 text-sm whitespace-nowrap text-gray-400 hover:bg-gray-900/80 hover:text-white hover:border hover:border-gray-700">
+                  Meme Gen
+                </button>
+              </Link>
             </div>
           </div>
 
@@ -125,6 +119,16 @@ export default function PSXLanding() {
                   {item.label}
                 </button>
               ))}
+              <Link href="/glizzy-world">
+                <button className="px-4 py-3 rounded-xl font-medium transition-all duration-300 text-sm bg-gradient-to-r from-red-600 to-pink-600 text-white hover:from-red-700 hover:to-pink-700 w-full">
+                  🎰 Glizzy World
+                </button>
+              </Link>
+              <Link href="/meme-generator">
+                <button className="px-4 py-3 rounded-xl font-medium transition-all duration-300 text-sm text-gray-400 hover:bg-gray-900/80 hover:text-white hover:border hover:border-gray-700 w-full">
+                  Meme Gen
+                </button>
+              </Link>
             </div>
           </div>
         )}
@@ -217,13 +221,11 @@ export default function PSXLanding() {
             >
               Buy PSX Now
             </Button>
-            <Button
-              onClick={() => scrollToSection(toolsRef)}
-              variant="outline"
-              className="border-gray-600/50 text-gray-300 hover:bg-gray-900/80 hover:text-white hover:border-gray-500 py-4 px-10 rounded-full text-lg transition-all duration-300 backdrop-blur-sm"
-            >
-              Meme Generator
-            </Button>
+            <Link href="/glizzy-world">
+              <Button className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white font-semibold py-4 px-10 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-xl backdrop-blur-sm animate-pulse">
+                🎰 Enter Glizzy World
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -353,134 +355,6 @@ export default function PSXLanding() {
         </div>
       </section>
 
-      {/* Glizzy World Section */}
-      <section ref={glizzyWorldRef} className="py-20 px-4">
-        <GlizzyWorld />
-      </section>
-
-      {/* Game Portal */}
-      <section className="py-20 px-4 bg-black/80 backdrop-blur-sm">
-        <GamePortal />
-      </section>
-
-      {/* Tokenomics Section */}
-      <section ref={tokenomicsRef} className="py-20 px-4">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12 text-white">Tokenomics</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <Card className="bg-black/80 border-purple-500/30">
-              <CardContent className="p-6">
-                <h3 className="text-2xl font-bold text-white mb-4">Token Distribution</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Liquidity Pool</span>
-                    <span className="text-white font-bold">80%</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div className="bg-purple-500 h-2 rounded-full" style={{ width: "80%" }}></div>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Casino Treasury</span>
-                    <span className="text-white font-bold">10%</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div className="bg-pink-500 h-2 rounded-full" style={{ width: "10%" }}></div>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Development</span>
-                    <span className="text-white font-bold">10%</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div className="bg-blue-500 h-2 rounded-full" style={{ width: "10%" }}></div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-black/80 border-purple-500/30">
-              <CardContent className="p-6">
-                <h3 className="text-2xl font-bold text-white mb-4">Token Utility</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-                    <span className="text-gray-300">Casino Gaming Currency</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
-                    <span className="text-gray-300">Staking Rewards</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                    <span className="text-gray-300">Governance Voting</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <span className="text-gray-300">Exclusive Access</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                    <span className="text-gray-300">Tournament Entry</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Roadmap */}
-      <section ref={roadmapRef} className="py-20 px-4 bg-black/90 backdrop-blur-sm">
-        <InteractiveRoadmap />
-      </section>
-
-      {/* Tools Section */}
-      <section ref={toolsRef} className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12 text-white">PSX Tools</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <MemeGenerator />
-            <PFPGenerator />
-          </div>
-        </div>
-      </section>
-
-      {/* How to Buy Section */}
-      <section ref={howToBuyRef} className="py-20 px-4 bg-black/80 backdrop-blur-sm">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12 text-white">How to Buy PSX</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { step: 1, title: "Install MetaMask & Add Base", icon: "🦊" },
-              { step: 2, title: "Fund Your Base Wallet", icon: "💰" },
-              { step: 3, title: "Navigate to Uniswap", icon: "🦄" },
-              { step: 4, title: "Complete Your Swap", icon: "✅" },
-            ].map((item) => (
-              <Card
-                key={item.step}
-                className="bg-black/80 border-purple-500/30 hover:border-purple-400 transition-all duration-300 group cursor-pointer"
-                onClick={() => setActiveStep(item.step)}
-              >
-                <CardContent className="p-6 text-center space-y-4">
-                  <div className="text-4xl mb-4">{item.icon}</div>
-                  <div className="w-12 h-12 mx-auto bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-white font-bold text-xl group-hover:scale-110 transition-transform duration-300">
-                    {item.step}
-                  </div>
-                  <h3 className="text-lg font-bold text-white">{item.title}</h3>
-                  <Button
-                    variant="outline"
-                    className="w-full border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
-                  >
-                    View Details
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="py-12 px-4 bg-black/50 backdrop-blur-sm border-t border-gray-800">
         <div className="max-w-6xl mx-auto">
@@ -492,11 +366,11 @@ export default function PSXLanding() {
             <div>
               <h4 className="text-lg font-semibold text-white mb-4">Quick Links</h4>
               <div className="space-y-2">
-                <Link href="#" className="text-gray-400 hover:text-purple-400 block">
-                  Corporate Filings
+                <Link href="/glizzy-world" className="text-gray-400 hover:text-purple-400 block">
+                  Glizzy World Casino
                 </Link>
-                <Link href="#" className="text-gray-400 hover:text-purple-400 block">
-                  Pitch Deck
+                <Link href="/meme-generator" className="text-gray-400 hover:text-purple-400 block">
+                  Meme Generator
                 </Link>
                 <Link href="#" className="text-gray-400 hover:text-purple-400 block">
                   Whitepaper
