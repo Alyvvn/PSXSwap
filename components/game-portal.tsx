@@ -18,7 +18,7 @@ export function GamePortal() {
   const [activeGame, setActiveGame] = useState<string | null>(null)
 
   const handlePasswordSubmit = () => {
-    if (password === "glizzy123") {
+    if (password === "iranglizzy") {
       setIsAuthenticated(true)
     } else {
       alert("Incorrect password. Try 'glizzy123' for demo.")
