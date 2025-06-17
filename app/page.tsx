@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -361,113 +360,113 @@ export default function PSXLanding() {
             <h1 className="text-7xl md:text-9xl font-black text-white mb-6 tracking-tight">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-fuchsia-400 to-purple-600 drop-shadow-[0_0_20px_rgba(168,85,247,0.3)]">
                 PSX
-              </h1>
-            </div>
-            <p className="text-2xl md:text-4xl text-cyan-300 font-light tracking-wide font-mono mt-4">
-              PLEASE STOP XISTING.
-            </p>
-            <div className="text-cyan-400/70 font-mono text-sm tracking-wider mt-3 uppercase">
-              Classified Operation // Spy Agency Protocol
-            </div>
+              </span>
+            </h1>
           </div>
-
-          {/* Professional Contract Address */}
-          <div className="mb-16 flex justify-center">
-            <div className="bg-slate-900/80 border border-cyan-400/20 backdrop-blur-xl rounded-2xl p-2 shadow-2xl">
-              <Button
-                onClick={copyToClipboard}
-                className={`bg-black/40 hover:bg-cyan-800/30 text-cyan-400 font-mono text-base px-10 py-5 rounded-xl shadow-xl transition-all duration-300 transform hover:scale-[1.02] border border-cyan-400/30 backdrop-blur-sm ${
-                  copied ? "min-w-[300px]" : "min-w-[380px]"
-                }`}
-              >
-                {copied ? (
-                  <span className="text-green-400 font-medium">✓ COPIED TO CLIPBOARD</span>
-                ) : (
-                  <div className="flex items-center gap-4">
-                    <span className="text-cyan-400/70 text-sm">CONTRACT:</span>
-                    <span className="text-cyan-300">
-                      {contractAddress.slice(0, 14)}...{contractAddress.slice(-14)}
-                    </span>
-                    <Copy className="h-4 w-4 opacity-70" />
-                  </div>
-                )}
-              </Button>
-            </div>
+          <p className="text-2xl md:text-4xl text-cyan-300 font-light tracking-wide font-mono mt-4">
+            PLEASE STOP XISTING.
+          </p>
+          <div className="text-cyan-400/70 font-mono text-sm tracking-wider mt-3 uppercase">
+            Classified Operation // Spy Agency Protocol
           </div>
+        </div>
 
-          {/* Professional Social Links */}
-          <div className="flex justify-center space-x-8 mb-20">
-            {[
-              { href: "https://t.me/psxonbase", icon: MessageCircle, label: "Telegram" },
-              { href: "https://x.com/PSXonBase", icon: Twitter, label: "Twitter" },
-              {
-                href: "https://dexscreener.com/base/0x4444489570Afd4261d616df00DE1668dAd5F8ceE",
-                icon: BarChart3,
-                label: "Chart",
-              },
-              { href: "https://discord.gg/cgUpjHpf", icon: Discord, label: "Discord" },
-              {
-                href: "https://basescan.org/address/0x4444489570Afd4261d616df00DE1668dAd5F8ceE",
-                icon: ExternalLink,
-                label: "Explorer",
-              },
-            ].map((social, index) => (
-              <Link key={index} href={social.href} target="_blank" rel="noopener noreferrer" className="group relative">
-                <div className="w-16 h-16 bg-slate-900/70 hover:bg-cyan-800/40 rounded-2xl flex items-center justify-center text-cyan-400 transition-all duration-300 transform hover:scale-110 border border-cyan-400/30 backdrop-blur-sm shadow-xl shadow-cyan-400/10">
-                  <social.icon className="h-7 w-7" />
-                </div>
-                <span className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 text-xs text-cyan-400/70 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap font-mono">
-                  {social.label}
-                </span>
-              </Link>
-            ))}
-          </div>
-
-          {/* Premium Interactive Action Boxes */}
-          <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
-            {/* Trade Box */}
-            <Card
-              className="bg-slate-900/20 border-cyan-400/30 backdrop-blur-xl hover:bg-slate-900/40 transition-all duration-500 cursor-pointer group shadow-2xl hover:shadow-cyan-400/20"
-              onClick={() => scrollToSection(swapRef)}
+        {/* Professional Contract Address */}
+        <div className="mb-16 flex justify-center">
+          <div className="bg-slate-900/80 border border-cyan-400/20 backdrop-blur-xl rounded-2xl p-2 shadow-2xl">
+            <Button
+              onClick={copyToClipboard}
+              className={`bg-black/40 hover:bg-cyan-800/30 text-cyan-400 font-mono text-base px-10 py-5 rounded-xl shadow-xl transition-all duration-300 transform hover:scale-[1.02] border border-cyan-400/30 backdrop-blur-sm ${
+                copied ? "min-w-[300px]" : "min-w-[380px]"
+              }`}
             >
-              <CardContent className="p-10 text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-cyan-600/80 to-blue-600/80 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                  <Zap className="h-10 w-10 text-white" />
+              {copied ? (
+                <span className="text-green-400 font-medium">✓ COPIED TO CLIPBOARD</span>
+              ) : (
+                <div className="flex items-center gap-4">
+                  <span className="text-cyan-400/70 text-sm">CONTRACT:</span>
+                  <span className="text-cyan-300">
+                    {contractAddress.slice(0, 14)}...{contractAddress.slice(-14)}
+                  </span>
+                  <Copy className="h-4 w-4 opacity-70" />
                 </div>
-                <h3 className="text-3xl font-bold text-cyan-400 mb-4 font-mono">INITIATE TRADE</h3>
-                <p className="text-cyan-300/70 mb-6 font-mono text-sm leading-relaxed">
-                  Deploy advanced swap protocols to acquire PSX tokens through our secure exchange interface with
-                  optimal rates
-                </p>
-                <div className="flex items-center justify-center text-cyan-400 group-hover:text-cyan-300 transition-colors">
-                  <span className="font-mono text-sm mr-3">ACCESS TRADING TERMINAL</span>
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Glizzy World Box */}
-            <Card
-              className="bg-slate-900/20 border-red-400/30 backdrop-blur-xl hover:bg-slate-900/40 transition-all duration-500 cursor-pointer group relative overflow-hidden shadow-2xl hover:shadow-red-400/20"
-              onClick={() => setGlizzyModalOpen(true)}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-red-600/5 to-pink-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <CardContent className="p-10 text-center relative z-10">
-                <div className="w-20 h-20 bg-gradient-to-br from-red-600/80 to-pink-600/80 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                  <Lock className="h-10 w-10 text-white" />
-                </div>
-                <h3 className="text-3xl font-bold text-red-400 mb-4 font-mono">GLIZZY WORLD</h3>
-                <p className="text-red-300/70 mb-6 font-mono text-sm leading-relaxed">
-                  Access our classified casino operations. Password-protected gaming suite exclusively for verified PSX
-                  agents
-                </p>
-                <div className="flex items-center justify-center text-red-400 group-hover:text-red-300 transition-colors">
-                  <span className="font-mono text-sm mr-3">CLASSIFIED ACCESS</span>
-                  <Shield className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                </div>
-              </CardContent>
-            </Card>
+              )}
+            </Button>
           </div>
+        </div>
+
+        {/* Professional Social Links */}
+        <div className="flex justify-center space-x-8 mb-20">
+          {[
+            { href: "https://t.me/psxonbase", icon: MessageCircle, label: "Telegram" },
+            { href: "https://x.com/PSXonBase", icon: Twitter, label: "Twitter" },
+            {
+              href: "https://dexscreener.com/base/0x4444489570Afd4261d616df00DE1668dAd5F8ceE",
+              icon: BarChart3,
+              label: "Chart",
+            },
+            { href: "https://discord.gg/cgUpjHpf", icon: Discord, label: "Discord" },
+            {
+              href: "https://basescan.org/address/0x4444489570Afd4261d616df00DE1668dAd5F8ceE",
+              icon: ExternalLink,
+              label: "Explorer",
+            },
+          ].map((social, index) => (
+            <Link key={index} href={social.href} target="_blank" rel="noopener noreferrer" className="group relative">
+              <div className="w-16 h-16 bg-slate-900/70 hover:bg-cyan-800/40 rounded-2xl flex items-center justify-center text-cyan-400 transition-all duration-300 transform hover:scale-110 border border-cyan-400/30 backdrop-blur-sm shadow-xl shadow-cyan-400/10">
+                <social.icon className="h-7 w-7" />
+              </div>
+              <span className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 text-xs text-cyan-400/70 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap font-mono">
+                {social.label}
+              </span>
+            </Link>
+          ))}
+        </div>
+
+        {/* Premium Interactive Action Boxes */}
+        <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+          {/* Trade Box */}
+          <Card
+            className="bg-slate-900/20 border-cyan-400/30 backdrop-blur-xl hover:bg-slate-900/40 transition-all duration-500 cursor-pointer group shadow-2xl hover:shadow-cyan-400/20"
+            onClick={() => scrollToSection(swapRef)}
+          >
+            <CardContent className="p-10 text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-cyan-600/80 to-blue-600/80 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <Zap className="h-10 w-10 text-white" />
+              </div>
+              <h3 className="text-3xl font-bold text-cyan-400 mb-4 font-mono">INITIATE TRADE</h3>
+              <p className="text-cyan-300/70 mb-6 font-mono text-sm leading-relaxed">
+                Deploy advanced swap protocols to acquire PSX tokens through our secure exchange interface with optimal
+                rates
+              </p>
+              <div className="flex items-center justify-center text-cyan-400 group-hover:text-cyan-300 transition-colors">
+                <span className="font-mono text-sm mr-3">ACCESS TRADING TERMINAL</span>
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Glizzy World Box */}
+          <Card
+            className="bg-slate-900/20 border-red-400/30 backdrop-blur-xl hover:bg-slate-900/40 transition-all duration-500 cursor-pointer group relative overflow-hidden shadow-2xl hover:shadow-red-400/20"
+            onClick={() => setGlizzyModalOpen(true)}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-red-600/5 to-pink-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <CardContent className="p-10 text-center relative z-10">
+              <div className="w-20 h-20 bg-gradient-to-br from-red-600/80 to-pink-600/80 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <Lock className="h-10 w-10 text-white" />
+              </div>
+              <h3 className="text-3xl font-bold text-red-400 mb-4 font-mono">GLIZZY WORLD</h3>
+              <p className="text-red-300/70 mb-6 font-mono text-sm leading-relaxed">
+                Access our classified casino operations. Password-protected gaming suite exclusively for verified PSX
+                agents
+              </p>
+              <div className="flex items-center justify-center text-red-400 group-hover:text-red-300 transition-colors">
+                <span className="font-mono text-sm mr-3">CLASSIFIED ACCESS</span>
+                <Shield className="h-5 w-5 group-hover:scale-110 transition-transform" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
