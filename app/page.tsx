@@ -620,80 +620,316 @@ export default function PSXLanding() {
         </div>
       )}
 
-      {/* Swap Section */}
-      <section ref={swapRef} className="py-32 px-4 bg-gradient-to-b from-slate-900/30 to-black/60">
-        <div className="max-w-7xl mx-auto">
+      {/* Revamped Swap Section */}
+      <section
+        ref={swapRef}
+        className="py-32 px-4 bg-gradient-to-b from-black via-slate-900/20 to-black relative overflow-hidden"
+      >
+        {/* Background Effects */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,255,136,0.1)_0%,transparent_50%)]"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.1)_0%,transparent_50%)]"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          {/* Section Header */}
           <div className="text-center mb-20">
-            <h2 className="text-6xl font-bold text-cyan-400 mb-6 font-mono">ACQUIRE PSX TOKENS</h2>
+            <div className="inline-flex items-center gap-3 bg-slate-900/80 backdrop-blur-xl rounded-full px-6 py-3 border border-cyan-400/30 mb-8">
+              <Zap className="h-5 w-5 text-cyan-400 animate-pulse" />
+              <span className="text-cyan-400 font-mono text-sm font-bold">TRADING TERMINAL ACTIVE</span>
+            </div>
+            <h2 className="text-6xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 mb-6 font-mono tracking-tight">
+              ACQUIRE PSX
+            </h2>
             <p className="text-xl text-cyan-300/70 max-w-3xl mx-auto font-mono leading-relaxed">
-              Deploy integrated swap protocols for optimal asset acquisition rates through our secure trading interface
+              Deploy our advanced trading interface powered by Flooz for seamless PSX token acquisition
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-20 items-start">
-            {/* Steps on Left */}
-            <div className="space-y-10">
-              <div>
-                <h3 className="text-4xl font-bold text-cyan-400 mb-8 font-mono">OPERATION PROTOCOL</h3>
-                <p className="text-cyan-300/70 mb-10 font-mono text-lg">
-                  Execute these classified steps to acquire PSX assets
-                </p>
-              </div>
+          {/* Main Trading Interface */}
+          <div className="grid xl:grid-cols-3 gap-12 items-start">
+            {/* Left Column - Trading Stats & Info */}
+            <div className="xl:col-span-1 space-y-8">
+              {/* Live Trading Stats */}
+              <Card className="bg-slate-900/40 border-cyan-400/20 backdrop-blur-xl">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Activity className="h-6 w-6 text-green-400 animate-pulse" />
+                    <h3 className="text-xl font-bold text-cyan-400 font-mono">LIVE MARKET DATA</h3>
+                  </div>
 
-              <div className="space-y-8">
-                {[
-                  {
-                    step: 1,
-                    title: "Connect Wallet",
-                    desc: "Establish secure connection with MetaMask or compatible Web3 wallet",
-                    icon: "🔗",
-                  },
-                  {
-                    step: 2,
-                    title: "Select Tokens",
-                    desc: "Configure ETH as input and PSX as target asset for swap operation",
-                    icon: "🔄",
-                  },
-                  {
-                    step: 3,
-                    title: "Enter Amount",
-                    desc: "Specify ETH quantity for PSX token acquisition protocol",
-                    icon: "💰",
-                  },
-                  {
-                    step: 4,
-                    title: "Execute Swap",
-                    desc: "Review transaction parameters and confirm swap execution",
-                    icon: "✅",
-                  },
-                ].map((item) => (
-                  <div
-                    key={item.step}
-                    className="flex items-start gap-8 p-8 bg-slate-900/20 rounded-3xl border border-cyan-400/20 backdrop-blur-xl hover:bg-slate-900/40 transition-all duration-300 shadow-xl"
-                  >
-                    <div className="flex-shrink-0">
-                      <div className="w-16 h-16 bg-gradient-to-br from-cyan-800/80 to-slate-900/80 rounded-2xl flex items-center justify-center text-cyan-100 font-bold text-xl border border-cyan-400/30 font-mono shadow-lg">
-                        {item.step}
-                      </div>
+                  <div className="space-y-6">
+                    <div className="flex justify-between items-center">
+                      <span className="text-cyan-300/70 font-mono text-sm">24h Volume</span>
+                      <span className="text-green-400 font-mono font-bold">$127,420</span>
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-4 mb-3">
-                        <span className="text-3xl">{item.icon}</span>
-                        <h4 className="text-cyan-400 font-semibold text-xl font-mono">{item.title}</h4>
-                      </div>
-                      <p className="text-cyan-300/70 leading-relaxed font-mono">{item.desc}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-cyan-300/70 font-mono text-sm">Market Cap</span>
+                      <span className="text-cyan-400 font-mono font-bold">$2.1M</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-cyan-300/70 font-mono text-sm">Holders</span>
+                      <span className="text-purple-400 font-mono font-bold">1,337</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-cyan-300/70 font-mono text-sm">Liquidity</span>
+                      <span className="text-blue-400 font-mono font-bold">$456K</span>
                     </div>
                   </div>
-                ))}
+
+                  <div className="mt-6 pt-6 border-t border-cyan-400/20">
+                    <div className="flex items-center gap-2 text-green-400">
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                      <span className="font-mono text-xs">REAL-TIME UPDATES</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Security Features */}
+              <Card className="bg-slate-900/40 border-cyan-400/20 backdrop-blur-xl">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Shield className="h-6 w-6 text-blue-400" />
+                    <h3 className="text-xl font-bold text-cyan-400 font-mono">SECURITY PROTOCOL</h3>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                      <span className="text-cyan-300/80 font-mono text-sm">Audited Smart Contracts</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                      <span className="text-cyan-300/80 font-mono text-sm">Liquidity Locked</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                      <span className="text-cyan-300/80 font-mono text-sm">Renounced Ownership</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                      <span className="text-cyan-300/80 font-mono text-sm">Base Network Verified</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quick Actions */}
+              <Card className="bg-slate-900/40 border-cyan-400/20 backdrop-blur-xl">
+                <CardContent className="p-8">
+                  <h3 className="text-xl font-bold text-cyan-400 font-mono mb-6">QUICK ACTIONS</h3>
+
+                  <div className="space-y-4">
+                    <Button
+                      asChild
+                      className="w-full bg-gradient-to-r from-cyan-600/80 to-blue-600/80 hover:from-cyan-700 hover:to-blue-700 text-white font-mono"
+                    >
+                      <Link
+                        href="https://dexscreener.com/base/0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
+                        target="_blank"
+                      >
+                        <BarChart3 className="h-4 w-4 mr-2" />
+                        VIEW CHART
+                      </Link>
+                    </Button>
+
+                    <Button
+                      onClick={copyToClipboard}
+                      variant="outline"
+                      className="w-full border-cyan-400/30 text-cyan-400 hover:bg-cyan-900/30 font-mono"
+                    >
+                      <Copy className="h-4 w-4 mr-2" />
+                      COPY CONTRACT
+                    </Button>
+
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full border-purple-400/30 text-purple-400 hover:bg-purple-900/30 font-mono"
+                    >
+                      <Link
+                        href="https://basescan.org/address/0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
+                        target="_blank"
+                      >
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        VERIFY ON BASESCAN
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Center Column - Main Trading Widget */}
+            <div className="xl:col-span-1 flex justify-center">
+              <div className="w-full max-w-md">
+                <SwapWidget />
               </div>
             </div>
 
-            {/* Swap Widget on Right */}
-            <div className="flex justify-center lg:justify-end">
-              <div className="w-full max-w-md">
-                <SwapWidget contractAddress={contractAddress} />
-              </div>
+            {/* Right Column - Trading Guide */}
+            <div className="xl:col-span-1 space-y-8">
+              {/* Trading Steps */}
+              <Card className="bg-slate-900/40 border-cyan-400/20 backdrop-blur-xl">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Target className="h-6 w-6 text-purple-400" />
+                    <h3 className="text-xl font-bold text-cyan-400 font-mono">MISSION PROTOCOL</h3>
+                  </div>
+
+                  <div className="space-y-6">
+                    {[
+                      {
+                        step: "01",
+                        title: "Connect Wallet",
+                        desc: "Link your Web3 wallet to the trading terminal",
+                        icon: "🔗",
+                      },
+                      {
+                        step: "02",
+                        title: "Select Amount",
+                        desc: "Choose ETH amount for PSX acquisition",
+                        icon: "💰",
+                      },
+                      {
+                        step: "03",
+                        title: "Review & Confirm",
+                        desc: "Verify transaction details and execute",
+                        icon: "✅",
+                      },
+                      {
+                        step: "04",
+                        title: "Mission Complete",
+                        desc: "PSX tokens deployed to your wallet",
+                        icon: "🎯",
+                      },
+                    ].map((item) => (
+                      <div key={item.step} className="flex items-start gap-4">
+                        <div className="flex-shrink-0">
+                          <div className="w-10 h-10 bg-gradient-to-br from-cyan-800/60 to-purple-800/60 rounded-xl flex items-center justify-center text-cyan-100 font-bold text-sm border border-cyan-400/30 font-mono">
+                            {item.step}
+                          </div>
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-lg">{item.icon}</span>
+                            <h4 className="text-cyan-400 font-semibold font-mono text-sm">{item.title}</h4>
+                          </div>
+                          <p className="text-cyan-300/60 font-mono text-xs leading-relaxed">{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Network Info */}
+              <Card className="bg-slate-900/40 border-cyan-400/20 backdrop-blur-xl">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Wifi className="h-6 w-6 text-green-400" />
+                    <h3 className="text-xl font-bold text-cyan-400 font-mono">NETWORK STATUS</h3>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-cyan-300/70 font-mono text-sm">Network</span>
+                      <span className="text-blue-400 font-mono font-bold">BASE MAINNET</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-cyan-300/70 font-mono text-sm">Gas Fees</span>
+                      <span className="text-green-400 font-mono font-bold">~$0.01</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-cyan-300/70 font-mono text-sm">Confirmation</span>
+                      <span className="text-cyan-400 font-mono font-bold">~2 SECONDS</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-cyan-300/70 font-mono text-sm">Status</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                        <span className="text-green-400 font-mono font-bold">OPERATIONAL</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Support */}
+              <Card className="bg-slate-900/40 border-cyan-400/20 backdrop-blur-xl">
+                <CardContent className="p-8">
+                  <h3 className="text-xl font-bold text-cyan-400 font-mono mb-6">NEED ASSISTANCE?</h3>
+
+                  <div className="space-y-4">
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full border-cyan-400/30 text-cyan-400 hover:bg-cyan-900/30 font-mono"
+                    >
+                      <Link href="https://discord.gg/cgUpjHpf" target="_blank">
+                        <Discord className="h-4 w-4 mr-2" />
+                        AGENT SUPPORT
+                      </Link>
+                    </Button>
+
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full border-cyan-400/30 text-cyan-400 hover:bg-cyan-900/30 font-mono"
+                    >
+                      <Link href="https://t.me/psxonbase" target="_blank">
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        TELEGRAM HQ
+                      </Link>
+                    </Button>
+                  </div>
+
+                  <div className="mt-6 pt-6 border-t border-cyan-400/20">
+                    <p className="text-cyan-300/60 font-mono text-xs text-center">24/7 Agent Support Available</p>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
+          </div>
+
+          {/* Bottom Section - Additional Info */}
+          <div className="mt-20 grid md:grid-cols-3 gap-8">
+            <Card className="bg-slate-900/30 border-cyan-400/20 backdrop-blur-xl">
+              <CardContent className="p-8 text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-600/80 to-emerald-600/80 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Shield className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-cyan-400 mb-3 font-mono">SECURE TRADING</h3>
+                <p className="text-cyan-300/70 font-mono text-sm">
+                  All transactions are secured by Base network's robust infrastructure and audited smart contracts.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-900/30 border-cyan-400/20 backdrop-blur-xl">
+              <CardContent className="p-8 text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-600/80 to-cyan-600/80 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Zap className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-cyan-400 mb-3 font-mono">INSTANT EXECUTION</h3>
+                <p className="text-cyan-300/70 font-mono text-sm">
+                  Lightning-fast swaps with minimal slippage powered by Flooz's advanced trading engine.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-900/30 border-cyan-400/20 backdrop-blur-xl">
+              <CardContent className="p-8 text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-600/80 to-pink-600/80 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Target className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-cyan-400 mb-3 font-mono">OPTIMAL RATES</h3>
+                <p className="text-cyan-300/70 font-mono text-sm">
+                  Get the best possible rates through intelligent routing and liquidity aggregation.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
