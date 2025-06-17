@@ -355,11 +355,11 @@ export default function PSXLanding() {
         ref={homeRef}
         className="min-h-screen flex flex-col items-center justify-center px-4 pt-40 pb-20 relative"
       >
-        <div className="relative z-10 text-center max-w-5xl mx-auto">
+        <div className="relative z-10 text-center max-w-4xl mx-auto">
           {/* Main Title */}
-          <div className="mb-16">
-            <div className={`relative inline-block ${glitchActive ? "animate-glitch" : ""}`}>
-              <h1 className="text-8xl md:text-9xl lg:text-[10rem] font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-purple-600 drop-shadow-[0_0_30px_rgba(168,85,247,0.3)] font-mono tracking-tight leading-none">
+          <div className="mb-12">
+            <h1 className="text-7xl md:text-9xl font-black text-white mb-6 tracking-tight">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-fuchsia-400 to-purple-600 drop-shadow-[0_0_20px_rgba(168,85,247,0.3)]">
                 PSX
               </h1>
             </div>
