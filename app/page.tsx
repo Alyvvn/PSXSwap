@@ -542,7 +542,7 @@ export default function PSXLanding() {
                 <CardContent className="p-6 text-center">
                   <Target className="h-8 w-8 text-blue-400 mx-auto mb-3" />
                   <div className="text-2xl font-bold text-white font-mono">24</div>
-                  <div className="text-xs text-cyan-400/60 font-mono">ACTIVE OPERATIONS</div>
+                  <div className="text-xs text-cyan-400/60 font-mono">ACTIVE BOUNTY OPERATIONS</div>
                 </CardContent>
               </Card>
 
