@@ -642,7 +642,7 @@ export default function PSXLanding() {
               ACQUIRE PSX
             </h2>
             <p className="text-xl text-cyan-300/70 max-w-3xl mx-auto font-mono leading-relaxed">
-              Deploy our advanced trading interface powered by Flooz for seamless PSX token acquisition
+              Deploy our advanced trading interface powered for seamless PSX token acquisition
             </p>
           </div>
 
