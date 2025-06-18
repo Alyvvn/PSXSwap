@@ -486,7 +486,7 @@ export default function PSXLanding() {
                 icon: BarChart3,
                 label: "Chart",
               },
-              { href: "https://discord.gg/cgUpjHpf", icon: Discord, label: "Discord" },
+              { href: "discord.gg/psxonbase", icon: Discord, label: "Discord" },
               {
                 href: "https://basescan.org/address/0x4444489570Afd4261d616df00DE1668dAd5F8ceE",
                 icon: ExternalLink,
