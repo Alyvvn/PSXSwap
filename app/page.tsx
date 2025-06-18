@@ -301,7 +301,7 @@ export default function PSXLanding() {
               >
                 <span className="relative z-10 flex items-center gap-2">
                   <span className="text-sm">🎰</span>
-                  CASINO
+                  GLIZZY WORLD CASINO
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-red-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </button>
