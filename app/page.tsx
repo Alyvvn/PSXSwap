@@ -359,7 +359,7 @@ export default function PSXLanding() {
                   }}
                   className="w-full px-6 py-4 rounded-xl font-medium transition-all duration-500 text-sm bg-gradient-to-r from-red-500/90 to-pink-500/90 text-white hover:from-red-600 hover:to-pink-600 font-mono shadow-lg"
                 >
-                  🎰 CASINO
+                  🎰 Glizzy World Casino
                 </button>
                 <Link href="/meme-generator" className="block">
                   <button
