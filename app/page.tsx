@@ -545,7 +545,7 @@ export default function PSXLanding() {
                   <Lock className="h-9 w-9 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-red-400 mb-4 font-mono group-hover:text-red-300 transition-colors duration-500">
-                  CASINO ACCESS
+                  GLIZZY WORLD CASINO ACCESS
                 </h3>
                 <p className="text-red-300/80 mb-6 font-mono text-sm leading-relaxed group-hover:text-red-300/100 transition-colors duration-500">
                   Access our classified casino operations. Password-protected gaming suite exclusively for verified PSX
