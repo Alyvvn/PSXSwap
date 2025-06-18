@@ -445,7 +445,7 @@ export default function PSXLanding() {
                 PRECISION. STEALTH. EXECUTION.
               </p>
               <div className="text-cyan-400/70 font-mono text-sm tracking-wider mt-4 uppercase animate-in slide-in-from-bottom-5 duration-1000 delay-700">
-                Elite Crypto Operations // Base Network Protocol
+                PLEASE STOP XISTING. // Base Network Protocol
               </div>
             </div>
           </div>
