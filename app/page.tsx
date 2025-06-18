@@ -1213,7 +1213,7 @@ export default function PSXLanding() {
                 {[
                   { href: "https://t.me/psxonbase", icon: MessageCircle },
                   { href: "https://x.com/PSXonBase", icon: Twitter },
-                  { href: "https://discord.gg/cgUpjHpf", icon: Discord },
+                  { href: "discord.gg/psxonbase", icon: Discord },
                 ].map((social, index) => (
                   <Link
                     key={index}
