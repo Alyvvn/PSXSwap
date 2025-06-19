@@ -21,13 +21,12 @@ import {
   ArrowRight,
   Shield,
   Activity,
-  Users,
-  TrendingUp,
-  Clock,
   Target,
 } from "lucide-react"
 import Link from "next/link"
 import { SwapWidget } from "@/components/swap-widget"
+import { GlizzyWorld } from "@/components/glizzy-world" // Import GlizzyWorld
+import { InteractiveRoadmap } from "@/components/interactive-roadmap" // Import InteractiveRoadmap
 
 export default function PSXLanding() {
   const [copied, setCopied] = useState(false)
@@ -45,6 +44,8 @@ export default function PSXLanding() {
   const homeRef = useRef<HTMLDivElement>(null)
   const swapRef = useRef<HTMLDivElement>(null)
   const intelRef = useRef<HTMLDivElement>(null)
+  const glizzyWorldRef = useRef<HTMLDivElement>(null) // Ref for GlizzyWorld section
+  const roadmapRef = useRef<HTMLDivElement>(null) // Ref for Roadmap section
 
   const contractAddress = "0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
 
@@ -173,7 +174,9 @@ export default function PSXLanding() {
   const navItems = [
     { id: "home", label: "Home", ref: homeRef },
     { id: "swap", label: "Trade", ref: swapRef },
+    { id: "glizzy-world", label: "Glizzy World", ref: glizzyWorldRef }, // Add Glizzy World to nav
     { id: "intel", label: "Intel", ref: intelRef },
+    { id: "roadmap", label: "Roadmap", ref: roadmapRef }, // Add Roadmap to nav
   ]
 
   const getPriorityColor = (priority: string) => {
@@ -359,7 +362,7 @@ export default function PSXLanding() {
                   }}
                   className="w-full px-6 py-4 rounded-xl font-medium transition-all duration-500 text-sm bg-gradient-to-r from-red-500/90 to-pink-500/90 text-white hover:from-red-600 hover:to-pink-600 font-mono shadow-lg"
                 >
-                  🎰 Glizzy World Casino
+                  🎰 GLIZZY WORLD CASINO
                 </button>
                 <Link href="/meme-generator" className="block">
                   <button
@@ -486,7 +489,7 @@ export default function PSXLanding() {
                 icon: BarChart3,
                 label: "Chart",
               },
-              { href: "discord.gg/psxonbase", icon: Discord, label: "Discord" },
+              { href: "https://discord.gg/psxonbase", icon: Discord, label: "Discord" },
               {
                 href: "https://basescan.org/address/0x4444489570Afd4261d616df00DE1668dAd5F8ceE",
                 icon: ExternalLink,
@@ -560,143 +563,6 @@ export default function PSXLanding() {
           </div>
         </div>
       </section>
-
-      {/* Enhanced Intelligence Reports Section */}
-      <section className="py-20 px-4 bg-black/60 backdrop-blur-sm border-y border-cyan-400/10">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-12">
-            <div className="flex items-center gap-4">
-              <div className="h-8 w-8 rounded-full bg-red-500/80 animate-pulse flex items-center justify-center shadow-lg shadow-red-500/20">
-                <Activity className="h-4 w-4 text-white" />
-              </div>
-              <h2 className="text-3xl font-bold text-cyan-400 font-mono">LIVE INTELLIGENCE FEED</h2>
-              <div className="hidden sm:flex items-center gap-2 text-green-400 text-sm font-mono">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span>REAL-TIME</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 text-cyan-400/60 text-sm font-mono">
-              <Users className="h-4 w-4" />
-              <span className="hidden sm:block">1,337 AGENTS ACTIVE</span>
-            </div>
-          </div>
-
-          {/* Enhanced Intelligence Grid */}
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Current Report */}
-            <Card className="bg-black/60 border-cyan-400/20 backdrop-blur-3xl hover:bg-black/80 transition-all duration-500 hover:-translate-y-1">
-              <CardContent className="p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse shadow-lg shadow-red-500/50"></div>
-                    <span className="text-red-400 font-mono text-xs font-bold">
-                      {intelReports[currentIntel].classification}
-                    </span>
-                  </div>
-                  <span className="text-cyan-400/60 font-mono text-xs">{intelReports[currentIntel].id}</span>
-                </div>
-
-                <h3 className="text-xl font-bold text-cyan-400 mb-4 font-mono">{intelReports[currentIntel].title}</h3>
-
-                <p className="text-cyan-300/80 mb-6 font-mono text-sm leading-relaxed">
-                  {intelReports[currentIntel].content}
-                </p>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <span
-                      className={`font-mono text-xs font-bold ${getStatusColor(intelReports[currentIntel].status)}`}
-                    >
-                      {intelReports[currentIntel].status}
-                    </span>
-                    <span className={`font-mono text-xs ${getPriorityColor(intelReports[currentIntel].priority)}`}>
-                      {intelReports[currentIntel].priority}
-                    </span>
-                  </div>
-                  <span className="text-cyan-400/60 font-mono text-xs">{intelReports[currentIntel].timestamp}</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Enhanced Mission Stats */}
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { icon: TrendingUp, value: "98.7%", label: "MISSION SUCCESS", color: "text-green-400" },
-                { icon: Target, value: "24", label: "ACTIVE OPERATIONS", color: "text-blue-400" },
-                { icon: Clock, value: "72h", label: "AVG RESPONSE", color: "text-yellow-400" },
-                { icon: Shield, value: "MAX", label: "SECURITY LEVEL", color: "text-purple-400" },
-              ].map((stat, index) => (
-                <Card
-                  key={index}
-                  className="bg-black/60 border-cyan-400/10 backdrop-blur-3xl hover:bg-black/80 transition-all duration-500 hover:-translate-y-1 group"
-                >
-                  <CardContent className="p-6 text-center">
-                    <stat.icon
-                      className={`h-6 w-6 ${stat.color} mx-auto mb-3 group-hover:scale-110 transition-transform duration-300`}
-                    />
-                    <div className="text-xl font-bold text-white font-mono">{stat.value}</div>
-                    <div className="text-xs text-cyan-400/60 font-mono">{stat.label}</div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Enhanced Glizzy World Access Modal - Fixed */}
-      {glizzyModalOpen && (
-        <div className="fixed inset-0 bg-black/95 backdrop-blur-3xl z-50 flex items-center justify-center p-4 animate-in fade-in-0 duration-500">
-          <Card className="w-full max-w-md bg-black/90 border-red-500/40 relative backdrop-blur-3xl shadow-2xl animate-in zoom-in-95 duration-700">
-            <button
-              onClick={() => setGlizzyModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors duration-500 hover:scale-110 z-10"
-            >
-              <X className="h-6 w-6" />
-            </button>
-            <CardContent className="p-10 text-center">
-              {!accessGranted ? (
-                <>
-                  <div className="w-24 h-24 bg-gradient-to-br from-red-500/90 to-pink-500/90 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-red-500/30 animate-pulse">
-                    <Lock className="h-12 w-12 text-white" />
-                  </div>
-                  <h3 className="text-3xl font-bold text-red-400 mb-6 font-mono">CLASSIFIED ACCESS</h3>
-                  <p className="text-gray-300 mb-8 font-mono text-sm leading-relaxed">
-                    You are about to enter the Casino. This is a password-protected gaming suite exclusively for PSX
-                    agents.
-                  </p>
-                  <div className="space-y-6">
-                    <Button
-                      onClick={handleGlizzyAccess}
-                      className="w-full bg-gradient-to-r from-red-500/95 to-pink-500/95 hover:from-red-600 hover:to-pink-600 text-white font-mono py-5 text-lg transition-all duration-700 hover:scale-[1.02] shadow-lg shadow-red-500/30"
-                    >
-                      🎰 ACCESS CASINO
-                    </Button>
-                    <Button
-                      onClick={() => setGlizzyModalOpen(false)}
-                      variant="outline"
-                      className="w-full border-gray-600 text-gray-400 hover:bg-gray-800 font-mono transition-all duration-500 py-4"
-                    >
-                      CANCEL OPERATION
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <div className="text-center">
-                  <div className="w-24 h-24 bg-green-500/90 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-green-500/30">
-                    <Shield className="h-12 w-12 text-white" />
-                  </div>
-                  <h3 className="text-3xl font-bold text-green-400 mb-6 font-mono">ACCESS GRANTED</h3>
-                  <p className="text-green-300 font-mono text-lg">Redirecting to Casino...</p>
-                  <div className="mt-8">
-                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-400 mx-auto"></div>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      )}
 
       {/* Revamped Swap Section */}
       <section
@@ -955,7 +821,7 @@ export default function PSXLanding() {
                       variant="outline"
                       className="w-full border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 font-mono transition-all duration-500 hover:scale-[1.02]"
                     >
-                      <Link href="https://discord.gg/cgUpjHpf" target="_blank">
+                      <Link href="https://discord.gg/psxonbase" target="_blank">
                         <Discord className="h-4 w-4 mr-2" />
                         AGENT SUPPORT
                       </Link>
@@ -1026,7 +892,12 @@ export default function PSXLanding() {
         </div>
       </section>
 
-      {/* Enhanced Agent Dossier Section */}
+      {/* Glizzy World Section */}
+      <section ref={glizzyWorldRef} className="py-32 px-4 bg-black/80 backdrop-blur-sm border-y border-red-400/10">
+        <GlizzyWorld />
+      </section>
+
+      {/* Enhanced Intelligence Reports Section */}
       <section ref={intelRef} className="py-32 px-4 bg-black/80 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-6xl font-bold text-center mb-16 text-cyan-400 font-mono">AGENT DOSSIER: PSX</h2>
@@ -1090,7 +961,7 @@ export default function PSXLanding() {
                     asChild
                     className="bg-red-500/90 hover:bg-red-600 text-white font-mono px-10 py-5 text-lg transition-all duration-500 hover:scale-[1.05] shadow-lg shadow-red-500/20"
                   >
-                    <Link href="discord.gg/psxonbase" target="_blank" rel="noopener noreferrer">
+                    <Link href="https://discord.gg/psxonbase" target="_blank" rel="noopener noreferrer">
                       [ ENLIST NOW ] <Discord className="ml-3 h-5 w-5" />
                     </Link>
                   </Button>
@@ -1099,6 +970,11 @@ export default function PSXLanding() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Interactive Roadmap Section */}
+      <section ref={roadmapRef} className="py-32 px-4 bg-black/80 backdrop-blur-sm border-y border-purple-400/10">
+        <InteractiveRoadmap />
       </section>
 
       {/* Enhanced Professional Footer */}
@@ -1117,7 +993,7 @@ export default function PSXLanding() {
                   onClick={() => setGlizzyModalOpen(true)}
                   className="text-cyan-300/70 hover:text-cyan-400 block font-mono transition-colors duration-300"
                 >
-                  Casino Access
+                  Glizzy World Casino Access
                 </button>
                 <Link
                   href="/meme-generator"
@@ -1143,7 +1019,7 @@ export default function PSXLanding() {
               <h4 className="text-xl font-semibold text-cyan-400 mb-8 font-mono">Communications</h4>
               <div className="space-y-4">
                 <Link
-                  href="discord.gg/psxonbase"
+                  href="https://discord.gg/psxonbase"
                   className="text-cyan-300/70 hover:text-cyan-400 block font-mono transition-colors duration-300"
                 >
                   Discord HQ
@@ -1213,7 +1089,7 @@ export default function PSXLanding() {
                 {[
                   { href: "https://t.me/psxonbase", icon: MessageCircle },
                   { href: "https://x.com/PSXonBase", icon: Twitter },
-                  { href: "discord.gg/psxonbase", icon: Discord },
+                  { href: "https://discord.gg/psxonbase", icon: Discord },
                 ].map((social, index) => (
                   <Link
                     key={index}
