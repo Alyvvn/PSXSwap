@@ -1090,7 +1090,7 @@ export default function PSXLanding() {
                     asChild
                     className="bg-red-500/90 hover:bg-red-600 text-white font-mono px-10 py-5 text-lg transition-all duration-500 hover:scale-[1.05] shadow-lg shadow-red-500/20"
                   >
-                    <Link href="https://discord.gg/cgUpjHpf" target="_blank" rel="noopener noreferrer">
+                    <Link href="discord.gg/psxonbase" target="_blank" rel="noopener noreferrer">
                       [ ENLIST NOW ] <Discord className="ml-3 h-5 w-5" />
                     </Link>
                   </Button>
@@ -1143,7 +1143,7 @@ export default function PSXLanding() {
               <h4 className="text-xl font-semibold text-cyan-400 mb-8 font-mono">Communications</h4>
               <div className="space-y-4">
                 <Link
-                  href="https://discord.gg/cgUpjHpf"
+                  href="discord.gg/psxonbase"
                   className="text-cyan-300/70 hover:text-cyan-400 block font-mono transition-colors duration-300"
                 >
                   Discord HQ
