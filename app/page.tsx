@@ -77,15 +77,16 @@ export default function PSXLanding() {
   const intelRef = useRef<HTMLDivElement>(null)
 
   const contractAddress = "0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
-  // Make absolutely sure we are working with a string
-  const displayAddress =
-    String(contractAddress ?? "") /
-    // Smooth scroll tracking
-    useEffect(() => {
-      const handleScroll = () => setScrollY(window.scrollY)
-      window.addEventListener("scroll", handleScroll, { passive: true })
-      return () => window.removeEventListener("scroll", handleScroll)
-    }, [])
+
+  // Always ensure we have a string so .slice() works
+  const displayAddress = String(contractAddress)
+
+  /* ----------  Smooth scroll tracking  ---------- */
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY)
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   // Intel reports cycling
   useEffect(() => {
@@ -1028,7 +1029,5 @@ export default function PSXLanding() {
             </div>
           </div>
         </div>
-      </footer>
+      </footer>\
     </div>
-  )
-}
