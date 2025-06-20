@@ -30,22 +30,19 @@ import { InteractiveRoadmap } from "@/components/interactive-roadmap" // Import 
 
 export default function PSXLanding() {
   const [copied, setCopied] = useState(false)
-  const [activeStep, setActiveStep] = useState<number | null>(null)
   const [activeNav, setActiveNav] = useState("home")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [glitchActive, setGlitchActive] = useState(false)
   const [terminalText, setTerminalText] = useState("")
-  const [glizzyModalOpen, setGlizzyModalOpen] = useState(false)
-  const [accessGranted, setAccessGranted] = useState(false)
   const [currentIntel, setCurrentIntel] = useState(0)
   const [scrollY, setScrollY] = useState(0)
 
   // Refs for scroll sections
   const homeRef = useRef<HTMLDivElement>(null)
   const swapRef = useRef<HTMLDivElement>(null)
-  const intelRef = useRef<HTMLDivElement>(null)
   const glizzyWorldRef = useRef<HTMLDivElement>(null) // Ref for GlizzyWorld section
   const roadmapRef = useRef<HTMLDivElement>(null) // Ref for Roadmap section
+  const intelRef = useRef<HTMLDivElement>(null)
 
   const contractAddress = "0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
 
@@ -164,19 +161,12 @@ export default function PSXLanding() {
     }
   }
 
-  const handleGlizzyAccess = () => {
-    setAccessGranted(true)
-    setTimeout(() => {
-      window.location.href = "/glizzy-world"
-    }, 1500)
-  }
-
   const navItems = [
     { id: "home", label: "Home", ref: homeRef },
     { id: "swap", label: "Trade", ref: swapRef },
     { id: "glizzy-world", label: "Glizzy World", ref: glizzyWorldRef }, // Add Glizzy World to nav
-    { id: "intel", label: "Intel", ref: intelRef },
     { id: "roadmap", label: "Roadmap", ref: roadmapRef }, // Add Roadmap to nav
+    { id: "intel", label: "Intel", ref: intelRef },
   ]
 
   const getPriorityColor = (priority: string) => {
@@ -298,16 +288,15 @@ export default function PSXLanding() {
             </div>
 
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => setGlizzyModalOpen(true)}
-                className="px-6 py-3 rounded-full font-medium transition-all duration-500 text-sm bg-gradient-to-r from-red-500/90 to-pink-500/90 text-white hover:from-red-600 hover:to-pink-600 shadow-lg shadow-red-500/30 font-mono relative overflow-hidden group hover:scale-105"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  <span className="text-sm">🎰</span>
-                  GLIZZY WORLD CASINO
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-red-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </button>
+              <Link href="/glizzy-world">
+                <button className="px-6 py-3 rounded-full font-medium transition-all duration-500 text-sm bg-gradient-to-r from-red-500/90 to-pink-500/90 text-white hover:from-red-600 hover:to-pink-600 shadow-lg shadow-red-500/30 font-mono relative overflow-hidden group hover:scale-105">
+                  <span className="relative z-10 flex items-center gap-2">
+                    <span className="text-sm">🎰</span>
+                    GLIZZY WORLD CASINO
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </button>
+              </Link>
               <Link href="/meme-generator">
                 <button className="px-6 py-3 rounded-full font-medium transition-all duration-500 text-sm text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100 font-mono hover:scale-105">
                   MEMES
@@ -355,15 +344,14 @@ export default function PSXLanding() {
                 </button>
               ))}
               <div className="pt-4 border-t border-cyan-400/30 space-y-4">
-                <button
-                  onClick={() => {
-                    setGlizzyModalOpen(true)
-                    setMobileMenuOpen(false)
-                  }}
-                  className="w-full px-6 py-4 rounded-xl font-medium transition-all duration-500 text-sm bg-gradient-to-r from-red-500/90 to-pink-500/90 text-white hover:from-red-600 hover:to-pink-600 font-mono shadow-lg"
-                >
-                  🎰 GLIZZY WORLD CASINO
-                </button>
+                <Link href="/glizzy-world" className="block">
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full px-6 py-4 rounded-xl font-medium transition-all duration-500 text-sm bg-gradient-to-r from-red-500/90 to-pink-500/90 text-white hover:from-red-600 hover:to-pink-600 font-mono shadow-lg"
+                  >
+                    🎰 GLIZZY WORLD CASINO
+                  </button>
+                </Link>
                 <Link href="/meme-generator" className="block">
                   <button
                     onClick={() => setMobileMenuOpen(false)}
@@ -526,7 +514,7 @@ export default function PSXLanding() {
                 <h3 className="text-2xl font-bold text-cyan-400 mb-4 font-mono group-hover:text-cyan-300 transition-colors duration-500">
                   INITIATE TRADE
                 </h3>
-                <p className="text-cyan-300/80 mb-6 font-mono text-sm leading-relaxed group-hover:text-cyan-300/100 transition-colors duration-500">
+                <p className="text-cyan-300/80 mb-6 text-sm leading-relaxed group-hover:text-cyan-300/100 transition-colors duration-500">
                   Deploy advanced swap protocols to acquire PSX tokens through our secure exchange interface with
                   optimal rates
                 </p>
@@ -538,28 +526,27 @@ export default function PSXLanding() {
             </Card>
 
             {/* Glizzy World Box - Fixed */}
-            <Card
-              className="bg-black/50 border-red-400/30 backdrop-blur-3xl hover:bg-black/70 transition-all duration-700 cursor-pointer group relative overflow-hidden shadow-2xl hover:shadow-red-400/30 hover:-translate-y-3 hover:scale-[1.02]"
-              onClick={() => setGlizzyModalOpen(true)}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-              <CardContent className="p-8 text-center relative z-10">
-                <div className="w-18 h-18 bg-gradient-to-br from-red-500/90 to-pink-500/90 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-700 shadow-lg shadow-red-500/30">
-                  <Lock className="h-9 w-9 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-red-400 mb-4 font-mono group-hover:text-red-300 transition-colors duration-500">
-                  GLIZZY WORLD CASINO ACCESS
-                </h3>
-                <p className="text-red-300/80 mb-6 font-mono text-sm leading-relaxed group-hover:text-red-300/100 transition-colors duration-500">
-                  Access our classified casino operations. Password-protected gaming suite exclusively for verified PSX
-                  agents
-                </p>
-                <div className="flex items-center justify-center text-red-400 group-hover:text-red-300 transition-colors duration-500">
-                  <span className="font-mono text-sm mr-3">CLASSIFIED ACCESS</span>
-                  <Shield className="h-4 w-4 group-hover:scale-110 transition-transform duration-500" />
-                </div>
-              </CardContent>
-            </Card>
+            <Link href="/glizzy-world" className="block">
+              <Card className="bg-black/50 border-red-400/30 backdrop-blur-3xl hover:bg-black/70 transition-all duration-700 cursor-pointer group relative overflow-hidden shadow-2xl hover:shadow-red-400/30 hover:-translate-y-3 hover:scale-[1.02]">
+                <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                <CardContent className="p-8 text-center relative z-10">
+                  <div className="w-18 h-18 bg-gradient-to-br from-red-500/90 to-pink-500/90 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-700 shadow-lg shadow-red-500/30">
+                    <Lock className="h-9 w-9 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-red-400 mb-4 font-mono group-hover:text-red-300 transition-colors duration-500">
+                    GLIZZY WORLD CASINO ACCESS
+                  </h3>
+                  <p className="text-red-300/80 mb-6 text-sm leading-relaxed group-hover:text-red-300/100 transition-colors duration-500">
+                    Access our classified casino operations. Password-protected gaming suite exclusively for verified
+                    PSX agents
+                  </p>
+                  <div className="flex items-center justify-center text-red-400 group-hover:text-red-300 transition-colors duration-500">
+                    <span className="font-mono text-sm mr-3">CLASSIFIED ACCESS</span>
+                    <Shield className="h-4 w-4 group-hover:scale-110 transition-transform duration-500" />
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </section>
@@ -585,7 +572,7 @@ export default function PSXLanding() {
             <h2 className="text-7xl md:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 mb-8 font-mono tracking-tight">
               ACQUIRE PSX
             </h2>
-            <p className="text-xl text-cyan-300/70 max-w-3xl mx-auto font-mono leading-relaxed">
+            <p className="text-xl text-cyan-300/70 max-w-3xl mx-auto leading-relaxed">
               Deploy our advanced trading interface for seamless PSX token acquisition
             </p>
           </div>
@@ -610,7 +597,7 @@ export default function PSXLanding() {
                       { label: "Liquidity", value: "$456K", color: "text-blue-400" },
                     ].map((item, index) => (
                       <div key={index} className="flex justify-between items-center group">
-                        <span className="text-cyan-300/70 font-mono text-sm group-hover:text-cyan-300 transition-colors">
+                        <span className="text-cyan-300/70 text-sm group-hover:text-cyan-300 transition-colors">
                           {item.label}
                         </span>
                         <span
@@ -648,7 +635,7 @@ export default function PSXLanding() {
                     ].map((item, index) => (
                       <div key={index} className="flex items-center gap-3 group">
                         <div className="w-2 h-2 bg-green-400 rounded-full group-hover:scale-125 transition-transform"></div>
-                        <span className="text-cyan-300/80 font-mono text-sm group-hover:text-cyan-300 transition-colors">
+                        <span className="text-cyan-300/80 text-sm group-hover:text-cyan-300 transition-colors">
                           {item}
                         </span>
                       </div>
@@ -760,7 +747,7 @@ export default function PSXLanding() {
                               {item.title}
                             </h4>
                           </div>
-                          <p className="text-cyan-300/60 font-mono text-xs leading-relaxed group-hover:text-cyan-300/80 transition-colors">
+                          <p className="text-cyan-300/60 text-xs leading-relaxed group-hover:text-cyan-300/80 transition-colors">
                             {item.desc}
                           </p>
                         </div>
@@ -785,7 +772,7 @@ export default function PSXLanding() {
                       { label: "Confirmation", value: "~2 SECONDS", color: "text-cyan-400" },
                     ].map((item, index) => (
                       <div key={index} className="flex justify-between items-center group">
-                        <span className="text-cyan-300/70 font-mono text-sm group-hover:text-cyan-300 transition-colors">
+                        <span className="text-cyan-300/70 text-sm group-hover:text-cyan-300 transition-colors">
                           {item.label}
                         </span>
                         <span
@@ -796,7 +783,7 @@ export default function PSXLanding() {
                       </div>
                     ))}
                     <div className="flex justify-between items-center group">
-                      <span className="text-cyan-300/70 font-mono text-sm group-hover:text-cyan-300 transition-colors">
+                      <span className="text-cyan-300/70 text-sm group-hover:text-cyan-300 transition-colors">
                         Status
                       </span>
                       <div className="flex items-center gap-2">
@@ -840,7 +827,7 @@ export default function PSXLanding() {
                   </div>
 
                   <div className="mt-6 pt-6 border-t border-cyan-400/20">
-                    <p className="text-cyan-300/60 font-mono text-xs text-center">24/7 Agent Support Available</p>
+                    <p className="text-cyan-300/60 text-xs text-center">24/7 Agent Support Available</p>
                   </div>
                 </CardContent>
               </Card>
@@ -882,9 +869,7 @@ export default function PSXLanding() {
                   <h3 className="text-xl font-bold text-cyan-400 mb-4 font-mono group-hover:text-cyan-300 transition-colors">
                     {item.title}
                   </h3>
-                  <p className="text-cyan-300/70 font-mono text-sm group-hover:text-cyan-300/90 transition-colors">
-                    {item.desc}
-                  </p>
+                  <p className="text-cyan-300/70 text-sm group-hover:text-cyan-300/90 transition-colors">{item.desc}</p>
                 </CardContent>
               </Card>
             ))}
@@ -895,6 +880,11 @@ export default function PSXLanding() {
       {/* Glizzy World Section */}
       <section ref={glizzyWorldRef} className="py-32 px-4 bg-black/80 backdrop-blur-sm border-y border-red-400/10">
         <GlizzyWorld />
+      </section>
+
+      {/* Interactive Roadmap Section */}
+      <section ref={roadmapRef} className="py-32 px-4 bg-black/80 backdrop-blur-sm border-y border-purple-400/10">
+        <InteractiveRoadmap />
       </section>
 
       {/* Enhanced Intelligence Reports Section */}
@@ -911,11 +901,11 @@ export default function PSXLanding() {
               <div className="grid md:grid-cols-2 gap-10">
                 <div>
                   <h3 className="text-2xl font-bold text-cyan-400 mb-6 font-mono">MISSION BRIEFING</h3>
-                  <p className="text-cyan-300/80 text-lg leading-relaxed font-mono mb-6">
+                  <p className="text-cyan-300/80 text-lg leading-relaxed mb-6">
                     PSX operates as a <span className="text-red-400 font-bold">covert intelligence network</span>{" "}
                     embedded within the Base blockchain ecosystem.
                   </p>
-                  <p className="text-cyan-300/80 text-lg leading-relaxed font-mono">
+                  <p className="text-cyan-300/80 text-lg leading-relaxed">
                     Our agents utilize advanced crypto warfare tactics to establish market dominance while maintaining
                     operational security.
                   </p>
@@ -947,16 +937,14 @@ export default function PSXLanding() {
 
               <div className="border-t border-cyan-400/20 pt-10">
                 <h3 className="text-2xl font-bold text-cyan-400 mb-8 font-mono">RECRUITMENT PROTOCOL</h3>
-                <p className="text-cyan-300/80 text-lg leading-relaxed font-mono mb-8">
+                <p className="text-cyan-300/80 text-lg leading-relaxed mb-8">
                   The agency maintains a fully operational crypto casino and advanced meme generation facilities. New
                   operatives undergo rigorous Discord verification protocols before gaining access to classified
                   operations.
                 </p>
 
                 <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-                  <div className="text-cyan-300/80 text-lg font-mono text-center md:text-left">
-                    READY TO JOIN THE OPERATION?
-                  </div>
+                  <div className="text-cyan-300/80 text-lg text-center md:text-left">READY TO JOIN THE OPERATION?</div>
                   <Button
                     asChild
                     className="bg-red-500/90 hover:bg-red-600 text-white font-mono px-10 py-5 text-lg transition-all duration-500 hover:scale-[1.05] shadow-lg shadow-red-500/20"
@@ -972,29 +960,24 @@ export default function PSXLanding() {
         </div>
       </section>
 
-      {/* Interactive Roadmap Section */}
-      <section ref={roadmapRef} className="py-32 px-4 bg-black/80 backdrop-blur-sm border-y border-purple-400/10">
-        <InteractiveRoadmap />
-      </section>
-
       {/* Enhanced Professional Footer */}
       <footer className="py-20 px-4 bg-black/80 backdrop-blur-sm border-t border-cyan-400/10">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-12">
             <div>
               <h3 className="text-3xl font-bold text-cyan-400 mb-8 font-mono">PSX.AGENCY</h3>
-              <p className="text-cyan-300/70 font-mono leading-relaxed">The People's Token on Base</p>
-              <p className="text-cyan-400/50 font-mono text-sm mt-3">Classified Operations Division</p>
+              <p className="text-cyan-300/70 leading-relaxed">The People's Token on Base</p>
+              <p className="text-cyan-400/50 text-sm mt-3">Classified Operations Division</p>
             </div>
             <div>
               <h4 className="text-xl font-semibold text-cyan-400 mb-8 font-mono">Quick Access</h4>
               <div className="space-y-4">
-                <button
-                  onClick={() => setGlizzyModalOpen(true)}
+                <Link
+                  href="/glizzy-world"
                   className="text-cyan-300/70 hover:text-cyan-400 block font-mono transition-colors duration-300"
                 >
                   Glizzy World Casino Access
-                </button>
+                </Link>
                 <Link
                   href="/meme-generator"
                   className="text-cyan-300/70 hover:text-cyan-400 block font-mono transition-colors duration-300"
@@ -1081,7 +1064,7 @@ export default function PSXLanding() {
                 <p className="text-cyan-400 font-mono text-lg font-bold mb-2">
                   BUILT BY DEGENERATES, POWERED BY GLIZZIES
                 </p>
-                <p className="text-cyan-400/60 font-mono text-sm">
+                <p className="text-cyan-400/60 text-sm">
                   © 2024 PSX.AGENCY • All operations classified • Not financial advice • DYOR
                 </p>
               </div>
