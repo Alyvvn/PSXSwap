@@ -757,27 +757,18 @@ export default function PSXLanding() {
             {
               title: "Operations",
               links: [
-                ["Live Chart", "https://dexscreener.com/base/" + contractAddress],
-                ["Contract Address", "#"],
-                ["Audit Reports", "#"],
-                ["White-paper", "#"],
+                { label: "Live Chart", href: `https://dexscreener.com/base/${contractAddress}` },
+                { label: "Contract Address", href: "#" },
+                { label: "Audit Reports", href: "#" },
+                { label: "White-paper", href: "#" },
               ],
             },
           ].map(({ title, links }) => (
             <div key={title}>
               <h4 className="text-xl font-mono font-semibold text-cyan-400 mb-4">{title}</h4>
               <ul className="space-y-3">
-                {links.map(([label, href]) =>
-                  href === "#" ? (
-                    <li key={label}>
-                      <button
-                        onClick={label === "Contract Address" ? copyToClipboard : undefined}
-                        className="text-cyan-300/70 hover:text-cyan-400 font-mono text-left"
-                      >
-                        {label}
-                      </button>
-                    </li>
-                  ) : (
+                {links.map(({ label, href }) =>
+                  href && href !== "#" ? (
                     <li key={label}>
                       <Link
                         href={href}
@@ -786,6 +777,15 @@ export default function PSXLanding() {
                       >
                         {label}
                       </Link>
+                    </li>
+                  ) : (
+                    <li key={label}>
+                      <button
+                        onClick={label === "Contract Address" ? copyToClipboard : undefined}
+                        className="text-cyan-300/70 hover:text-cyan-400 font-mono text-left"
+                      >
+                        {label}
+                      </button>
                     </li>
                   ),
                 )}
