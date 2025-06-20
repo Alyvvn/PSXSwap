@@ -1,259 +1,216 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { CheckCircle, Circle, Clock, Rocket, Target, Zap } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { CheckCircle, XCircle, Clock, Rocket, Lightbulb, Users, TrendingUp, Shield } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+interface Milestone {
+  id: string
+  title: string
+  description: string
+  status: "completed" | "in-progress" | "planned" | "delayed"
+  date: string
+  icon: React.ElementType
+  details?: string[]
+}
+
+const milestones: Milestone[] = [
+  {
+    id: "m1",
+    title: "Phase 1: Infiltration & Establishment",
+    description: "Initial deployment of PSX token on Base network, core team formation, and community building.",
+    status: "completed",
+    date: "Q4 2024",
+    icon: Rocket,
+    details: [
+      "Smart contract deployment & audit",
+      "Initial liquidity provision",
+      "Website launch (v1)",
+      "Community Discord & Telegram establishment",
+      "First marketing campaign (stealth phase)",
+    ],
+  },
+  {
+    id: "m2",
+    title: "Phase 2: Agent Recruitment & Expansion",
+    description: "Expanding the PSX agent network through strategic partnerships and enhanced community engagement.",
+    status: "completed",
+    date: "Q1 2025",
+    icon: Users,
+    details: [
+      "Influencer marketing partnerships",
+      "Community contests & giveaways",
+      "Meme Generator launch",
+      "PFP Generator launch",
+      "Initial CEX listings exploration",
+    ],
+  },
+  {
+    id: "m3",
+    title: "Phase 3: Classified Operations & Utility",
+    description: "Introducing core utility features and classified gaming experiences for PSX holders.",
+    status: "in-progress",
+    date: "Q2 2025",
+    icon: Lightbulb,
+    details: [
+      "Glizzy World Casino (Beta) launch",
+      "Staking mechanisms implementation",
+      "Partnerships with Base ecosystem projects",
+      "Enhanced analytics dashboard for agents",
+      "First major CEX listing",
+    ],
+  },
+  {
+    id: "m4",
+    title: "Phase 4: Global Dominance & Innovation",
+    description: "Scaling PSX operations globally, introducing advanced DeFi features, and fostering innovation.",
+    status: "planned",
+    date: "Q3 2025",
+    icon: TrendingUp,
+    details: [
+      "Decentralized Autonomous Organization (DAO) establishment",
+      "Cross-chain bridge development",
+      "Advanced AI-powered trading tools (Alpha)",
+      "Global marketing expansion",
+      "Tier-1 CEX listings",
+    ],
+  },
+  {
+    id: "m5",
+    title: "Phase 5: Perpetual Security & Evolution",
+    description: "Continuous security audits, technological advancements, and community-driven evolution.",
+    status: "planned",
+    date: "Q4 2025+",
+    icon: Shield,
+    details: [
+      "Quantum-resistant security research",
+      "Integration with emerging blockchain technologies",
+      "Community grant program for ecosystem development",
+      "Real-world asset (RWA) tokenization exploration",
+      "PSX Layer 2 solution research",
+    ],
+  },
+]
+
+const getStatusIcon = (status: Milestone["status"]) => {
+  switch (status) {
+    case "completed":
+      return <CheckCircle className="h-5 w-5 text-green-400" />
+    case "in-progress":
+      return <Clock className="h-5 w-5 text-yellow-400 animate-spin-slow" />
+    case "planned":
+      return <Lightbulb className="h-5 w-5 text-blue-400" />
+    case "delayed":
+      return <XCircle className="h-5 w-5 text-red-400" />
+    default:
+      return null
+  }
+}
+
+const getStatusColor = (status: Milestone["status"]) => {
+  switch (status) {
+    case "completed":
+      return "border-green-500/30 text-green-400"
+    case "in-progress":
+      return "border-yellow-500/30 text-yellow-400"
+    case "planned":
+      return "border-blue-500/30 text-blue-400"
+    case "delayed":
+      return "border-red-500/30 text-red-400"
+    default:
+      return "border-gray-500/30 text-gray-400"
+  }
+}
 
 export function InteractiveRoadmap() {
-  const [selectedPhase, setSelectedPhase] = useState(0)
-
-  const roadmapPhases = [
-    {
-      phase: "Phase 1",
-      title: "Foundation",
-      status: "completed",
-      date: "Q4 2024",
-      icon: <CheckCircle className="h-6 w-6" />,
-      items: [
-        "✅ Token Launch on Base",
-        "✅ Initial Liquidity Pool",
-        "✅ Community Building",
-        "✅ Basic Website Launch",
-        "✅ Social Media Presence",
-      ],
-      description: "Establishing the core infrastructure and community foundation for PSX.",
-    },
-    {
-      phase: "Phase 2",
-      title: "Growth",
-      status: "in-progress",
-      date: "Q1 2025",
-      icon: <Zap className="h-6 w-6" />,
-      items: [
-        "✅ Meme Generator Tool",
-        "✅ PFP Generator",
-        "🔄 Glizzy World Alpha",
-        "🔄 First Casino Games",
-        "⏳ Mobile App Development",
-      ],
-      description: "Expanding the ecosystem with tools and gaming features.",
-    },
-    {
-      phase: "Phase 3",
-      title: "Gaming Empire",
-      status: "upcoming",
-      date: "Q2 2025",
-      icon: <Target className="h-6 w-6" />,
-      items: [
-        "⏳ Full Casino Launch",
-        "⏳ Tournament System",
-        "⏳ NFT Marketplace",
-        "⏳ Staking Rewards",
-        "⏳ DAO Governance",
-      ],
-      description: "Launching the complete gaming ecosystem with advanced features.",
-    },
-    {
-      phase: "Phase 4",
-      title: "Domination",
-      status: "future",
-      date: "Q3 2025",
-      icon: <Rocket className="h-6 w-6" />,
-      items: [
-        "⏳ Multi-chain Expansion",
-        "⏳ VR Casino Experience",
-        "⏳ Celebrity Partnerships",
-        "⏳ Global Tournaments",
-        "⏳ PSX Metaverse",
-      ],
-      description: "Expanding beyond Base to become the ultimate crypto gaming platform.",
-    },
-  ]
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-600"
-      case "in-progress":
-        return "bg-yellow-600"
-      case "upcoming":
-        return "bg-blue-600"
-      case "future":
-        return "bg-purple-600"
-      default:
-        return "bg-gray-600"
-    }
-  }
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "completed":
-        return <CheckCircle className="h-4 w-4" />
-      case "in-progress":
-        return <Zap className="h-4 w-4" />
-      case "upcoming":
-        return <Clock className="h-4 w-4" />
-      case "future":
-        return <Rocket className="h-4 w-4" />
-      default:
-        return <Circle className="h-4 w-4" />
-    }
-  }
+  const [selectedMilestone, setSelectedMilestone] = useState<Milestone | null>(null)
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-white mb-4">Interactive Roadmap</h2>
-        <p className="text-gray-300">Track our journey to crypto gaming domination</p>
-      </div>
+    <Card className="w-full bg-black/70 border-cyan-500/30 backdrop-blur-xl shadow-cyan-500/20">
+      <CardHeader className="text-center">
+        <CardTitle className="text-4xl font-bold text-cyan-400">PSX Operational Roadmap</CardTitle>
+        <p className="text-cyan-300/80 text-sm mt-2">Strategic deployment phases for global dominance.</p>
+      </CardHeader>
+      <CardContent className="p-6">
+        <div className="relative flex flex-col items-center py-8">
+          {/* Vertical Line */}
+          <div className="absolute left-1/2 -translate-x-1/2 w-1 bg-cyan-700/50 h-full rounded-full" />
 
-      {/* Timeline */}
-      <div className="relative">
-        {/* Timeline Line */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-gray-700 via-gray-500 to-gray-700 rounded-full"></div>
-
-        {/* Phase Cards */}
-        <div className="space-y-12">
-          {roadmapPhases.map((phase, index) => (
+          {milestones.map((milestone, index) => (
             <div
-              key={index}
-              className={`relative flex items-center ${index % 2 === 0 ? "justify-start" : "justify-end"}`}
+              key={milestone.id}
+              className={cn(
+                "relative flex w-full items-center py-4",
+                index % 2 === 0 ? "justify-start" : "justify-end",
+              )}
             >
-              {/* Timeline Node */}
-              <div className="absolute left-1/2 transform -translate-x-1/2 z-10">
-                <div
-                  className={`w-12 h-12 rounded-full border-4 border-gray-900 flex items-center justify-center cursor-pointer transition-all duration-300 ${getStatusColor(
-                    phase.status,
-                  )} ${selectedPhase === index ? "scale-125" : "hover:scale-110"}`}
-                  onClick={() => setSelectedPhase(index)}
-                >
-                  <div className="text-white">{getStatusIcon(phase.status)}</div>
-                </div>
-              </div>
-
-              {/* Phase Card */}
+              {/* Milestone Card */}
               <Card
-                className={`w-5/12 cursor-pointer transition-all duration-300 ${
-                  selectedPhase === index
-                    ? "bg-black/80 border-gray-500 scale-105"
-                    : "bg-black/80 border-gray-700 hover:border-gray-500/50"
-                } ${index % 2 === 0 ? "mr-auto" : "ml-auto"}`}
-                onClick={() => setSelectedPhase(index)}
+                className={cn(
+                  "w-full md:w-5/12 bg-black/80 backdrop-blur-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer",
+                  index % 2 === 0 ? "md:mr-auto" : "md:ml-auto",
+                  getStatusColor(milestone.status),
+                )}
+                onClick={() => setSelectedMilestone(milestone)}
               >
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className="text-xl font-bold text-white">{phase.title}</h3>
-                      <p className="text-sm text-gray-400">{phase.phase}</p>
-                    </div>
-                    <Badge className={`${getStatusColor(phase.status)} text-white`}>{phase.date}</Badge>
-                  </div>
-                  <p className="text-gray-300 text-sm mb-4">{phase.description}</p>
-                  <div className="space-y-2">
-                    {phase.items.slice(0, 3).map((item, itemIndex) => (
-                      <div key={itemIndex} className="text-sm text-gray-400">
-                        {item}
-                      </div>
-                    ))}
-                    {phase.items.length > 3 && (
-                      <div className="text-sm text-purple-400">+{phase.items.length - 3} more items...</div>
-                    )}
-                  </div>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-xl font-bold font-mono text-cyan-400">{milestone.title}</CardTitle>
+                  {getStatusIcon(milestone.status)}
+                </CardHeader>
+                <CardContent>
+                  <p className="text-cyan-300/80 text-sm">{milestone.description}</p>
+                  <p className="text-cyan-400/70 text-xs mt-2 font-mono">{milestone.date}</p>
                 </CardContent>
               </Card>
+
+              {/* Dot on the line */}
+              <div
+                className={cn(
+                  "absolute left-1/2 -translate-x-1/2 w-6 h-6 rounded-full border-4 z-10",
+                  milestone.status === "completed" && "bg-green-500 border-green-700",
+                  milestone.status === "in-progress" && "bg-yellow-500 border-yellow-700 animate-pulse",
+                  milestone.status === "planned" && "bg-blue-500 border-blue-700",
+                  milestone.status === "delayed" && "bg-red-500 border-red-700",
+                )}
+              >
+                <milestone.icon className="h-3 w-3 text-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
+              </div>
             </div>
           ))}
         </div>
-      </div>
 
-      {/* Detailed View */}
-      <Card className="mt-12 bg-black/80 border-gray-500/30">
-        <CardContent className="p-8">
-          <div className="flex items-center gap-4 mb-6">
-            <div className={`p-3 rounded-full ${getStatusColor(roadmapPhases[selectedPhase].status)}`}>
-              {roadmapPhases[selectedPhase].icon}
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-white">{roadmapPhases[selectedPhase].title}</h3>
-              <p className="text-gray-400">
-                {roadmapPhases[selectedPhase].phase} - {roadmapPhases[selectedPhase].date}
+        {selectedMilestone && (
+          <Card className="mt-8 bg-black/80 border-cyan-500/30 backdrop-blur-lg shadow-lg">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-2xl font-bold font-mono text-cyan-400">{selectedMilestone.title}</CardTitle>
+              <Button variant="ghost" size="icon" onClick={() => setSelectedMilestone(null)}>
+                <XCircle className="h-6 w-6 text-cyan-400" />
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <p className="text-cyan-300/80 text-base">{selectedMilestone.description}</p>
+              <p className="text-cyan-400/70 text-sm mt-2 font-mono">
+                Status: {selectedMilestone.status.toUpperCase()}
               </p>
-            </div>
-            <Badge className={`ml-auto ${getStatusColor(roadmapPhases[selectedPhase].status)} text-white`}>
-              {roadmapPhases[selectedPhase].status.replace("-", " ").toUpperCase()}
-            </Badge>
-          </div>
-
-          <p className="text-gray-300 mb-6">{roadmapPhases[selectedPhase].description}</p>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="text-lg font-semibold text-white mb-4">Deliverables</h4>
-              <div className="space-y-3">
-                {roadmapPhases[selectedPhase].items.map((item, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <div
-                      className={`w-2 h-2 rounded-full ${
-                        item.startsWith("✅") ? "bg-green-500" : item.startsWith("🔄") ? "bg-yellow-500" : "bg-gray-500"
-                      }`}
-                    ></div>
-                    <span className="text-gray-300">{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-lg font-semibold text-white mb-4">Progress Metrics</h4>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-400">Completion</span>
-                    <span className="text-white">
-                      {roadmapPhases[selectedPhase].status === "completed"
-                        ? "100%"
-                        : roadmapPhases[selectedPhase].status === "in-progress"
-                          ? "60%"
-                          : roadmapPhases[selectedPhase].status === "upcoming"
-                            ? "20%"
-                            : "0%"}
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full ${getStatusColor(roadmapPhases[selectedPhase].status)}`}
-                      style={{
-                        width:
-                          roadmapPhases[selectedPhase].status === "completed"
-                            ? "100%"
-                            : roadmapPhases[selectedPhase].status === "in-progress"
-                              ? "60%"
-                              : roadmapPhases[selectedPhase].status === "upcoming"
-                                ? "20%"
-                                : "0%",
-                      }}
-                    ></div>
-                  </div>
+              <p className="text-cyan-400/70 text-sm font-mono">Date: {selectedMilestone.date}</p>
+              {selectedMilestone.details && (
+                <div className="mt-4">
+                  <h4 className="text-lg font-semibold text-cyan-400 mb-2">Key Objectives:</h4>
+                  <ul className="list-disc list-inside space-y-1 text-cyan-300/80 text-sm">
+                    {selectedMilestone.details.map((detail, index) => (
+                      <li key={index}>{detail}</li>
+                    ))}
+                  </ul>
                 </div>
-
-                <div className="grid grid-cols-2 gap-4 text-center">
-                  <div className="bg-gray-900/50 rounded-lg p-3">
-                    <div className="text-lg font-bold text-white">
-                      {roadmapPhases[selectedPhase].items.filter((item) => item.startsWith("✅")).length}
-                    </div>
-                    <div className="text-xs text-gray-400">Completed</div>
-                  </div>
-                  <div className="bg-gray-900/50 rounded-lg p-3">
-                    <div className="text-lg font-bold text-white">{roadmapPhases[selectedPhase].items.length}</div>
-                    <div className="text-xs text-gray-400">Total Items</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </CardContent>
+    </Card>
   )
 }

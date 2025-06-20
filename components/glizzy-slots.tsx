@@ -1,240 +1,238 @@
 "use client"
 
-import { useState } from "react"
+import type React from "react"
+
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Coins, RotateCcw, TrendingUp, Zap } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { Sparkles } from "lucide-react"
+
+const symbols = ["🍒", "🍋", "🍊", "🍇", "🔔", "💎", "💰", "🍀", "⭐", "👑"]
+const winMessages = [
+  "JACKPOT! You're a Glizzy God!",
+  "EPIC WIN! The Glizzy Gods favor you!",
+  "BIG WIN! Glizzy Gang!",
+  "WINNER! Keep that Glizzy energy!",
+  "Nice one! Glizzy on!",
+]
+const loseMessages = [
+  "No luck this time, Glizzy Gang!",
+  "Better luck next spin, agent!",
+  "Almost! Keep trying!",
+  "The Glizzy Gods are testing you...",
+  "Try again, the Glizzy awaits!",
+]
 
 export function GlizzySlots() {
+  const [reels, setReels] = useState(["?", "?", "?"])
+  const [spinning, setSpinning] = useState(false)
+  const [message, setMessage] = useState("Spin to win!")
   const [balance, setBalance] = useState(1000)
-  const [bet, setBet] = useState(10)
-  const [isSpinning, setIsSpinning] = useState(false)
-  const [reels, setReels] = useState([0, 0, 0])
+  const [betAmount, setBetAmount] = useState(10)
   const [lastWin, setLastWin] = useState(0)
-  const [totalWins, setTotalWins] = useState(0)
-  const [spinCount, setSpinCount] = useState(0)
+  const [history, setHistory] = useState<string[]>([])
 
-  const symbols = [
-    { name: "Glizzy", multiplier: 10, image: "/images/psx-hero.png", emoji: "🌭" },
-    { name: "Diamond", multiplier: 5, image: "/images/psx-chart.png", emoji: "💎" },
-    { name: "Fire", multiplier: 3, image: "/images/psx-attention.png", emoji: "🔥" },
-    { name: "Crown", multiplier: 2, image: "/images/psx-meme.png", emoji: "👑" },
-    { name: "Money", multiplier: 1.5, image: "/images/psx-computer.png", emoji: "💰" },
-    { name: "Star", multiplier: 1, image: "/images/psx-dream.png", emoji: "⭐" },
-  ]
+  const reelRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)]
 
-  const spin = () => {
-    if (balance < bet || isSpinning) return
+  const spinSoundRef = useRef<HTMLAudioElement>(null)
+  const winSoundRef = useRef<HTMLAudioElement>(null)
+  const loseSoundRef = useRef<HTMLAudioElement>(null)
 
-    setIsSpinning(true)
-    setBalance(balance - bet)
-    setSpinCount(spinCount + 1)
+  useEffect(() => {
+    // Preload sounds
+    if (spinSoundRef.current) spinSoundRef.current.load()
+    if (winSoundRef.current) winSoundRef.current.load()
+    if (loseSoundRef.current) loseSoundRef.current.load()
+  }, [])
 
-    // Simulate spinning animation
-    const spinDuration = 2000
-    const spinInterval = setInterval(() => {
-      setReels([
-        Math.floor(Math.random() * symbols.length),
-        Math.floor(Math.random() * symbols.length),
-        Math.floor(Math.random() * symbols.length),
-      ])
-    }, 100)
-
-    setTimeout(() => {
-      clearInterval(spinInterval)
-
-      // Final result
-      const finalReels = [
-        Math.floor(Math.random() * symbols.length),
-        Math.floor(Math.random() * symbols.length),
-        Math.floor(Math.random() * symbols.length),
-      ]
-      setReels(finalReels)
-
-      // Check for wins
-      let winAmount = 0
-      if (finalReels[0] === finalReels[1] && finalReels[1] === finalReels[2]) {
-        // Three of a kind
-        winAmount = bet * symbols[finalReels[0]].multiplier * 3
-      } else if (
-        finalReels[0] === finalReels[1] ||
-        finalReels[1] === finalReels[2] ||
-        finalReels[0] === finalReels[2]
-      ) {
-        // Two of a kind
-        const matchingSymbol = finalReels[0] === finalReels[1] ? finalReels[0] : finalReels[1]
-        winAmount = bet * symbols[matchingSymbol].multiplier
-      }
-
-      if (winAmount > 0) {
-        setBalance(balance - bet + winAmount)
-        setLastWin(winAmount)
-        setTotalWins(totalWins + winAmount)
-      } else {
-        setLastWin(0)
-      }
-
-      setIsSpinning(false)
-    }, spinDuration)
+  const playSound = (audioRef: React.RefObject<HTMLAudioElement>) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0
+      audioRef.current.play().catch((e) => console.error("Error playing sound:", e))
+    }
   }
 
-  const maxBet = () => setBet(Math.min(balance, 100))
-  const resetGame = () => {
-    setBalance(1000)
-    setBet(10)
+  const spinReels = () => {
+    if (spinning || balance < betAmount) {
+      setMessage(balance < betAmount ? "Not enough balance!" : "Reels are spinning!")
+      return
+    }
+
+    playSound(spinSoundRef)
+    setSpinning(true)
+    setMessage("Spinning...")
+    setBalance((prev) => prev - betAmount)
     setLastWin(0)
-    setTotalWins(0)
-    setSpinCount(0)
-    setReels([0, 0, 0])
+
+    const newReels = ["", "", ""]
+    const spinDurations = [2000, 2500, 3000] // Different durations for staggered stop
+
+    reels.forEach((_, i) => {
+      const reelElement = reelRefs[i].current
+      if (reelElement) {
+        reelElement.style.transition = "none"
+        reelElement.style.transform = "translateY(0)"
+      }
+
+      setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * symbols.length)
+        newReels[i] = symbols[randomIndex]
+        setReels((prev) => {
+          const updated = [...prev]
+          updated[i] = newReels[i]
+          return updated
+        })
+
+        if (reelElement) {
+          reelElement.style.transition = `transform ${spinDurations[i] / 1000}s cubic-bezier(0.25, 0.1, 0.25, 1)`
+          reelElement.style.transform = `translateY(-${randomIndex * 100}%)` // Simulate scrolling to symbol
+        }
+
+        if (i === reels.length - 1) {
+          // Last reel finished spinning
+          setTimeout(() => {
+            checkWin(newReels)
+            setSpinning(false)
+          }, spinDurations[i])
+        }
+      }, i * 500) // Stagger the start of each reel spin
+    })
+  }
+
+  const checkWin = (finalReels: string[]) => {
+    let win = 0
+    let msg = ""
+
+    if (finalReels[0] === finalReels[1] && finalReels[1] === finalReels[2]) {
+      // Three in a row
+      win = betAmount * 10 // Example payout
+      msg = winMessages[0]
+    } else if (finalReels[0] === finalReels[1] || finalReels[1] === finalReels[2]) {
+      // Two in a row
+      win = betAmount * 2 // Example payout
+      msg = winMessages[4]
+    } else {
+      msg = loseMessages[Math.floor(Math.random() * loseMessages.length)]
+    }
+
+    setBalance((prev) => prev + win)
+    setLastWin(win)
+    setHistory((prev) => [`${finalReels.join(" ")} - ${win > 0 ? `+${win}` : "LOSE"}`, ...prev].slice(0, 5))
+
+    if (win > 0) {
+      playSound(winSoundRef)
+    } else {
+      playSound(loseSoundRef)
+    }
+    setMessage(msg)
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="grid md:grid-cols-3 gap-6">
-        {/* Game Area */}
-        <div className="md:col-span-2">
-          <Card className="bg-gradient-to-br from-red-900/50 to-orange-900/50 border-red-500/30">
-            <CardHeader>
-              <CardTitle className="text-white text-center text-2xl">🌭 GLIZZY SLOTS 🌭</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Slot Machine */}
-              <div className="bg-black/50 rounded-lg p-6 border border-red-500/30">
-                <div className="grid grid-cols-3 gap-4 mb-6">
-                  {reels.map((symbolIndex, index) => (
-                    <div
-                      key={index}
-                      className={`aspect-square bg-gray-800 rounded-lg flex items-center justify-center border-2 border-red-500/50 ${
-                        isSpinning ? "animate-pulse" : ""
-                      }`}
-                    >
-                      <div className="text-6xl">{symbols[symbolIndex].emoji}</div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Win Display */}
-                {lastWin > 0 && (
-                  <div className="text-center mb-4">
-                    <div className="text-3xl font-bold text-yellow-400 animate-pulse">WIN: {lastWin} Glizzys! 🎉</div>
-                  </div>
-                )}
-
-                {/* Controls */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1">
-                      <label className="text-sm text-gray-300 mb-1 block">Bet Amount</label>
-                      <Input
-                        type="number"
-                        value={bet}
-                        onChange={(e) => setBet(Math.max(1, Math.min(balance, Number.parseInt(e.target.value) || 1)))}
-                        className="bg-gray-800 border-gray-600 text-white"
-                        min="1"
-                        max={balance}
-                      />
-                    </div>
-                    <Button
-                      onClick={maxBet}
-                      variant="outline"
-                      className="border-red-500/30 text-red-400 hover:bg-red-500/10"
-                    >
-                      Max Bet
-                    </Button>
-                  </div>
-
-                  <Button
-                    onClick={spin}
-                    disabled={balance < bet || isSpinning}
-                    className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-bold py-4 text-lg"
-                  >
-                    {isSpinning ? "SPINNING..." : "🎰 SPIN THE GLIZZYS 🎰"}
-                  </Button>
-                </div>
+    <Card className="w-full max-w-md bg-black/70 border-red-500/30 backdrop-blur-xl shadow-red-500/20">
+      <CardHeader className="text-center">
+        <CardTitle className="text-4xl font-bold text-red-400 flex items-center justify-center gap-2">
+          <Sparkles className="h-8 w-8 text-pink-400 animate-pulse" />
+          Glizzy Slots
+          <Sparkles className="h-8 w-8 text-pink-400 animate-pulse" />
+        </CardTitle>
+        <p className="text-red-300/80 text-sm mt-2">Spin the reels, win the Glizzy!</p>
+      </CardHeader>
+      <CardContent className="flex flex-col items-center gap-6 p-6">
+        <div className="flex items-center justify-around w-full bg-red-900/20 rounded-lg p-4 border border-red-500/30 shadow-inner">
+          {reels.map((symbol, i) => (
+            <div
+              key={i}
+              className="relative w-24 h-24 bg-red-900/40 rounded-md flex items-center justify-center text-6xl border-2 border-red-500 text-white overflow-hidden"
+            >
+              <div ref={reelRefs[i]} className="absolute inset-0 flex flex-col justify-center items-center">
+                {symbols.map((s, idx) => (
+                  <span key={idx} className="h-24 w-24 flex items-center justify-center">
+                    {s}
+                  </span>
+                ))}
+                {/* Duplicate symbols to allow smooth looping */}
+                {symbols.map((s, idx) => (
+                  <span key={`dup-${idx}`} className="h-24 w-24 flex items-center justify-center">
+                    {s}
+                  </span>
+                ))}
               </div>
-            </CardContent>
-          </Card>
+              <span className="relative z-10">{symbol}</span>
+            </div>
+          ))}
         </div>
 
-        {/* Stats Panel */}
-        <div className="space-y-6">
-          {/* Balance */}
-          <Card className="bg-black/80 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Coins className="h-5 w-5" />
-                Glizzy Balance
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-400">{balance} Glizzys</div>
-              <p className="text-gray-400 text-sm">Available to bet</p>
-            </CardContent>
-          </Card>
+        <div className="w-full flex justify-between items-center text-red-300 font-mono text-lg">
+          <span>BALANCE: ${balance}</span>
+          <span>BET: ${betAmount}</span>
+        </div>
 
-          {/* Stats */}
-          <Card className="bg-black/80 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <TrendingUp className="h-5 w-5" />
-                Session Stats
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between">
-                <span className="text-gray-400">Spins:</span>
-                <span className="text-white">{spinCount}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Total Wins:</span>
-                <span className="text-green-400">{totalWins} Glizzys</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Last Win:</span>
-                <span className="text-yellow-400">{lastWin} Glizzys</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Win Rate:</span>
-                <span className="text-white">
-                  {spinCount > 0 ? ((totalWins / (spinCount * bet)) * 100).toFixed(1) : 0}%
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Paytable */}
-          <Card className="bg-black/80 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Zap className="h-5 w-5" />
-                Glizzy Paytable
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {symbols.map((symbol, index) => (
-                <div key={index} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">{symbol.emoji}</span>
-                    <span className="text-gray-300">{symbol.name}</span>
-                  </div>
-                  <span className="text-yellow-400">{symbol.multiplier}x</span>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Reset */}
+        <div className="w-full flex justify-center gap-4">
           <Button
-            onClick={resetGame}
+            onClick={() => setBetAmount(5)}
             variant="outline"
-            className="w-full border-gray-700 text-gray-300 hover:bg-gray-800"
+            className={cn(
+              "bg-red-800/30 text-red-300 border-red-500/50 hover:bg-red-800/50",
+              betAmount === 5 && "bg-red-500/50 text-white",
+            )}
           >
-            <RotateCcw className="h-4 w-4 mr-2" />
-            Reset Game
+            Bet $5
+          </Button>
+          <Button
+            onClick={() => setBetAmount(10)}
+            variant="outline"
+            className={cn(
+              "bg-red-800/30 text-red-300 border-red-500/50 hover:bg-red-800/50",
+              betAmount === 10 && "bg-red-500/50 text-white",
+            )}
+          >
+            Bet $10
+          </Button>
+          <Button
+            onClick={() => setBetAmount(25)}
+            variant="outline"
+            className={cn(
+              "bg-red-800/30 text-red-300 border-red-500/50 hover:bg-red-800/50",
+              betAmount === 25 && "bg-red-500/50 text-white",
+            )}
+          >
+            Bet $25
           </Button>
         </div>
-      </div>
-    </div>
+
+        <Button
+          onClick={spinReels}
+          disabled={spinning || balance < betAmount}
+          className="w-full bg-gradient-to-r from-red-600 to-pink-600 text-white text-xl py-6 font-bold uppercase tracking-wider shadow-lg shadow-red-500/30 hover:from-red-700 hover:to-pink-700"
+        >
+          {spinning ? "Spinning..." : "SPIN"}
+        </Button>
+
+        <div className="text-center text-red-200 font-mono text-lg mt-2">
+          {message} {lastWin > 0 && <span className="text-green-400"> (+${lastWin})</span>}
+        </div>
+
+        <div className="w-full mt-4">
+          <h4 className="text-red-400 font-mono text-sm mb-2">Recent Spins:</h4>
+          <div className="bg-red-900/20 border border-red-500/30 rounded-md p-3 h-24 overflow-y-auto scrollbar-hide">
+            {history.length === 0 ? (
+              <p className="text-red-300/60 text-sm">No spins yet.</p>
+            ) : (
+              <ul className="space-y-1">
+                {history.map((entry, index) => (
+                  <li key={index} className="text-red-300 text-sm font-mono">
+                    {entry}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      </CardContent>
+      <audio ref={spinSoundRef} src="/sounds/spin.mp3" preload="auto" />
+      <audio ref={winSoundRef} src="/sounds/win.mp3" preload="auto" />
+      <audio ref={loseSoundRef} src="/sounds/lose.mp3" preload="auto" />
+    </Card>
   )
 }
