@@ -4,7 +4,7 @@
  * Uniswap iframe wrapped in a responsive card.
  * Exported as the default export so `next/dynamic` can find it.
  */
-export default function SwapWidget() {
+export function SwapWidget() {
   return (
     <div className="w-full max-w-3xl mx-auto">
       {/* ─── Swap Container ──────────────────────────────────────────────── */}
@@ -38,3 +38,5 @@ export default function SwapWidget() {
     </div>
   )
 }
+
+export default SwapWidget
