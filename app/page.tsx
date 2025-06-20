@@ -77,15 +77,15 @@ export default function PSXLanding() {
   const intelRef = useRef<HTMLDivElement>(null)
 
   const contractAddress = "0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
-
-  /
-
-  // Smooth scroll tracking
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY)
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  // Make absolutely sure we are working with a string
+  const displayAddress =
+    String(contractAddress ?? "") /
+    // Smooth scroll tracking
+    useEffect(() => {
+      const handleScroll = () => setScrollY(window.scrollY)
+      window.addEventListener("scroll", handleScroll, { passive: true })
+      return () => window.removeEventListener("scroll", handleScroll)
+    }, [])
 
   // Intel reports cycling
   useEffect(() => {
@@ -390,7 +390,7 @@ export default function PSXLanding() {
                   <div className="flex items-center gap-3">
                     <span className="text-cyan-400/70 text-sm">CONTRACT:</span>
                     <span className="text-cyan-300 group-hover:text-cyan-100 transition-colors duration-300">
-                      {contractAddress.slice(0, 12)}...{contractAddress.slice(-12)}
+                      {displayAddress.slice(0, 12)}...{displayAddress.slice(-12)}
                     </span>
                     <Copy className="h-4 w-4 opacity-70 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
