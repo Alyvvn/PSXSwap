@@ -1,399 +1,718 @@
 "use client"
 
+import type React from "react"
+
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { DiscIcon, Github, Trophy, Users, Zap } from "lucide-react"
+import {
+  DiscIcon,
+  Zap,
+  ArrowRight,
+  Lock,
+  Shield,
+  Activity,
+  Target,
+  MessageCircle,
+  Twitter,
+  BarChart3,
+  ExternalLink,
+  Copy,
+  Menu,
+  X,
+  Wifi,
+} from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import dynamic from "next/dynamic"
-import { GlizzyWorld } from "@/components/glizzy-world" // Import the GlizzyWorld authentication component
 
 const SwapWidget = dynamic(() => import("@/components/swap-widget"), { ssr: false })
 
-export default function Home() {
-  const sectionsRef = useRef<{ [key: string]: HTMLElement | null }>({})
-  const [activeSection, setActiveSection] = useState("hero")
+/* -------------------------------------------------------------------------- */
+/*                                 DUMMY DATA                                 */
+/* -------------------------------------------------------------------------- */
 
+const intelReports = [
+  {
+    id: "INTEL-001",
+    timestamp: "2024-12-17 14:23:07",
+    classification: "TOP SECRET",
+    title: "Operation Glizzy World Deployment",
+    content: "Casino infrastructure successfully deployed on Base network. Agent recruitment protocols active.",
+    status: "COMPLETED",
+    priority: "HIGH",
+  },
+  {
+    id: "INTEL-002",
+    timestamp: "2024-12-17 09:15:42",
+    classification: "CLASSIFIED",
+    title: "Market Infiltration Analysis",
+    content: "PSX token showing strong community adoption. Meme warfare tactics proving effective.",
+    status: "ONGOING",
+    priority: "MEDIUM",
+  },
+  {
+    id: "INTEL-003",
+    timestamp: "2024-12-16 22:08:19",
+    classification: "CONFIDENTIAL",
+    title: "Agent Network Expansion",
+    content: "Discord recruitment successful. 1 337 verified agents now active in the field.",
+    status: "COMPLETED",
+    priority: "HIGH",
+  },
+  {
+    id: "INTEL-004",
+    timestamp: "2024-12-16 16:45:33",
+    classification: "SECRET",
+    title: "Blockchain Security Assessment",
+    content: "Base network integration secure. Smart contract audits passed. Ready for phase 2.",
+    status: "VERIFIED",
+    priority: "CRITICAL",
+  },
+]
+
+/* -------------------------------------------------------------------------- */
+/*                                MAIN PAGE                                   */
+/* -------------------------------------------------------------------------- */
+
+export default function PSXLanding() {
+  /* ------------------------------   State   -------------------------------- */
+  const [copied, setCopied] = useState(false)
+  const [activeNav, setActiveNav] = useState("home")
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [currentIntel, setCurrentIntel] = useState(0)
+  const [scrollY, setScrollY] = useState(0)
+
+  /* ------------------------------  Refs  ----------------------------------- */
+  const homeRef = useRef<HTMLDivElement>(null)
+  const swapRef = useRef<HTMLDivElement>(null)
+  const intelRef = useRef<HTMLDivElement>(null)
+
+  /* ---------------------------   Constants   ------------------------------- */
+  const contractAddress = "0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
+  const displayAddress = contractAddress // ensure it is a string
+
+  const navItems = [
+    { id: "home", label: "Home", ref: homeRef },
+    { id: "swap", label: "Trade", ref: swapRef },
+    { id: "intel", label: "Intel", ref: intelRef },
+  ]
+
+  /* --------------------------   Effects   ---------------------------------- */
+
+  // Track page scroll for parallax & navbar opacity
   useEffect(() => {
-    // Scroll to top on initial mount
-    window.scrollTo({ top: 0, behavior: "auto" })
-
-    // Prevent any default scroll restoration
-    if ("scrollRestoration" in history) {
-      history.scrollRestoration = "manual"
-    }
-
-    const handleHashChange = () => {
-      const hash = window.location.hash.substring(1)
-      if (hash && sectionsRef.current[hash]) {
-        sectionsRef.current[hash]?.scrollIntoView({ behavior: "smooth" })
-      } else {
-        window.scrollTo({ top: 0, behavior: "smooth" })
-      }
-    }
-
-    window.addEventListener("hashchange", handleHashChange)
-    return () => {
-      window.removeEventListener("hashchange", handleHashChange)
-    }
+    const handleScroll = () => setScrollY(window.scrollY)
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const scrollToSection = (sectionId: string) => {
-    const element = sectionsRef.current[sectionId]
-    if (element) {
-      const offset = 80 // Adjust this value based on your fixed header height
-      const bodyRect = document.body.getBoundingClientRect().top
-      const elementRect = element.getBoundingClientRect().top
-      const elementPosition = elementRect - bodyRect
-      const offsetPosition = elementPosition - offset
+  // Rotate intel reports every 5 s
+  useEffect(() => {
+    const id = setInterval(() => setCurrentIntel((p) => (p + 1) % intelReports.length), 5000)
+    return () => clearInterval(id)
+  }, [])
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      })
-      setActiveSection(sectionId)
+  // Scroll to top on initial mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" })
+  }, [])
+
+  /* ---------------------------   Helpers   --------------------------------- */
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(contractAddress)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error("Clipboard copy failed", err)
     }
   }
 
-  const navItems = [
-    { label: "About PSX", section: "about" },
-    { label: "Tokenomics", section: "tokenomics" },
-    { label: "Roadmap", section: "roadmap" },
-    { label: "Meme Generator", href: "/meme-generator" },
-    { label: "PFP Generator", href: "/pfp-generator" },
-    { label: "Game Portal", href: "/game-portal" },
-  ]
+  const scrollToSection = (section: React.RefObject<HTMLDivElement>) => {
+    section.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
 
-  const footerLinks = [
-    { label: "Twitter", href: "https://twitter.com/psx_official" },
-    { label: "Telegram", href: "https://t.me/psx_official" },
-    { label: "Discord", href: "https://discord.gg/psx_official" },
-    { label: "Live Chart", href: "https://dexscreener.com/base/0xYourPSXTokenAddress" },
-    { label: "Buy PSX", href: "https://app.uniswap.org/swap?outputCurrency=0xYourPSXTokenAddress&chain=base" },
-  ]
+  /* -------------------------------------------------------------------------- */
+  /*                                   JSX                                      */
+  /* -------------------------------------------------------------------------- */
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white font-mono relative">
-      {/* Noise Overlay */}
-      <div
-        className="fixed inset-0 z-0 opacity-10 pointer-events-none"
-        style={{
-          backgroundImage: "url(/images/noise.png)",
-          backgroundSize: "100px 100px",
-        }}
-      />
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* ------------------------------  BACKGROUND LAYERS  ------------------------------ */}
+      <div className="fixed inset-0 opacity-30 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-transparent to-purple-900/20" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,255,136,0.04)_1px,transparent_1px)] bg-[length:60px_60px]" />
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/40 transition-transform duration-300 ease-out"
+          style={{ transform: `translateY(${scrollY * 0.5}px)` }}
+        />
+      </div>
 
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-800 p-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <Image src="/placeholder-logo.svg" alt="PSX Logo" width={32} height={32} />
-            <span className="text-2xl font-bold text-purple-400">PSX</span>
-          </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            {navItems.map((item) =>
-              item.href ? (
-                <Link key={item.label} href={item.href}>
-                  <Button variant="ghost" className="text-gray-300 hover:text-purple-400 hover:bg-gray-800">
-                    {item.label}
-                  </Button>
-                </Link>
-              ) : (
-                <Button
-                  key={item.label}
-                  variant="ghost"
-                  onClick={() => scrollToSection(item.section)}
-                  className={`text-gray-300 hover:text-purple-400 hover:bg-gray-800 ${
-                    activeSection === item.section ? "text-purple-400" : ""
-                  }`}
-                >
-                  {item.label}
-                </Button>
-              ),
-            )}
-            {/* Glizzy World button now links to the authentication component */}
-            <Button
-              variant="ghost"
-              onClick={() => scrollToSection("glizzy-world")}
-              className={`text-gray-300 hover:text-purple-400 hover:bg-gray-800 ${
-                activeSection === "glizzy-world" ? "text-purple-400" : ""
-              }`}
-            >
-              Glizzy World
-            </Button>
-          </nav>
-          <div className="md:hidden">
-            <Button variant="ghost" className="text-gray-300">
-              Menu
-            </Button>
+      {/* ------------------------------  HEADER / TERMINAL BAR  ------------------------------ */}
+      <header className="fixed top-0 inset-x-0 z-50 bg-black/90 backdrop-blur-3xl border-b border-cyan-400/20">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3 text-xs font-mono text-cyan-400">
+          <div className="flex items-center gap-4">
+            <div className="flex gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
+              <span
+                className="w-2.5 h-2.5 rounded-full bg-yellow-500 animate-pulse"
+                style={{ animationDelay: "0.2s" }}
+              />
+              <span
+                className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"
+                style={{ animationDelay: "0.4s" }}
+              />
+            </div>
+            <span className="hidden sm:block opacity-80">PSX.AGENCY // MAINFRAME v2.1.337</span>
+            <span className="sm:hidden opacity-80">PSX.AGENCY</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="hidden sm:flex items-center gap-1 opacity-70">
+              <Wifi className="h-3 w-3 animate-pulse" /> SECURE
+            </span>
+            <span className="flex items-center gap-1 text-green-400">
+              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" /> ONLINE
+            </span>
           </div>
         </div>
       </header>
 
-      <main className="relative z-10 pt-20">
-        {/* Hero Section */}
-        <section
-          id="hero"
-          ref={(el) => (sectionsRef.current.hero = el)}
-          className="relative h-[calc(100vh-80px)] flex items-center justify-center text-center overflow-hidden"
+      {/* ------------------------------  NAVBAR  ------------------------------ */}
+      <nav className="fixed top-12 left-1/2 -translate-x-1/2 z-40 w-full max-w-5xl px-4">
+        <div
+          className="bg-black/50 backdrop-blur-3xl border border-cyan-400/30 rounded-full shadow-2xl shadow-cyan-400/10 transition-all duration-700"
+          style={{
+            transform: `translateY(${Math.min(scrollY * 0.05, 10)}px)`,
+            opacity: Math.max(0.85, 1 - scrollY * 0.0005),
+          }}
         >
-          <Image
-            src="/images/psx-hero.png"
-            alt="PSX Hero Background"
-            fill
-            priority
-            className="object-cover object-center opacity-30"
-          />
-          <div className="relative z-10 p-4 max-w-4xl mx-auto">
-            <h1 className="text-6xl md:text-8xl font-black leading-tight mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 animate-pulse">
+          {/* -------- DESKTOP NAV -------- */}
+          <div className="hidden lg:flex items-center justify-between px-8 py-2">
+            <Link href="/" className="flex items-center gap-3 text-xl font-mono font-bold text-cyan-400">
+              <span className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400/90 to-purple-500/90 flex items-center justify-center shadow-lg shadow-cyan-400/20">
+                <Image
+                  src="/images/psx-attention.png"
+                  alt="PSX Logo"
+                  width={24}
+                  height={24}
+                  className="object-contain"
+                />
+              </span>
               PSX
-            </h1>
-            <p className="text-xl md:text-3xl text-gray-200 mb-8 font-bold tracking-wide">
-              The Future of Decentralized Gaming on Base
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="https://app.uniswap.org/swap?outputCurrency=0xYourPSXTokenAddress&chain=base" target="_blank">
-                <Button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-lg py-3 px-8 rounded-full shadow-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-300">
-                  Buy PSX Now
-                </Button>
-              </Link>
-              <Button
-                variant="outline"
-                onClick={() => scrollToSection("about")}
-                className="border-purple-500 text-purple-300 hover:bg-purple-900/20 text-lg py-3 px-8 rounded-full transition-all duration-300"
-              >
-                Learn More
-              </Button>
-            </div>
-          </div>
-        </section>
+            </Link>
 
-        {/* About Section */}
-        <section id="about" ref={(el) => (sectionsRef.current.about = el)} className="py-20 px-4 max-w-7xl mx-auto">
-          <h2 className="text-5xl font-bold text-center mb-12 text-purple-400">About PSX</h2>
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-                PSX is pioneering the next generation of decentralized gaming, built on the secure and scalable Base
-                blockchain. We offer a unique ecosystem where players can truly own their assets, participate in
-                governance, and earn rewards through engaging gameplay.
-              </p>
-              <p className="text-lg text-gray-300 leading-relaxed">
-                Our vision is to create a vibrant community-driven platform that redefines the gaming experience,
-                combining cutting-edge blockchain technology with immersive entertainment. Join us on this journey to
-                the future of gaming.
-              </p>
-            </div>
-            <div className="relative aspect-video rounded-xl overflow-hidden border border-gray-700 shadow-lg">
-              <Image
-                src="/images/psx-computer.png"
-                alt="PSX Gaming Setup"
-                fill
-                className="object-cover object-center"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* Features Section */}
-        <section className="py-20 px-4 max-w-7xl mx-auto">
-          <h2 className="text-5xl font-bold text-center mb-12 text-pink-400">Why PSX?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="bg-gray-900/70 border-gray-800 hover:border-pink-500/50 transition-all duration-300">
-              <CardContent className="p-6 text-center">
-                <Zap className="h-12 w-12 text-pink-400 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-white mb-2">Blazing Fast</h3>
-                <p className="text-gray-400">Leveraging Base for lightning-fast transactions and low fees.</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-gray-900/70 border-gray-800 hover:border-pink-500/50 transition-all duration-300">
-              <CardContent className="p-6 text-center">
-                <Users className="h-12 w-12 text-pink-400 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-white mb-2">Community Driven</h3>
-                <p className="text-gray-400">Decentralized governance puts power in the hands of players.</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-gray-900/70 border-gray-800 hover:border-pink-500/50 transition-all duration-300">
-              <CardContent className="p-6 text-center">
-                <Trophy className="h-12 w-12 text-pink-400 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-white mb-2">Play & Earn</h3>
-                <p className="text-gray-400">Earn PSX tokens and exclusive NFTs through gameplay.</p>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        {/* Tokenomics Section */}
-        <section
-          id="tokenomics"
-          ref={(el) => (sectionsRef.current.tokenomics = el)}
-          className="py-20 px-4 max-w-7xl mx-auto"
-        >
-          <h2 className="text-5xl font-bold text-center mb-12 text-purple-400">Tokenomics</h2>
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="relative aspect-square rounded-xl overflow-hidden border border-gray-700 shadow-lg">
-              <Image src="/images/psx-chart.png" alt="Tokenomics Chart" fill className="object-cover object-center" />
-            </div>
-            <div>
-              <h3 className="text-4xl font-bold text-white mb-6">PSX Token Distribution</h3>
-              <ul className="space-y-4 text-lg text-gray-300">
-                <li className="flex justify-between items-center">
-                  <span>Gaming Rewards:</span>
-                  <span className="text-purple-300 font-bold">40%</span>
-                </li>
-                <li className="flex justify-between items-center">
-                  <span>Liquidity & Staking:</span>
-                  <span className="text-purple-300 font-bold">25%</span>
-                </li>
-                <li className="flex justify-between items-center">
-                  <span>Development Fund:</span>
-                  <span className="text-purple-300 font-bold">15%</span>
-                </li>
-                <li className="flex justify-between items-center">
-                  <span>Marketing & Partnerships:</span>
-                  <span className="text-purple-300 font-bold">10%</span>
-                </li>
-                <li className="flex justify-between items-center">
-                  <span>Team & Advisors:</span>
-                  <span className="text-purple-300 font-bold">10%</span>
-                </li>
-              </ul>
-              <p className="text-sm text-gray-500 mt-6">Total Supply: 1,000,000,000 PSX</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Roadmap Section */}
-        <section id="roadmap" ref={(el) => (sectionsRef.current.roadmap = el)} className="py-20 px-4 max-w-7xl mx-auto">
-          <h2 className="text-5xl font-bold text-center mb-12 text-pink-400">Roadmap</h2>
-          <div className="relative">
-            <div className="absolute left-1/2 -translate-x-1/2 h-full w-1 bg-gray-700 rounded-full hidden md:block" />
-            <div className="space-y-16">
-              <div className="flex flex-col md:flex-row items-center md:justify-between md:even:flex-row-reverse">
-                <div className="w-full md:w-5/12 text-center md:text-left">
-                  <h3 className="text-3xl font-bold text-white mb-4">Q4 2024: Launch & Core Features</h3>
-                  <ul className="list-disc list-inside text-lg text-gray-300 space-y-2">
-                    <li>PSX Token Launch on Base</li>
-                    <li>Decentralized Exchange Listing</li>
-                    <li>Staking Platform Deployment</li>
-                    <li>Initial Gaming DApp Release</li>
-                  </ul>
-                </div>
-                <div className="w-2 h-2 bg-pink-500 rounded-full absolute left-1/2 -translate-x-1/2 hidden md:block" />
-                <div className="w-full md:w-5/12 relative aspect-video rounded-xl overflow-hidden border border-gray-700 shadow-lg mt-8 md:mt-0">
-                  <Image src="/images/psx-open.png" alt="Roadmap Phase 1" fill className="object-cover object-center" />
-                </div>
-              </div>
-
-              <div className="flex flex-col md:flex-row items-center md:justify-between md:even:flex-row-reverse">
-                <div className="w-full md:w-5/12 text-center md:text-left">
-                  <h3 className="text-3xl font-bold text-white mb-4">Q1 2025: Ecosystem Expansion</h3>
-                  <ul className="list-disc list-inside text-lg text-gray-300 space-y-2">
-                    <li>NFT Marketplace Integration</li>
-                    <li>New Game Releases (Poker, Blackjack)</li>
-                    <li>Community Governance Portal</li>
-                    <li>Strategic Partnerships</li>
-                  </ul>
-                </div>
-                <div className="w-2 h-2 bg-pink-500 rounded-full absolute left-1/2 -translate-x-1/2 hidden md:block" />
-                <div className="w-full md:w-5/12 relative aspect-video rounded-xl overflow-hidden border border-gray-700 shadow-lg mt-8 md:mt-0">
-                  <Image
-                    src="/images/psx-store.png"
-                    alt="Roadmap Phase 2"
-                    fill
-                    className="object-cover object-center"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col md:flex-row items-center md:justify-between md:even:flex-row-reverse">
-                <div className="w-full md:w-5/12 text-center md:text-left">
-                  <h3 className="text-3xl font-bold text-white mb-4">Q2 2025: Global Adoption</h3>
-                  <ul className="list-disc list-inside text-lg text-gray-300 space-y-2">
-                    <li>Mobile App Launch</li>
-                    <li>Cross-chain Interoperability</li>
-                    <li>Esports Tournament Series</li>
-                    <li>Global Marketing Campaigns</li>
-                  </ul>
-                </div>
-                <div className="w-2 h-2 bg-pink-500 rounded-full absolute left-1/2 -translate-x-1/2 hidden md:block" />
-                <div className="w-full md:w-5/12 relative aspect-video rounded-xl overflow-hidden border border-gray-700 shadow-lg mt-8 md:mt-0">
-                  <Image
-                    src="/images/psx-dream.png"
-                    alt="Roadmap Phase 3"
-                    fill
-                    className="object-cover object-center"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Glizzy World Authentication Section */}
-        <section
-          id="glizzy-world"
-          ref={(el) => (sectionsRef.current["glizzy-world"] = el)}
-          className="py-20 px-4 max-w-7xl mx-auto flex justify-center items-center"
-        >
-          <GlizzyWorld />
-        </section>
-
-        {/* Swap Widget Section */}
-        <section className="py-20 px-4 max-w-7xl mx-auto flex justify-center items-center">
-          <SwapWidget />
-        </section>
-
-        {/* Call to Action */}
-        <section className="py-20 px-4 max-w-7xl mx-auto text-center">
-          <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl p-8 border border-purple-500/30">
-            <h2 className="text-4xl font-bold text-white mb-4">Join the PSX Revolution!</h2>
-            <p className="text-lg text-gray-300 mb-8">
-              Become an early adopter and shape the future of decentralized gaming.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="https://app.uniswap.org/swap?outputCurrency=0xYourPSXTokenAddress&chain=base" target="_blank">
-                <Button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-lg py-3 px-8 rounded-full shadow-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-300">
-                  Buy PSX Now
-                </Button>
-              </Link>
-              <Link href="https://discord.gg/psx_official" target="_blank">
+            <div className="flex gap-2">
+              {navItems.map((n) => (
                 <Button
-                  variant="outline"
-                  className="border-purple-500 text-purple-300 hover:bg-purple-900/20 text-lg py-3 px-8 rounded-full transition-all duration-300"
+                  key={n.id}
+                  onClick={() => {
+                    setActiveNav(n.id)
+                    scrollToSection(n.ref)
+                  }}
+                  className={`relative px-6 py-3 rounded-full text-sm font-mono transition-all ${
+                    activeNav === n.id
+                      ? "bg-cyan-400/25 text-cyan-100 shadow-lg shadow-cyan-400/25"
+                      : "text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100"
+                  }`}
                 >
-                  Join Our Community
+                  {n.label}
+                  {activeNav === n.id && (
+                    <span className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-400/20 to-purple-400/20 animate-pulse" />
+                  )}
                 </Button>
-              </Link>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              {[
+                { href: "/meme-generator", label: "MEME GENERATOR" },
+                { href: "/pfp-generator", label: "PFP GENERATOR" },
+                { href: "/roadmap", label: "ROADMAP" },
+                { href: "/game-portal", label: "GAME PORTAL" },
+                { href: "/glizzy-world", label: "GLIZZY WORLD" }, // Direct link to Glizzy World
+              ].map((item, i) => (
+                <Link key={i} href={item.href}>
+                  <Button className="px-6 py-3 text-sm font-mono text-cyan-400/90 rounded-full transition hover:bg-cyan-400/15 hover:text-cyan-100">
+                    {item.label}
+                  </Button>
+                </Link>
+              ))}
             </div>
           </div>
-        </section>
-      </main>
 
-      {/* Footer */}
-      <footer className="bg-black/80 border-t border-gray-800 py-8 px-4">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-gray-400 text-sm">
-          <div className="flex items-center gap-2">
-            <Image src="/placeholder-logo.svg" alt="PSX Logo" width={24} height={24} />
-            <span>&copy; 2025 PSX. All rights reserved.</span>
+          {/* -------- MOBILE NAV BUTTON -------- */}
+          <div className="lg:hidden flex items-center justify-between px-6 py-2">
+            <Link href="/" className="flex items-center gap-3 text-xl font-mono font-bold text-cyan-400">
+              <span className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400/90 to-purple-500/90 flex items-center justify-center shadow-lg shadow-cyan-400/20">
+                <Image
+                  src="/images/psx-attention.png"
+                  alt="PSX Logo"
+                  width={24}
+                  height={24}
+                  className="object-contain"
+                />
+              </span>
+              PSX
+            </Link>
+            <button
+              onClick={() => setMobileMenuOpen((o) => !o)}
+              className="p-3 text-cyan-400 hover:bg-cyan-400/15 rounded-full transition"
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
           </div>
-          <nav className="flex gap-6">
-            {footerLinks.map((item) => (
-              <Link key={item.label} href={item.href} target="_blank" rel="noopener noreferrer">
-                <Button variant="link" className="text-gray-400 hover:text-purple-400">
-                  {item.label}
-                </Button>
+        </div>
+
+        {/* -------- MOBILE PANEL -------- */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden mt-4 bg-black/85 border border-cyan-400/30 rounded-2xl backdrop-blur-3xl p-4 space-y-4">
+            {navItems.map((n) => (
+              <Button
+                key={n.id}
+                onClick={() => {
+                  setActiveNav(n.id)
+                  scrollToSection(n.ref)
+                  setMobileMenuOpen(false)
+                }}
+                className={`w-full text-left px-6 py-4 rounded-xl text-sm font-mono transition ${
+                  activeNav === n.id
+                    ? "bg-cyan-400/25 text-cyan-100 border border-cyan-400/40"
+                    : "text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100"
+                }`}
+              >
+                {n.label}
+              </Button>
+            ))}
+
+            <div className="pt-4 border-t border-cyan-400/30 space-y-4">
+              {[
+                { href: "/meme-generator", label: "MEME GENERATOR" },
+                { href: "/pfp-generator", label: "PFP GENERATOR" },
+                { href: "/roadmap", label: "ROADMAP" },
+                { href: "/game-portal", label: "GAME PORTAL" },
+                { href: "/glizzy-world", label: "GLIZZY WORLD" }, // Direct link to Glizzy World
+              ].map((item) => (
+                <Link key={item.label} href={item.href} onClick={() => setMobileMenuOpen(false)}>
+                  <Button className="w-full text-left px-6 py-4 rounded-xl text-sm font-mono text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100">
+                    {item.label}
+                  </Button>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </nav>
+
+      {/* ===================================================================== */}
+      {/*                                HERO                                   */}
+      {/* ===================================================================== */}
+
+      <section
+        ref={homeRef}
+        className="min-h-screen flex flex-col justify-center items-center pt-32 pb-24 px-4 text-center"
+      >
+        <h1 className="text-8xl md:text-[12rem] font-black bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-600 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_30px_rgba(168,85,247,0.4)]">
+          PSX
+        </h1>
+        <p className="mt-6 text-2xl md:text-4xl font-mono text-cyan-300">PRECISION. STEALTH. EXECUTION.</p>
+        <p className="mt-2 text-sm md:text-base font-mono text-cyan-400/70 uppercase tracking-wider">
+          PLEASE STOP XISTING. // Base Network Protocol
+        </p>
+
+        {/* -------- CONTRACT ADDRESS -------- */}
+        <div className="mt-16 bg-black/70 border border-cyan-400/30 rounded-3xl p-1.5 backdrop-blur-sm shadow-2xl">
+          <Button
+            onClick={copyToClipboard}
+            className={`bg-black/70 hover:bg-cyan-400/15 font-mono transition ${
+              copied ? "min-w-[300px]" : "min-w-[380px]"
+            }`}
+          >
+            {copied ? (
+              <span className="text-green-400">✓ COPIED TO CLIPBOARD</span>
+            ) : (
+              <span className="flex items-center gap-3 text-cyan-400">
+                <span className="text-sm opacity-70">CONTRACT:</span>
+                <span className="tracking-tight">
+                  {displayAddress.slice(0, 12)}…{displayAddress.slice(-12)}
+                </span>
+                <Copy className="h-4 w-4 opacity-70" />
+              </span>
+            )}
+          </Button>
+        </div>
+
+        {/* -------- SOCIAL ICON ROW -------- */}
+        <div className="mt-24 flex gap-8 justify-center">
+          {[
+            { href: "https://t.me/psxonbase", icon: MessageCircle, label: "Telegram" },
+            { href: "https://x.com/PSXonBase", icon: Twitter, label: "Twitter" },
+            {
+              href: "https://dexscreener.com/base/0x4444489570Afd4261d616df00DE1668dAd5F8ceE",
+              icon: BarChart3,
+              label: "Chart",
+            },
+            { href: "https://discord.gg/psxonbase", icon: DiscIcon, label: "Discord" },
+            {
+              href: "https://basescan.org/address/0x4444489570Afd4261d616df00DE1668dAd5F8ceE",
+              icon: ExternalLink,
+              label: "Explorer",
+            },
+          ].map(({ href, icon: Icon, label }, i) => (
+            <Link key={label} href={href} target="_blank" rel="noopener noreferrer">
+              <span className="group relative block">
+                <span className="w-16 h-16 flex items-center justify-center rounded-2xl bg-black/70 border border-cyan-400/30 text-cyan-400 transition group-hover:bg-cyan-400/25 group-hover:-translate-y-2 group-hover:scale-110">
+                  <Icon className="h-6 w-6 transition group-hover:scale-110" />
+                </span>
+                <span className="absolute left-1/2 -translate-x-1/2 -bottom-8 text-xs font-mono text-cyan-400 opacity-0 group-hover:opacity-100 transition">
+                  {label}
+                </span>
+              </span>
+            </Link>
+          ))}
+        </div>
+
+        {/* -------- CALL TO ACTION CARDS -------- */}
+        <div className="mt-24 grid md:grid-cols-2 gap-8 max-w-6xl w-full">
+          {/* Trade card */}
+          <Card
+            className="bg-black/50 border-cyan-400/30 backdrop-blur-3xl cursor-pointer hover:bg-black/70 hover:-translate-y-2 transition"
+            onClick={() => scrollToSection(swapRef)}
+          >
+            <CardContent className="p-8 text-center">
+              <div className="w-18 h-18 flex items-center justify-center mx-auto mb-6 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-500 text-white shadow-lg">
+                <Zap className="h-9 w-9" />
+              </div>
+              <h3 className="text-2xl font-mono font-bold text-cyan-400">INITIATE TRADE</h3>
+              <p className="mt-4 text-sm text-cyan-300/80">
+                Deploy advanced swap protocols to acquire PSX tokens with optimal rates.
+              </p>
+              <span className="mt-6 inline-flex items-center gap-2 text-sm font-mono text-cyan-400">
+                ACCESS TRADING TERMINAL <ArrowRight className="h-4 w-4" />
+              </span>
+            </CardContent>
+          </Card>
+
+          {/* Casino card */}
+          <Link href="/glizzy-world" className="block">
+            <Card className="bg-black/50 border-red-400/30 backdrop-blur-3xl hover:bg-black/70 hover:-translate-y-2 transition relative overflow-hidden">
+              <CardContent className="p-8 text-center relative z-10">
+                <div className="w-18 h-18 flex items-center justify-center mx-auto mb-6 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 text-white shadow-lg">
+                  <Lock className="h-9 w-9" />
+                </div>
+                <h3 className="text-2xl font-mono font-bold text-red-400">GLIZZY WORLD CASINO</h3>
+                <p className="mt-4 text-sm text-red-300/80">
+                  Password-protected gaming suite exclusively for verified PSX agents.
+                </p>
+                <span className="mt-6 inline-flex items-center gap-2 text-sm font-mono text-red-400">
+                  CLASSIFIED ACCESS <Shield className="h-4 w-4" />
+                </span>
+              </CardContent>
+              <span className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-pink-500/10 opacity-0 hover:opacity-100 transition" />
+            </Card>
+          </Link>
+        </div>
+      </section>
+
+      {/* ===================================================================== */}
+      {/*                              SWAP SECTION                              */}
+      {/* ===================================================================== */}
+
+      <section ref={swapRef} className="py-32 px-4 bg-gradient-to-b from-black via-black/80 to-black relative">
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,255,136,0.15)_0%,transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.15)_0%,transparent_50%)]" />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto">
+          <header className="text-center mb-24">
+            <span className="inline-flex items-center gap-2 px-8 py-4 border border-cyan-400/20 rounded-full bg-black/60 backdrop-blur-3xl text-sm font-mono text-cyan-400 shadow-2xl">
+              <Zap className="h-5 w-5 animate-pulse" /> TRADING TERMINAL ACTIVE
+            </span>
+            <h2 className="mt-12 text-7xl md:text-8xl font-mono font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+              ACQUIRE PSX
+            </h2>
+            <p className="mt-4 text-xl text-cyan-300/70 max-w-3xl mx-auto">
+              Deploy our advanced trading interface for seamless PSX token acquisition
+            </p>
+          </header>
+
+          {/* ------------------------------  THREE COLUMN GRID  ------------------------------ */}
+          <div className="grid xl:grid-cols-3 gap-12">
+            {/* ---------- STATS / INFO ---------- */}
+            <div className="space-y-8">
+              {/* live market */}
+              <Card className="bg-black/60 border-cyan-400/20 backdrop-blur-3xl hover:bg-black/80 transition">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Activity className="h-6 w-6 text-green-400 animate-pulse" />
+                    <h3 className="text-xl font-mono font-bold text-cyan-400">LIVE MARKET DATA</h3>
+                  </div>
+                  <div className="space-y-6">
+                    {[
+                      ["24h Volume", "$127 420"],
+                      ["Market Cap", "$2.1 M"],
+                      ["Holders", "1 337"],
+                      ["Liquidity", "$456 K"],
+                    ].map(([label, value]) => (
+                      <div key={label} className="flex justify-between">
+                        <span className="text-sm text-cyan-300/70">{label}</span>
+                        <span className="font-mono font-bold text-green-400">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-6 pt-6 border-t border-cyan-400/20 flex items-center gap-2 text-xs font-mono text-green-400">
+                    <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" /> REAL-TIME UPDATES
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* security */}
+              <Card className="bg-black/60 border-cyan-400/20 backdrop-blur-3xl hover:bg-black/80 transition">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Shield className="h-6 w-6 text-blue-400" />
+                    <h3 className="text-xl font-mono font-bold text-cyan-400">SECURITY PROTOCOL</h3>
+                  </div>
+                  {["Audited Smart Contracts", "Liquidity Locked", "Renounced Ownership", "Base Network Verified"].map(
+                    (t) => (
+                      <div key={t} className="flex items-center gap-3 text-sm text-cyan-300/80">
+                        <span className="w-2 h-2 rounded-full bg-green-400" />
+                        {t}
+                      </div>
+                    ),
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* quick actions */}
+              <Card className="bg-black/60 border-cyan-400/20 backdrop-blur-3xl hover:bg-black/80 transition">
+                <CardContent className="p-8 space-y-4">
+                  <h3 className="text-xl font-mono font-bold text-cyan-400 mb-4">QUICK ACTIONS</h3>
+                  <Button
+                    asChild
+                    className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-mono"
+                  >
+                    <Link
+                      href="https://dexscreener.com/base/0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
+                      target="_blank"
+                    >
+                      <BarChart3 className="h-4 w-4 mr-2" /> VIEW CHART
+                    </Link>
+                  </Button>
+                  <Button
+                    onClick={copyToClipboard}
+                    variant="outline"
+                    className="w-full border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 font-mono"
+                  >
+                    <Copy className="h-4 w-4 mr-2" /> COPY CONTRACT
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full border-purple-400/30 text-purple-400 hover:bg-purple-400/10 font-mono"
+                  >
+                    <Link
+                      href="https://basescan.org/address/0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
+                      target="_blank"
+                    >
+                      <ExternalLink className="h-4 w-4 mr-2" /> VERIFY ON BASESCAN
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* ---------- SWAP WIDGET ---------- */}
+            <div className="flex justify-center">
+              <div className="w-full max-w-md">
+                <SwapWidget />
+              </div>
+            </div>
+
+            {/* ---------- GUIDE / STATUS ---------- */}
+            <div className="space-y-8">
+              {/* steps */}
+              <Card className="bg-black/60 border-cyan-400/20 backdrop-blur-3xl hover:bg-black/80 transition">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Target className="h-6 w-6 text-purple-400" />
+                    <h3 className="text-xl font-mono font-bold text-cyan-400">MISSION PROTOCOL</h3>
+                  </div>
+                  {[
+                    ["01", "Connect Wallet", "🔗"],
+                    ["02", "Select Amount", "💰"],
+                    ["03", "Review & Confirm", "✅"],
+                    ["04", "Mission Complete", "🎯"],
+                  ].map(([step, title, icon]) => (
+                    <div key={step} className="flex items-start gap-4 mb-4">
+                      <span className="w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-cyan-800/60 to-purple-800/60 font-mono font-bold border border-cyan-400/30 text-cyan-100">
+                        {step}
+                      </span>
+                      <div>
+                        <h4 className="flex items-center gap-2 text-sm font-mono text-cyan-400">
+                          <span>{icon}</span> {title}
+                        </h4>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* network */}
+              <Card className="bg-black/60 border-cyan-400/20 backdrop-blur-3xl hover:bg-black/80 transition">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Wifi className="h-6 w-6 text-green-400" />
+                    <h3 className="text-xl font-mono font-bold text-cyan-400">NETWORK STATUS</h3>
+                  </div>
+                  {[
+                    ["Network", "BASE MAINNET"],
+                    ["Gas Fees", "~$0.01"],
+                    ["Confirmation", "~2 s"],
+                  ].map(([l, v]) => (
+                    <div key={l} className="flex justify-between text-sm">
+                      <span className="text-cyan-300/70">{l}</span>
+                      <span className="font-mono font-bold text-blue-400">{v}</span>
+                    </div>
+                  ))}
+                  <div className="flex justify-between text-sm mt-2">
+                    <span className="text-cyan-300/70">Status</span>
+                    <span className="flex items-center gap-2 font-mono font-bold text-green-400">
+                      <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                      OPERATIONAL
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* support */}
+              <Card className="bg-black/60 border-cyan-400/20 backdrop-blur-3xl hover:bg-black/80 transition">
+                <CardContent className="p-8">
+                  <h3 className="text-xl font-mono font-bold text-cyan-400 mb-6">NEED ASSISTANCE?</h3>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full mb-4 border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 font-mono"
+                  >
+                    <Link href="https://discord.gg/psxonbase" target="_blank">
+                      <DiscIcon className="h-4 w-4 mr-2" /> AGENT SUPPORT
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 font-mono"
+                  >
+                    <Link href="https://t.me/psxonbase" target="_blank">
+                      <MessageCircle className="h-4 w-4 mr-2" /> TELEGRAM HQ
+                    </Link>
+                  </Button>
+                  <p className="mt-6 pt-6 border-t border-cyan-400/20 text-center text-xs text-cyan-300/60">
+                    24/7 Agent Support Available
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===================================================================== */}
+      {/*                               FOOTER                                  */}
+      {/* ===================================================================== */}
+
+      <footer className="bg-black/80 backdrop-blur-sm border-t border-cyan-400/10 py-20 px-4">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-12">
+          <div>
+            <h3 className="text-3xl font-mono font-bold text-cyan-400 mb-4">PSX.AGENCY</h3>
+            <p className="text-cyan-300/70">The People's Token on Base</p>
+            <p className="mt-3 text-sm text-cyan-400/50">Classified Operations Division</p>
+          </div>
+
+          {[
+            {
+              title: "Quick Access",
+              links: [
+                { label: "Glizzy World Casino", href: "/glizzy-world" },
+                { label: "Meme Generator", href: "/meme-generator" },
+                { label: "PFP Generator", href: "/pfp-generator" },
+                { label: "Interactive Roadmap", href: "/roadmap" },
+                { label: "Game Portal", href: "/game-portal" },
+              ],
+            },
+            {
+              title: "Communications",
+              links: [
+                { label: "Discord HQ", href: "https://discord.gg/psxonbase" },
+                { label: "Telegram Channel", href: "https://t.me/psxonbase" },
+                { label: "Twitter /X", href: "https://x.com/PSXonBase" },
+                { label: "BaseScan", href: `https://basescan.org/address/${contractAddress}` },
+              ],
+            },
+            {
+              title: "Operations",
+              links: [
+                { label: "Live Chart", href: `https://dexscreener.com/base/${contractAddress}` },
+                { label: "Contract Address", href: "#copy-contract" }, // Use a hash to trigger copy
+                { label: "Audit Reports", href: "#" },
+                { label: "White-paper", href: "#" },
+              ],
+            },
+          ].map(({ title, links }) => (
+            <div key={title}>
+              <h4 className="text-xl font-mono font-semibold text-cyan-400 mb-4">{title}</h4>
+              <ul className="space-y-3">
+                {links.map((item) => (
+                  <li key={item.label}>
+                    {item.href === "#copy-contract" ? (
+                      <button
+                        onClick={copyToClipboard}
+                        className="text-cyan-300/70 hover:text-cyan-400 font-mono text-left"
+                      >
+                        {item.label}
+                      </button>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        target={item.href.startsWith("http") ? "_blank" : undefined}
+                        className="text-cyan-300/70 hover:text-cyan-400 font-mono"
+                      >
+                        {item.label}
+                      </Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="max-w-7xl mx-auto mt-16 pt-12 border-t border-cyan-400/20 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="text-center md:text-left">
+            <p className="font-mono font-bold text-lg text-cyan-400">BUILT BY DEGENERATES, POWERED BY GLIZZIES</p>
+            <p className="text-sm text-cyan-400/60">
+              © 2024 PSX.AGENCY • All operations classified • Not financial advice • DYOR
+            </p>
+          </div>
+
+          <div className="flex gap-6">
+            {[
+              { href: "https://t.me/psxonbase", icon: MessageCircle },
+              { href: "https://x.com/PSXonBase", icon: Twitter },
+              { href: "https://discord.gg/psxonbase", icon: DiscIcon },
+            ].map(({ href, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-12 h-12 flex items-center justify-center rounded-xl bg-black/60 border border-cyan-400/20 text-cyan-400 hover:bg-cyan-400/20 transition"
+              >
+                <Icon className="h-5 w-5" />
               </Link>
             ))}
-          </nav>
-          <div className="flex items-center gap-4">
-            <Link href="https://github.com/psx_official" target="_blank" rel="noopener noreferrer">
-              <Github className="h-6 w-6 hover:text-purple-400 transition-colors" />
-            </Link>
-            <Link href="https://discord.gg/psx_official" target="_blank" rel="noopener noreferrer">
-              <DiscIcon className="h-6 w-6 hover:text-purple-400 transition-colors" />
-            </Link>
           </div>
         </div>
       </footer>
