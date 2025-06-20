@@ -738,20 +738,20 @@ export default function PSXLanding() {
             {
               title: "Quick Access",
               links: [
-                ["Glizzy World Casino", "/glizzy-world"],
-                ["Meme Generator", "/meme-generator"],
-                ["PFP Generator", "/pfp-generator"],
-                ["Interactive Roadmap", "/roadmap"],
-                ["Game Portal", "/game-portal"],
+                { label: "Glizzy World Casino", href: "/glizzy-world" },
+                { label: "Meme Generator", href: "/meme-generator" },
+                { label: "PFP Generator", href: "/pfp-generator" },
+                { label: "Interactive Roadmap", href: "/roadmap" },
+                { label: "Game Portal", href: "/game-portal" },
               ],
             },
             {
               title: "Communications",
               links: [
-                ["Discord HQ", "https://discord.gg/psxonbase"],
-                ["Telegram Channel", "https://t.me/psxonbase"],
-                ["Twitter /X", "https://x.com/PSXonBase"],
-                ["BaseScan", "https://basescan.org/address/" + contractAddress],
+                { label: "Discord HQ", href: "https://discord.gg/psxonbase" },
+                { label: "Telegram Channel", href: "https://t.me/psxonbase" },
+                { label: "Twitter / X", href: "https://x.com/PSXonBase" },
+                { label: "BaseScan", href: `https://basescan.org/address/${contractAddress}` },
               ],
             },
             {
