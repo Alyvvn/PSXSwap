@@ -1,36 +1,42 @@
 "use client"
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { ArrowRight } from "lucide-react"
+import Link from "next/link"
+
 export function SwapWidget() {
   return (
-    <div className="w-full max-w-3xl mx-auto">
-      {/* Swap Container */}
-      <div className="bg-slate-900/90 backdrop-blur-xl rounded-3xl p-1 border border-cyan-400/30 shadow-2xl">
-        <div className="bg-black/50 rounded-[22px] overflow-hidden">
+    <Card className="w-full max-w-md bg-black/70 border-purple-500/30 backdrop-blur-xl shadow-purple-500/20">
+      <CardHeader className="text-center">
+        <CardTitle className="text-4xl font-bold text-purple-400">PSX Swap</CardTitle>
+        <p className="text-purple-300/80 text-sm mt-2">Trade PSX on Base Network</p>
+      </CardHeader>
+      <CardContent className="flex flex-col items-center gap-6 p-6">
+        <div className="w-full h-[400px] rounded-lg overflow-hidden border border-purple-500/50 shadow-inner shadow-purple-500/20">
           <iframe
-            src="https://app.uniswap.org/#/swap?outputCurrency=0x4444489570Afd4261d616df00DE1668dAd5F8ceE&chain=base"
+            src="https://app.uniswap.org/swap?outputCurrency=0xYourPSXTokenAddress&chain=base"
             width="100%"
-            height="660"
-            style={{
-              border: "none",
-              borderRadius: "22px",
-              overflow: "hidden",
-              display: "block",
-              margin: 0,
-              padding: 0,
-            }}
-            allow="clipboard-write; clipboard-read; web-share"
-            className="w-full h-[660px]"
+            height="100%"
+            style={{ border: "0", margin: "0", display: "block", borderRadius: "10px" }}
+            title="Uniswap Widget"
+            scrolling="no" // Crucial for preventing iframe-induced scrolling
           />
         </div>
-      </div>
-
-      {/* Branding Badge */}
-      <div className="text-center mt-4">
-        <div className="inline-flex items-center gap-2 bg-slate-900/80 backdrop-blur-sm rounded-full px-4 py-2 border border-cyan-400/20">
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-          <span className="text-cyan-400 font-mono text-xs">POWERED BY UNISWAP</span>
-        </div>
-      </div>
-    </div>
+        <Link
+          href="https://dexscreener.com/base/0xYourPSXTokenAddress"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full"
+        >
+          <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-lg py-6 font-bold uppercase tracking-wider shadow-lg shadow-purple-500/30 hover:from-purple-700 hover:to-pink-700">
+            <ArrowRight className="h-5 w-5 mr-2" />
+            View Live Chart
+          </Button>
+        </Link>
+      </CardContent>
+    </Card>
   )
 }
+
+export default SwapWidget
