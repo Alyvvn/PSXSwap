@@ -22,14 +22,53 @@ import {
   Target,
 } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image" // Import Image component
+import Image from "next/image"
 import { SwapWidget } from "@/components/swap-widget"
+
+const intelReports = [
+  {
+    id: "INTEL-001",
+    timestamp: "2024.12.17 14:23:07",
+    classification: "TOP SECRET",
+    title: "Operation Glizzy World Deployment",
+    content: "Casino infrastructure successfully deployed on Base network. Agent recruitment protocols active.",
+    status: "COMPLETED",
+    priority: "HIGH",
+  },
+  {
+    id: "INTEL-002",
+    timestamp: "2024.12.17 09:15:42",
+    classification: "CLASSIFIED",
+    title: "Market Infiltration Analysis",
+    content: "PSX token showing strong community adoption. Meme warfare tactics proving effective.",
+    status: "ONGOING",
+    priority: "MEDIUM",
+  },
+  {
+    id: "INTEL-003",
+    timestamp: "2024.12.16 22:08:19",
+    classification: "CONFIDENTIAL",
+    title: "Agent Network Expansion",
+    content: "Discord recruitment successful. 1,337 verified agents now active in the field.",
+    status: "COMPLETED",
+    priority: "HIGH",
+  },
+  {
+    id: "INTEL-004",
+    timestamp: "2024.12.16 16:45:33",
+    classification: "SECRET",
+    title: "Blockchain Security Assessment",
+    content: "Base network integration secure. Smart contract audits passed. Ready for phase 2.",
+    status: "VERIFIED",
+    priority: "CRITICAL",
+  },
+]
 
 export default function PSXLanding() {
   const [copied, setCopied] = useState(false)
   const [activeNav, setActiveNav] = useState("home")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [terminalText, setTerminalText] = useState("")
+  // Removed terminalText state as it was not being used in the JSX
   const [currentIntel, setCurrentIntel] = useState(0)
   const [scrollY, setScrollY] = useState(0)
 
@@ -40,6 +79,11 @@ export default function PSXLanding() {
 
   const contractAddress = "0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
 
+  // Force scroll to top on component mount to prevent unwanted initial scroll
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   // Smooth scroll tracking
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY)
@@ -47,74 +91,7 @@ export default function PSXLanding() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Intelligence reports data
-  const intelReports = [
-    {
-      id: "INTEL-001",
-      timestamp: "2024.12.17 14:23:07",
-      classification: "TOP SECRET",
-      title: "Operation Glizzy World Deployment",
-      content: "Casino infrastructure successfully deployed on Base network. Agent recruitment protocols active.",
-      status: "COMPLETED",
-      priority: "HIGH",
-    },
-    {
-      id: "INTEL-002",
-      timestamp: "2024.12.17 09:15:42",
-      classification: "CLASSIFIED",
-      title: "Market Infiltration Analysis",
-      content: "PSX token showing strong community adoption. Meme warfare tactics proving effective.",
-      status: "ONGOING",
-      priority: "MEDIUM",
-    },
-    {
-      id: "INTEL-003",
-      timestamp: "2024.12.16 22:08:19",
-      classification: "CONFIDENTIAL",
-      title: "Agent Network Expansion",
-      content: "Discord recruitment successful. 1,337 verified agents now active in the field.",
-      status: "COMPLETED",
-      priority: "HIGH",
-    },
-    {
-      id: "INTEL-004",
-      timestamp: "2024.12.16 16:45:33",
-      classification: "SECRET",
-      title: "Blockchain Security Assessment",
-      content: "Base network integration secure. Smart contract audits passed. Ready for phase 2.",
-      status: "VERIFIED",
-      priority: "CRITICAL",
-    },
-  ]
-
-  // Smooth terminal typing effect
-  useEffect(() => {
-    const messages = [
-      "ACCESSING PSX MAINFRAME...",
-      "CRYPTO PROTOCOLS ACTIVE",
-      "AGENTS: 1337 ONLINE",
-      "MARKET INTEL ACQUIRED",
-      "OPERATION STATUS: GREEN",
-    ]
-
-    let messageIndex = 0
-    let charIndex = 0
-
-    const typeInterval = setInterval(() => {
-      if (charIndex < messages[messageIndex].length) {
-        setTerminalText(messages[messageIndex].substring(0, charIndex + 1))
-        charIndex++
-      } else {
-        setTimeout(() => {
-          messageIndex = (messageIndex + 1) % messages.length
-          charIndex = 0
-          setTerminalText("")
-        }, 4000)
-      }
-    }, 120)
-
-    return () => clearInterval(typeInterval)
-  }, [])
+  // Removed Smooth terminal typing effect as terminalText was not being used
 
   // Intel reports cycling
   useEffect(() => {
