@@ -1,179 +1,168 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect } from "react"
+
+import type React from "react"
+
+import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Download, RefreshCw, Type } from "lucide-react"
-import Image from "next/image"
+import { Sparkles, Download, ImageIcon, Text, Eraser } from "lucide-react"
 
 export function MemeGenerator() {
-  const [selectedTemplate, setSelectedTemplate] = useState(0)
-  const [topText, setTopText] = useState("")
-  const [bottomText, setBottomText] = useState("")
+  const [topText, setTopText] = useState("TOP TEXT")
+  const [bottomText, setBottomText] = useState("BOTTOM TEXT")
+  const [imageSrc, setImageSrc] = useState("/placeholder.png?height=400&width=600")
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const imageRef = useRef<HTMLImageElement>(null)
 
-  const memeTemplates = [
-    "/images/meme-templates/template-1.png",
-    "/images/meme-templates/template-2.png",
-    "/images/meme-templates/template-3.png",
-    "/images/meme-templates/template-4.png",
-    "/images/meme-templates/template-5.png",
-    "/images/meme-templates/template-6.png",
-  ]
-
-  const handleDownload = () => {
-    console.log("Downloading meme with:", { selectedTemplate, topText, bottomText })
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImageSrc(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
   }
 
-  const randomizeTemplate = () => {
-    const randomIndex = Math.floor(Math.random() * memeTemplates.length)
-    setSelectedTemplate(randomIndex)
+  const drawMeme = () => {
+    const canvas = canvasRef.current
+    const image = imageRef.current
+
+    if (!canvas || !image) return
+
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+
+    // Set canvas dimensions to match image
+    canvas.width = image.naturalWidth
+    canvas.height = image.naturalHeight
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
+
+    ctx.fillStyle = "white"
+    ctx.strokeStyle = "black"
+    ctx.lineWidth = canvas.width * 0.008 // Responsive border
+    ctx.textAlign = "center"
+    ctx.textBaseline = "top"
+
+    // Calculate font size based on canvas width
+    const fontSize = canvas.width * 0.06 // Adjust as needed
+    ctx.font = `${fontSize}px Impact, sans-serif`
+    ctx.lineJoin = "round"
+
+    // Top text
+    ctx.strokeText(topText.toUpperCase(), canvas.width / 2, canvas.height * 0.05)
+    ctx.fillText(topText.toUpperCase(), canvas.width / 2, canvas.height * 0.05)
+
+    // Bottom text
+    ctx.textBaseline = "bottom"
+    ctx.strokeText(bottomText.toUpperCase(), canvas.width / 2, canvas.height * 0.95)
+    ctx.fillText(bottomText.toUpperCase(), canvas.width / 2, canvas.height * 0.95)
+  }
+
+  // Redraw meme when text or image changes
+  useEffect(() => {
+    const image = new Image()
+    image.src = imageSrc
+    image.crossOrigin = "anonymous" // Crucial for CORS when drawing to canvas
+    image.onload = () => {
+      imageRef.current = image
+      drawMeme()
+    }
+  }, [imageSrc, topText, bottomText])
+
+  const downloadMeme = () => {
+    const canvas = canvasRef.current
+    if (canvas) {
+      const link = document.createElement("a")
+      link.download = "psx-meme.png"
+      link.href = canvas.toDataURL("image/png")
+      link.click()
+    }
+  }
+
+  const resetGenerator = () => {
+    setTopText("TOP TEXT")
+    setBottomText("BOTTOM TEXT")
+    setImageSrc("/placeholder.png?height=400&width=600")
   }
 
   return (
-    <Card className="bg-black/80 border-gray-800">
-      <CardHeader>
-        <CardTitle className="text-white flex items-center gap-2">
-          <Type className="h-5 w-5" />
-          PSX Meme Generator
+    <Card className="w-full bg-black/70 border-cyan-500/30 backdrop-blur-xl shadow-cyan-500/20">
+      <CardHeader className="text-center">
+        <CardTitle className="text-4xl font-bold text-cyan-400 flex items-center justify-center gap-2">
+          <Sparkles className="h-8 w-8 text-purple-400 animate-pulse" />
+          Meme Generator
+          <Sparkles className="h-8 w-8 text-purple-400 animate-pulse" />
         </CardTitle>
+        <p className="text-cyan-300/80 text-sm mt-2">Craft your viral PSX memes.</p>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Template Selection */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-white">Choose Template</h3>
-            <Button
-              onClick={randomizeTemplate}
-              variant="outline"
-              size="sm"
-              className="bg-black text-white border-gray-700 hover:bg-gray-900"
-            >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Random
-            </Button>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            {memeTemplates.map((template, index) => (
-              <div
-                key={index}
-                className={`relative aspect-square cursor-pointer rounded-lg overflow-hidden border-2 transition-all ${
-                  selectedTemplate === index ? "border-gray-600" : "border-gray-800 hover:border-gray-700"
-                }`}
-                onClick={() => setSelectedTemplate(index)}
-              >
-                <Image
-                  src={template || "/placeholder.png"}
-                  alt={`Template ${index + 1}`}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            ))}
-          </div>
+      <CardContent className="flex flex-col items-center gap-6 p-6">
+        {/* Meme Preview */}
+        <div className="relative w-full max-w-xl aspect-video bg-gray-900 rounded-lg overflow-hidden border border-cyan-400/30 shadow-lg">
+          <img
+            ref={imageRef}
+            src={imageSrc || "/placeholder.png"}
+            alt="Meme Base"
+            className="absolute inset-0 w-full h-full object-contain"
+            style={{ display: "none" }} // Hide the img element, only canvas is visible
+          />
+          <canvas ref={canvasRef} className="w-full h-full object-contain" />
         </div>
 
-        {/* Text Inputs */}
-        <div className="space-y-4">
-          <div>
-            <label className="text-sm font-medium text-gray-300 mb-2 block">Top Text</label>
+        {/* Controls */}
+        <div className="w-full space-y-4">
+          <div className="flex items-center gap-2">
+            <Text className="h-5 w-5 text-cyan-400" />
             <Input
+              placeholder="Top Text"
               value={topText}
               onChange={(e) => setTopText(e.target.value)}
-              placeholder="Enter top text..."
-              className="bg-gray-900 border-gray-800 text-white placeholder-gray-500"
+              className="bg-cyan-900/30 border-cyan-500/50 text-cyan-200 placeholder:text-cyan-400/70 focus:ring-cyan-500"
             />
           </div>
-          <div>
-            <label className="text-sm font-medium text-gray-300 mb-2 block">Bottom Text</label>
+          <div className="flex items-center gap-2">
+            <Text className="h-5 w-5 text-cyan-400" />
             <Input
+              placeholder="Bottom Text"
               value={bottomText}
               onChange={(e) => setBottomText(e.target.value)}
-              placeholder="Enter bottom text..."
-              className="bg-gray-900 border-gray-800 text-white placeholder-gray-500"
+              className="bg-cyan-900/30 border-cyan-500/50 text-cyan-200 placeholder:text-cyan-400/70 focus:ring-cyan-500"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <ImageIcon className="h-5 w-5 text-cyan-400" />
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="bg-cyan-900/30 border-cyan-500/50 text-cyan-200 file:text-cyan-400 file:bg-cyan-400/10 file:rounded-md file:px-3 file:py-1 file:border-none file:mr-2 hover:file:bg-cyan-400/20 focus:ring-cyan-500"
             />
           </div>
         </div>
 
-        {/* Preview */}
-        <div>
-          <h3 className="text-lg font-semibold text-white mb-4">Preview</h3>
-          <div className="relative aspect-square bg-black rounded-lg overflow-hidden border border-gray-800">
-            <Image
-              src={memeTemplates[selectedTemplate] || "/placeholder.png"}
-              alt="Meme Preview"
-              fill
-              className="object-cover"
-            />
-            {topText && (
-              <div className="absolute top-4 left-4 right-4 text-center">
-                <span
-                  className="text-white font-black bg-black/70 px-4 py-2 rounded-lg shadow-lg"
-                  style={{
-                    fontSize: "clamp(1.5rem, 4vw, 2.5rem)",
-                    textShadow: "2px 2px 0px #000, -2px -2px 0px #000, 2px -2px 0px #000, -2px 2px 0px #000",
-                    letterSpacing: "0.1em",
-                  }}
-                >
-                  {topText.toUpperCase()}
-                </span>
-              </div>
-            )}
-            {bottomText && (
-              <div className="absolute bottom-4 left-4 right-4 text-center">
-                <span
-                  className="text-white font-black bg-black/70 px-4 py-2 rounded-lg shadow-lg"
-                  style={{
-                    fontSize: "clamp(1.5rem, 4vw, 2.5rem)",
-                    textShadow: "2px 2px 0px #000, -2px -2px 0px #000, 2px -2px 0px #000, -2px 2px 0px #000",
-                    letterSpacing: "0.1em",
-                  }}
-                >
-                  {bottomText.toUpperCase()}
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-4">
+        {/* Action Buttons */}
+        <div className="w-full flex flex-col sm:flex-row gap-4">
           <Button
-            onClick={handleDownload}
-            className="flex-1 bg-gradient-to-r from-gray-800 to-black hover:from-gray-700 hover:to-gray-900 border border-gray-700"
+            onClick={downloadMeme}
+            className="flex-1 bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-lg py-6 font-bold uppercase tracking-wider shadow-lg shadow-cyan-500/30 hover:from-cyan-700 hover:to-blue-700"
           >
-            <Download className="h-4 w-4 mr-2" />
-            Download Meme
+            <Download className="h-5 w-5 mr-2" />
+            DOWNLOAD MEME
           </Button>
-          <Button variant="outline" className="bg-black text-white border-gray-700 hover:bg-gray-900">
-            Share
+          <Button
+            onClick={resetGenerator}
+            variant="outline"
+            className="flex-1 bg-cyan-800/30 text-cyan-300 border-cyan-500/50 hover:bg-cyan-800/50 text-lg py-6 font-bold uppercase tracking-wider"
+          >
+            <Eraser className="h-5 w-5 mr-2" />
+            RESET
           </Button>
-        </div>
-
-        {/* Quick Templates */}
-        <div>
-          <h4 className="text-sm font-medium text-gray-300 mb-2">Quick Templates</h4>
-          <div className="flex flex-wrap gap-2">
-            {[
-              { top: "WHEN PSX HITS", bottom: "$1" },
-              { top: "DIAMOND HANDS", bottom: "PSX FOREVER" },
-              { top: "TO THE MOON", bottom: "AND BEYOND" },
-              { top: "HOLD PSX", bottom: "NEVER SELL" },
-            ].map((template, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                size="sm"
-                className="bg-black text-white border-gray-800 hover:border-gray-700 hover:bg-gray-900"
-                onClick={() => {
-                  setTopText(template.top)
-                  setBottomText(template.bottom)
-                }}
-              >
-                {template.top}
-              </Button>
-            ))}
-          </div>
         </div>
       </CardContent>
     </Card>

@@ -87,7 +87,7 @@ export default function PSXLanding() {
 
   /* ---------------------------   Constants   ------------------------------- */
   const contractAddress = "0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
-  const displayAddress = contractAddress // ensure it is a string
+  const displayAddress = String(contractAddress) // Ensure it's always a string
 
   const navItems = [
     { id: "home", label: "Home", ref: homeRef },
@@ -96,6 +96,11 @@ export default function PSXLanding() {
   ]
 
   /* --------------------------   Effects   ---------------------------------- */
+
+  // Force scroll to top on component mount to prevent unwanted initial scroll
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   // Track page scroll for parallax & navbar opacity
   useEffect(() => {
@@ -124,6 +129,32 @@ export default function PSXLanding() {
 
   const scrollToSection = (section: React.RefObject<HTMLDivElement>) => {
     section.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "CRITICAL":
+        return "text-red-400"
+      case "HIGH":
+        return "text-orange-400"
+      case "MEDIUM":
+        return "text-yellow-400"
+      default:
+        return "text-cyan-400"
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "COMPLETED":
+        return "text-green-400"
+      case "VERIFIED":
+        return "text-blue-400"
+      case "ONGOING":
+        return "text-yellow-400"
+      default:
+        return "text-gray-400"
+    }
   }
 
   /* -------------------------------------------------------------------------- */
@@ -220,9 +251,12 @@ export default function PSXLanding() {
             <div className="flex gap-3">
               {["/meme-generator", "/pfp-generator", "/roadmap", "/game-portal"].map((href, i) => (
                 <Link key={i} href={href}>
-                  <button className="px-6 py-3 text-sm font-mono text-cyan-400/90 rounded-full transition hover:bg-cyan-400/15 hover:text-cyan-100">
+                  <Button
+                    variant="outline"
+                    className="bg-black/70 text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100 font-mono"
+                  >
                     {href.split("/")[1].replace("-", " ").toUpperCase()}
-                  </button>
+                  </Button>
                 </Link>
               ))}
             </div>
@@ -421,7 +455,7 @@ export default function PSXLanding() {
           {/* ------------------------------  THREE COLUMN GRID  ------------------------------ */}
           <div className="grid xl:grid-cols-3 gap-12">
             {/* ---------- STATS / INFO ---------- */}
-            <div className="space-y-8">
+            <div className="xl:col-span-1 space-y-8">
               {/* live market */}
               <Card className="bg-black/60 border-cyan-400/20 backdrop-blur-3xl hover:bg-black/80 transition">
                 <CardContent className="p-8">
@@ -469,7 +503,7 @@ export default function PSXLanding() {
               {/* quick actions */}
               <Card className="bg-black/60 border-cyan-400/20 backdrop-blur-3xl hover:bg-black/80 transition">
                 <CardContent className="p-8 space-y-4">
-                  <h3 className="text-xl font-mono font-bold text-cyan-400 mb-4">QUICK ACTIONS</h3>
+                  <h3 className="text-xl font-mono font-bold text-cyan-400 mb-6">QUICK ACTIONS</h3>
                   <Button
                     asChild
                     className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-mono"
@@ -505,14 +539,14 @@ export default function PSXLanding() {
             </div>
 
             {/* ---------- SWAP WIDGET ---------- */}
-            <div className="flex justify-center">
+            <div className="xl:col-span-1 flex justify-center">
               <div className="w-full max-w-md">
                 <SwapWidget />
               </div>
             </div>
 
             {/* ---------- GUIDE / STATUS ---------- */}
-            <div className="space-y-8">
+            <div className="xl:col-span-1 space-y-8">
               {/* steps */}
               <Card className="bg-black/60 border-cyan-400/20 backdrop-blur-3xl hover:bg-black/80 transition">
                 <CardContent className="p-8">
@@ -594,6 +628,82 @@ export default function PSXLanding() {
                   </p>
                 </CardContent>
               </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===================================================================== */}
+      {/*                         INTEL REPORTS SECTION                         */}
+      {/* ===================================================================== */}
+
+      <section ref={intelRef} className="py-32 px-4 bg-black/80 backdrop-blur-sm">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-6xl font-bold text-center mb-16 text-cyan-400 font-mono">AGENT DOSSIER: PSX</h2>
+
+          <div className="bg-black/60 backdrop-blur-3xl p-12 rounded-3xl border border-cyan-500/20 relative overflow-hidden shadow-2xl hover:shadow-cyan-500/10 transition-all duration-700">
+            <div className="absolute top-6 right-6 text-red-400 font-mono text-xs font-bold animate-pulse">
+              CLASSIFIED // EYES ONLY
+            </div>
+
+            <div className="space-y-10 relative z-10">
+              <div className="grid md:grid-cols-2 gap-10">
+                <div>
+                  <h3 className="text-2xl font-bold text-cyan-400 mb-6 font-mono">MISSION BRIEFING</h3>
+                  <p className="text-cyan-300/80 text-lg leading-relaxed mb-6">
+                    PSX operates as a <span className="text-red-400 font-bold">covert intelligence network</span>{" "}
+                    embedded within the Base blockchain ecosystem.
+                  </p>
+                  <p className="text-cyan-300/80 text-lg leading-relaxed">
+                    Our agents utilize advanced crypto warfare tactics to establish market dominance while maintaining
+                    operational security.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-2xl font-bold text-cyan-400 mb-6 font-mono">OPERATIONAL STATUS</h3>
+                  <div className="space-y-4">
+                    {[
+                      { label: "Network:", value: "BASE MAINNET", color: "text-green-400" },
+                      { label: "Security Level:", value: "MAXIMUM", color: "text-red-400" },
+                      { label: "Agent Count:", value: "1,337 ACTIVE", color: "text-cyan-400" },
+                      { label: "Mission Status:", value: "OPERATIONAL", color: "text-green-400" },
+                    ].map((item, index) => (
+                      <div key={index} className="flex justify-between items-center group">
+                        <span className="text-cyan-300/80 font-mono group-hover:text-cyan-300 transition-colors">
+                          {item.label}
+                        </span>
+                        <span
+                          className={`${item.color} font-mono font-bold group-hover:scale-105 transition-transform`}
+                        >
+                          {item.value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-cyan-400/20 pt-10">
+                <h3 className="text-2xl font-bold text-cyan-400 mb-8 font-mono">RECRUITMENT PROTOCOL</h3>
+                <p className="text-cyan-300/80 text-lg leading-relaxed mb-8">
+                  The agency maintains a fully operational crypto casino and advanced meme generation facilities. New
+                  operatives undergo rigorous Discord verification protocols before gaining access to classified
+                  operations.
+                </p>
+
+                <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+                  <div className="text-cyan-300/80 text-lg text-center md:text-left">READY TO JOIN THE OPERATION?</div>
+                  <Button
+                    asChild
+                    className="bg-red-500/90 hover:bg-red-600 text-white font-mono px-10 py-5 text-lg transition-all duration-500 hover:scale-[1.05] shadow-lg shadow-red-500/20"
+                  >
+                    <Link href="https://discord.gg/psxonbase" target="_blank" rel="noopener noreferrer">
+                      [ ENLIST NOW ] <Discord className="ml-3 h-5 w-5" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

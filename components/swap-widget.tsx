@@ -19,6 +19,7 @@ export function SwapWidget() {
               padding: 0,
             }}
             allow="clipboard-write; clipboard-read; web-share"
+            scrolling="no" // Crucial fix: Prevents iframe from having its own scrollbar
             className="w-full h-[660px]"
           />
         </div>

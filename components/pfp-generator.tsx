@@ -1,186 +1,236 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Download, RefreshCw, User } from "lucide-react"
-import Image from "next/image"
+import { Input } from "@/components/ui/input"
+import { Sparkles, Download, ImageIcon, Eraser, Palette, Text } from "lucide-react"
+import { cn } from "@/lib/utils"
 
-export function PFPGenerator() {
-  const [selectedBackground, setSelectedBackground] = useState(0)
-  const [selectedCharacter, setSelectedCharacter] = useState(0)
-  const [selectedAccessory, setSelectedAccessory] = useState(0)
+const backgrounds = [
+  "/placeholder.png?height=200&width=200",
+  "/placeholder.png?height=200&width=200",
+  "/placeholder.png?height=200&width=200",
+  "/placeholder.png?height=200&width=200",
+  "/placeholder.png?height=200&width=200",
+]
 
-  const backgrounds = [
-    { name: "Cyber", color: "from-purple-600 to-blue-600" },
-    { name: "Neon", color: "from-pink-600 to-purple-600" },
-    { name: "Matrix", color: "from-green-600 to-black" },
-    { name: "Sunset", color: "from-orange-600 to-red-600" },
-  ]
+const characters = [
+  "/placeholder.png?height=200&width=200",
+  "/placeholder.png?height=200&width=200",
+  "/placeholder.png?height=200&width=200",
+  "/placeholder.png?height=200&width=200",
+  "/placeholder.png?height=200&width=200",
+]
 
-  const characters = [
-    { name: "PSX Agent", rarity: "Common" },
-    { name: "Cyber Dog", rarity: "Rare" },
-    { name: "Glizzy Master", rarity: "Epic" },
-    { name: "Diamond Hands", rarity: "Legendary" },
-  ]
+export function PfpGenerator() {
+  const [selectedBackground, setSelectedBackground] = useState(backgrounds[0])
+  const [selectedCharacter, setSelectedCharacter] = useState(characters[0])
+  const [customText, setCustomText] = useState("PSX")
+  const [textColor, setTextColor] = useState("#00FFFF") // Cyan
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const bgImageRef = useRef<HTMLImageElement>(null)
+  const charImageRef = useRef<HTMLImageElement>(null)
 
-  const accessories = [
-    { name: "None", rarity: "Common" },
-    { name: "Ski Mask", rarity: "Common" },
-    { name: "Sunglasses", rarity: "Rare" },
-    { name: "Crown", rarity: "Epic" },
-    { name: "Laser Eyes", rarity: "Legendary" },
-  ]
+  const drawPfp = () => {
+    const canvas = canvasRef.current
+    const bgImage = bgImageRef.current
+    const charImage = charImageRef.current
 
-  const generateRandom = () => {
-    setSelectedBackground(Math.floor(Math.random() * backgrounds.length))
-    setSelectedCharacter(Math.floor(Math.random() * characters.length))
-    setSelectedAccessory(Math.floor(Math.random() * accessories.length))
+    if (!canvas || !bgImage || !charImage) return
+
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+
+    const size = 500 // Standard PFP size
+    canvas.width = size
+    canvas.height = size
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    // Draw background
+    ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height)
+
+    // Draw character, centered and scaled
+    const charWidth = size * 0.7
+    const charHeight = size * 0.7
+    const charX = (size - charWidth) / 2
+    const charY = (size - charHeight) / 2
+    ctx.drawImage(charImage, charX, charY, charWidth, charHeight)
+
+    // Draw custom text
+    ctx.fillStyle = textColor
+    ctx.strokeStyle = "black"
+    ctx.lineWidth = 8
+    ctx.textAlign = "center"
+    ctx.textBaseline = "bottom"
+    ctx.font = `bold ${size * 0.1}px 'Press Start 2P', cursive` // Example retro font
+
+    const textX = canvas.width / 2
+    const textY = canvas.height * 0.95 // Near the bottom
+    ctx.strokeText(customText.toUpperCase(), textX, textY)
+    ctx.fillText(customText.toUpperCase(), textX, textY)
   }
 
-  const getRarityColor = (rarity: string) => {
-    switch (rarity) {
-      case "Common":
-        return "bg-gray-600"
-      case "Rare":
-        return "bg-blue-600"
-      case "Epic":
-        return "bg-purple-600"
-      case "Legendary":
-        return "bg-yellow-600"
-      default:
-        return "bg-gray-600"
+  // Load images and redraw when selections change
+  useEffect(() => {
+    const loadImages = async () => {
+      const loadImage = (src: string) =>
+        new Promise<HTMLImageElement>((resolve, reject) => {
+          const img = new Image()
+          img.src = src
+          img.crossOrigin = "anonymous"
+          img.onload = () => resolve(img)
+          img.onerror = reject
+        })
+
+      try {
+        const loadedBg = await loadImage(selectedBackground)
+        const loadedChar = await loadImage(selectedCharacter)
+        bgImageRef.current = loadedBg
+        charImageRef.current = loadedChar
+        drawPfp()
+      } catch (error) {
+        console.error("Error loading images:", error)
+      }
+    }
+
+    loadImages()
+  }, [selectedBackground, selectedCharacter, customText, textColor])
+
+  const downloadPfp = () => {
+    const canvas = canvasRef.current
+    if (canvas) {
+      const link = document.createElement("a")
+      link.download = "psx-pfp.png"
+      link.href = canvas.toDataURL("image/png")
+      link.click()
     }
   }
 
+  const resetGenerator = () => {
+    setSelectedBackground(backgrounds[0])
+    setSelectedCharacter(characters[0])
+    setCustomText("PSX")
+    setTextColor("#00FFFF")
+  }
+
   return (
-    <Card className="bg-black/80 border-gray-800">
-      <CardHeader>
-        <CardTitle className="text-white flex items-center gap-2">
-          <User className="h-5 w-5" />
-          PSX PFP Generator
+    <Card className="w-full bg-black/70 border-cyan-500/30 backdrop-blur-xl shadow-cyan-500/20">
+      <CardHeader className="text-center">
+        <CardTitle className="text-4xl font-bold text-cyan-400 flex items-center justify-center gap-2">
+          <Sparkles className="h-8 w-8 text-purple-400 animate-pulse" />
+          PFP Generator
+          <Sparkles className="h-8 w-8 text-purple-400 animate-pulse" />
         </CardTitle>
+        <p className="text-cyan-300/80 text-sm mt-2">Craft your unique agent identity.</p>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Preview */}
-        <div>
-          <h3 className="text-lg font-semibold text-white mb-4">Your PFP</h3>
-          <div className="relative aspect-square bg-gray-900 rounded-lg overflow-hidden border border-gray-600 max-w-64 mx-auto">
-            <div className={`absolute inset-0 bg-gradient-to-br ${backgrounds[selectedBackground].color}`}></div>
-            <div className="absolute inset-4 flex items-center justify-center">
-              <Image
-                src="/images/pfp-character.png"
-                alt="Character"
-                width={150}
-                height={150}
-                className="object-contain"
-              />
-            </div>
-            {selectedAccessory > 0 && (
-              <div className="absolute top-4 right-4">
-                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                  <span className="text-xs">👑</span>
-                </div>
-              </div>
-            )}
-          </div>
+      <CardContent className="flex flex-col items-center gap-6 p-6">
+        {/* PFP Preview */}
+        <div className="relative w-64 h-64 rounded-full overflow-hidden border-4 border-cyan-400/50 shadow-xl">
+          <canvas ref={canvasRef} className="w-full h-full" />
         </div>
 
-        {/* Customization Options */}
-        <div className="space-y-4">
-          {/* Background */}
+        {/* Controls */}
+        <div className="w-full space-y-4">
+          {/* Backgrounds */}
           <div>
-            <h4 className="text-sm font-medium text-gray-300 mb-2">Background</h4>
-            <div className="grid grid-cols-2 gap-2">
+            <h3 className="text-lg font-semibold text-cyan-400 mb-2 flex items-center gap-2">
+              <Palette className="h-5 w-5" /> Background
+            </h3>
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
               {backgrounds.map((bg, index) => (
                 <button
                   key={index}
-                  onClick={() => setSelectedBackground(index)}
-                  className={`p-3 rounded-lg border-2 transition-all ${
-                    selectedBackground === index ? "border-purple-500" : "border-gray-600 hover:border-purple-400"
-                  }`}
+                  onClick={() => setSelectedBackground(bg)}
+                  className={cn(
+                    "w-full h-20 rounded-md overflow-hidden border-2 transition-all",
+                    selectedBackground === bg
+                      ? "border-cyan-400 ring-2 ring-cyan-400"
+                      : "border-gray-700 hover:border-cyan-500",
+                  )}
                 >
-                  <div className={`h-8 w-full rounded bg-gradient-to-r ${bg.color} mb-2`}></div>
-                  <span className="text-xs text-gray-300">{bg.name}</span>
+                  <img
+                    src={bg || "/placeholder.png"}
+                    alt={`Background ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Character */}
+          {/* Characters */}
           <div>
-            <h4 className="text-sm font-medium text-gray-300 mb-2">Character</h4>
-            <div className="grid grid-cols-2 gap-2">
+            <h3 className="text-lg font-semibold text-cyan-400 mb-2 flex items-center gap-2">
+              <ImageIcon className="h-5 w-5" /> Character
+            </h3>
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
               {characters.map((char, index) => (
                 <button
                   key={index}
-                  onClick={() => setSelectedCharacter(index)}
-                  className={`p-3 rounded-lg border-2 transition-all text-left ${
-                    selectedCharacter === index ? "border-purple-500" : "border-gray-600 hover:border-purple-400"
-                  }`}
+                  onClick={() => setSelectedCharacter(char)}
+                  className={cn(
+                    "w-full h-20 rounded-md overflow-hidden border-2 transition-all",
+                    selectedCharacter === char
+                      ? "border-cyan-400 ring-2 ring-cyan-400"
+                      : "border-gray-700 hover:border-cyan-500",
+                  )}
                 >
-                  <div className="text-xs text-white mb-1">{char.name}</div>
-                  <Badge className={`text-xs ${getRarityColor(char.rarity)}`}>{char.rarity}</Badge>
+                  <img
+                    src={char || "/placeholder.png"}
+                    alt={`Character ${index + 1}`}
+                    className="w-full h-full object-contain"
+                  />
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Accessories */}
+          {/* Custom Text */}
           <div>
-            <h4 className="text-sm font-medium text-gray-300 mb-2">Accessories</h4>
-            <div className="grid grid-cols-2 gap-2">
-              {accessories.map((acc, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedAccessory(index)}
-                  className={`p-3 rounded-lg border-2 transition-all text-left ${
-                    selectedAccessory === index ? "border-purple-500" : "border-gray-600 hover:border-purple-400"
-                  }`}
-                >
-                  <div className="text-xs text-white mb-1">{acc.name}</div>
-                  <Badge className={`text-xs ${getRarityColor(acc.rarity)}`}>{acc.rarity}</Badge>
-                </button>
-              ))}
-            </div>
+            <h3 className="text-lg font-semibold text-cyan-400 mb-2 flex items-center gap-2">
+              <Text className="h-5 w-5" /> Custom Text
+            </h3>
+            <Input
+              placeholder="Your Text"
+              value={customText}
+              onChange={(e) => setCustomText(e.target.value)}
+              className="bg-cyan-900/30 border-cyan-500/50 text-cyan-200 placeholder:text-cyan-400/70 focus:ring-cyan-500"
+            />
+          </div>
+
+          {/* Text Color */}
+          <div>
+            <h3 className="text-lg font-semibold text-cyan-400 mb-2 flex items-center gap-2">
+              <Palette className="h-5 w-5" /> Text Color
+            </h3>
+            <Input
+              type="color"
+              value={textColor}
+              onChange={(e) => setTextColor(e.target.value)}
+              className="w-full h-10 bg-cyan-900/30 border-cyan-500/50 rounded-md cursor-pointer"
+            />
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex gap-4">
+        {/* Action Buttons */}
+        <div className="w-full flex flex-col sm:flex-row gap-4">
           <Button
-            onClick={generateRandom}
-            variant="outline"
-            className="bg-black text-white flex-1 border-gray-800 hover:bg-gray-800/50"
+            onClick={downloadPfp}
+            className="flex-1 bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-lg py-6 font-bold uppercase tracking-wider shadow-lg shadow-cyan-500/30 hover:from-cyan-700 hover:to-blue-700"
           >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Random
+            <Download className="h-5 w-5 mr-2" />
+            DOWNLOAD PFP
           </Button>
-          <Button className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-            <Download className="h-4 w-4 mr-2" />
-            Download
+          <Button
+            onClick={resetGenerator}
+            variant="outline"
+            className="flex-1 bg-cyan-800/30 text-cyan-300 border-cyan-500/50 hover:bg-cyan-800/50 text-lg py-6 font-bold uppercase tracking-wider"
+          >
+            <Eraser className="h-5 w-5 mr-2" />
+            RESET
           </Button>
-        </div>
-
-        {/* Stats */}
-        <div className="bg-gray-900/50 rounded-lg p-4">
-          <h4 className="text-sm font-medium text-gray-300 mb-2">PFP Stats</h4>
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-lg font-bold text-white">1/10,000</div>
-              <div className="text-xs text-gray-400">Rarity</div>
-            </div>
-            <div>
-              <div className="text-lg font-bold text-white">Epic</div>
-              <div className="text-xs text-gray-400">Tier</div>
-            </div>
-            <div>
-              <div className="text-lg font-bold text-white">2.5 PSX</div>
-              <div className="text-xs text-gray-400">Mint Cost</div>
-            </div>
-          </div>
         </div>
       </CardContent>
     </Card>

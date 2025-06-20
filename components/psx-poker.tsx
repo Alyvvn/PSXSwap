@@ -1,158 +1,325 @@
 "use client"
 
-import { useState } from "react"
+import type React from "react"
+
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Coins, Users, Clock } from "lucide-react"
+import { Sparkles } from "lucide-react"
+import { cn } from "@/lib/utils"
 
-export function PSXPoker() {
-  const [balance, setBalance] = useState(5000)
-  const [currentBet, setCurrentBet] = useState(0)
-  const [gameState, setGameState] = useState<"waiting" | "betting" | "playing">("waiting")
+type PlayingCard = {
+  suit: string
+  rank: string
+  value: number
+}
 
-  const players = [
-    { name: "You", chips: balance, status: "active", position: "bottom" },
-    { name: "Agent_007", chips: 3200, status: "active", position: "left" },
-    { name: "CryptoNinja", chips: 4800, status: "folded", position: "top" },
-    { name: "BaseHunter", chips: 2100, status: "active", position: "right" },
-  ]
+const suits = ["♠️", "♥️", "♦️", "♣️"]
+const ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
+
+const getCardValue = (rank: string): number => {
+  if (rank === "A") return 14 // For poker ranking, Ace is high
+  if (rank === "K") return 13
+  if (rank === "Q") return 12
+  if (rank === "J") return 11
+  return Number.parseInt(rank)
+}
+
+const createDeck = (): PlayingCard[] => {
+  const deck: PlayingCard[] = []
+  for (const suit of suits) {
+    for (const rank of ranks) {
+      deck.push({ suit, rank, value: getCardValue(rank) })
+    }
+  }
+  return shuffleDeck(deck)
+}
+
+const shuffleDeck = (deck: PlayingCard[]): PlayingCard[] => {
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[deck[i], deck[j]] = [deck[j], deck[i]]
+  }
+  return deck
+}
+
+// Simplified hand evaluation for demonstration (e.g., just checking for pairs)
+const evaluateHand = (hand: PlayingCard[]): string => {
+  if (hand.length < 2) return "Incomplete Hand"
+
+  const rankCounts: { [key: string]: number } = {}
+  for (const card of hand) {
+    rankCounts[card.rank] = (rankCounts[card.rank] || 0) + 1
+  }
+
+  const pairs = Object.values(rankCounts).filter((count) => count === 2).length
+  const threes = Object.values(rankCounts).filter((count) => count === 3).length
+  const fours = Object.values(rankCounts).filter((count) => count === 4).length
+
+  if (fours > 0) return "Four of a Kind!"
+  if (threes > 0 && pairs > 0) return "Full House!"
+  if (threes > 0) return "Three of a Kind!"
+  if (pairs === 2) return "Two Pair!"
+  if (pairs === 1) return "One Pair!"
+
+  return "High Card"
+}
+
+export function PsxPoker() {
+  const [deck, setDeck] = useState<PlayingCard[]>([])
+  const [playerHand, setPlayerHand] = useState<PlayingCard[]>([])
+  const [communityCards, setCommunityCards] = useState<PlayingCard[]>([])
+  const [balance, setBalance] = useState(1000)
+  const [bet, setBet] = useState(0)
+  const [message, setMessage] = useState("Place your bet to start!")
+  const [gamePhase, setGamePhase] = useState<"betting" | "pre_flop" | "flop" | "turn" | "river" | "results">("betting")
+  const [inputBet, setInputBet] = useState("")
+
+  const dealSoundRef = useRef<HTMLAudioElement>(null)
+  const chipSoundRef = useRef<HTMLAudioElement>(null)
+  const winSoundRef = useRef<HTMLAudioElement>(null)
+  const loseSoundRef = useRef<HTMLAudioElement>(null)
+
+  useEffect(() => {
+    // Preload sounds
+    if (dealSoundRef.current) dealSoundRef.current.load()
+    if (chipSoundRef.current) chipSoundRef.current.load()
+    if (winSoundRef.current) winSoundRef.current.load()
+    if (loseSoundRef.current) loseSoundRef.current.load()
+  }, [])
+
+  const playSound = (audioRef: React.RefObject<HTMLAudioElement>) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0
+      audioRef.current.play().catch((e) => console.error("Error playing sound:", e))
+    }
+  }
+
+  const startGame = () => {
+    if (bet <= 0 || bet > balance) {
+      setMessage("Invalid bet amount!")
+      return
+    }
+    playSound(chipSoundRef)
+    setBalance((prev) => prev - bet)
+    const newDeck = createDeck()
+    setDeck(newDeck)
+    setPlayerHand([newDeck.pop()!, newDeck.pop()!])
+    setCommunityCards([])
+    setMessage("Dealing hole cards...")
+    setGamePhase("pre_flop")
+    playSound(dealSoundRef)
+  }
+
+  const dealFlop = () => {
+    if (deck.length < 3) {
+      setMessage("Not enough cards for flop!")
+      return
+    }
+    playSound(dealSoundRef)
+    const newDeck = [...deck]
+    setCommunityCards([newDeck.pop()!, newDeck.pop()!, newDeck.pop()!])
+    setDeck(newDeck)
+    setMessage("Flop dealt!")
+    setGamePhase("flop")
+  }
+
+  const dealTurn = () => {
+    if (deck.length < 1) {
+      setMessage("Not enough cards for turn!")
+      return
+    }
+    playSound(dealSoundRef)
+    const newDeck = [...deck]
+    setCommunityCards((prev) => [...prev, newDeck.pop()!])
+    setDeck(newDeck)
+    setMessage("Turn dealt!")
+    setGamePhase("turn")
+  }
+
+  const dealRiver = () => {
+    if (deck.length < 1) {
+      setMessage("Not enough cards for river!")
+      return
+    }
+    playSound(dealSoundRef)
+    const newDeck = [...deck]
+    setCommunityCards((prev) => [...prev, newDeck.pop()!])
+    setDeck(newDeck)
+    setMessage("River dealt! Showdown!")
+    setGamePhase("river")
+  }
+
+  const showdown = () => {
+    const fullHand = [...playerHand, ...communityCards]
+    const handResult = evaluateHand(fullHand)
+    setMessage(`Your best hand: ${handResult}`)
+    // Simplified win condition: if player has at least a pair, they win
+    if (handResult.includes("Pair") || handResult.includes("Kind") || handResult.includes("House")) {
+      setBalance((prev) => prev + bet * 3) // Example payout
+      playSound(winSoundRef)
+    } else {
+      playSound(loseSoundRef)
+    }
+    setGamePhase("results")
+  }
+
+  const resetGame = () => {
+    setPlayerHand([])
+    setCommunityCards([])
+    setBet(0)
+    setInputBet("")
+    setMessage("Place your bet to start!")
+    setGamePhase("betting")
+  }
+
+  const handleBetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setInputBet(value)
+    const numValue = Number.parseInt(value)
+    if (!isNaN(numValue) && numValue > 0 && numValue <= balance) {
+      setBet(numValue)
+    } else {
+      setBet(0)
+    }
+  }
+
+  const getCardColor = (suit: string) => {
+    return suit === "♥️" || suit === "♦️" ? "text-red-500" : "text-black"
+  }
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="grid md:grid-cols-4 gap-6 mb-6">
-        <Card className="bg-black/80 border-gray-700">
-          <CardContent className="p-4 text-center">
-            <Coins className="h-6 w-6 text-green-400 mx-auto mb-2" />
-            <div className="text-xl font-bold text-white">{balance}</div>
-            <div className="text-sm text-gray-400">Your Chips</div>
-          </CardContent>
-        </Card>
-        <Card className="bg-black/80 border-gray-700">
-          <CardContent className="p-4 text-center">
-            <Users className="h-6 w-6 text-blue-400 mx-auto mb-2" />
-            <div className="text-xl font-bold text-white">4/6</div>
-            <div className="text-sm text-gray-400">Players</div>
-          </CardContent>
-        </Card>
-        <Card className="bg-black/80 border-gray-700">
-          <CardContent className="p-4 text-center">
-            <Clock className="h-6 w-6 text-yellow-400 mx-auto mb-2" />
-            <div className="text-xl font-bold text-white">1,250</div>
-            <div className="text-sm text-gray-400">Pot Size</div>
-          </CardContent>
-        </Card>
-        <Card className="bg-black/80 border-gray-700">
-          <CardContent className="p-4 text-center">
-            <Badge className="bg-green-600 mb-2">Live</Badge>
-            <div className="text-sm text-gray-400">Table Status</div>
-          </CardContent>
-        </Card>
-      </div>
+    <Card className="w-full max-w-3xl bg-black/70 border-red-500/30 backdrop-blur-xl shadow-red-500/20">
+      <CardHeader className="text-center">
+        <CardTitle className="text-4xl font-bold text-red-400 flex items-center justify-center gap-2">
+          <Sparkles className="h-8 w-8 text-pink-400 animate-pulse" />
+          Glizzy Poker
+          <Sparkles className="h-8 w-8 text-pink-400 animate-pulse" />
+        </CardTitle>
+        <p className="text-red-300/80 text-sm mt-2">Go all-in for the Glizzy!</p>
+      </CardHeader>
+      <CardContent className="flex flex-col items-center gap-6 p-6">
+        <div className="w-full flex justify-between items-center text-red-300 font-mono text-lg">
+          <span>BALANCE: ${balance}</span>
+          <span>CURRENT BET: ${bet}</span>
+        </div>
 
-      {/* Poker Table */}
-      <Card className="bg-gradient-to-br from-green-900/30 to-green-800/30 border-green-500/30 mb-6">
-        <CardHeader>
-          <CardTitle className="text-white text-center">Texas Hold'em - PSX Stakes</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="relative aspect-[16/10] bg-green-800/50 rounded-lg border-4 border-green-600/30 p-8">
-            {/* Community Cards */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <div className="flex gap-2 mb-4">
-                {[1, 2, 3, 4, 5].map((card) => (
-                  <div
-                    key={card}
-                    className="w-12 h-16 bg-white rounded border-2 border-gray-300 flex items-center justify-center"
-                  >
-                    <span className="text-black text-xs">?</span>
-                  </div>
-                ))}
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-yellow-400">1,250 PSX</div>
-                <div className="text-sm text-gray-300">Pot</div>
-              </div>
-            </div>
-
-            {/* Player Positions */}
-            {players.map((player, index) => (
-              <div
-                key={index}
-                className={`absolute ${
-                  player.position === "bottom"
-                    ? "bottom-4 left-1/2 transform -translate-x-1/2"
-                    : player.position === "top"
-                      ? "top-4 left-1/2 transform -translate-x-1/2"
-                      : player.position === "left"
-                        ? "left-4 top-1/2 transform -translate-y-1/2"
-                        : "right-4 top-1/2 transform -translate-y-1/2"
-                }`}
-              >
-                <div className="bg-gray-900/80 rounded-lg p-3 text-center border border-gray-600">
-                  <div className="text-white font-semibold text-sm">{player.name}</div>
-                  <div className="text-green-400 text-xs">{player.chips} PSX</div>
-                  <Badge className={`text-xs mt-1 ${player.status === "active" ? "bg-green-600" : "bg-gray-600"}`}>
-                    {player.status}
-                  </Badge>
+        {/* Community Cards */}
+        <div className="w-full bg-red-900/20 rounded-lg p-4 border border-red-500/30 shadow-inner">
+          <h3 className="text-red-400 font-mono text-lg mb-2">COMMUNITY CARDS</h3>
+          <div className="flex flex-wrap gap-3 justify-center">
+            {communityCards.length === 0 ? (
+              <p className="text-red-300/60">No community cards yet.</p>
+            ) : (
+              communityCards.map((card, index) => (
+                <div
+                  key={index}
+                  className={cn(
+                    "w-20 h-28 bg-white rounded-md flex flex-col items-center justify-center text-xl font-bold border-2 border-gray-400",
+                    getCardColor(card.suit),
+                  )}
+                >
+                  <span>{card.rank}</span>
+                  <span className="text-3xl">{card.suit}</span>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Game Controls */}
-      <Card className="bg-black/80 border-gray-700">
-        <CardContent className="p-6">
-          <div className="text-center mb-6">
-            <h3 className="text-xl font-bold text-white mb-2">Your Turn</h3>
-            <p className="text-gray-400">Choose your action</p>
+        {/* Player's Hand */}
+        <div className="w-full bg-red-900/20 rounded-lg p-4 border border-red-500/30 shadow-inner">
+          <h3 className="text-red-400 font-mono text-lg mb-2">YOUR HAND</h3>
+          <div className="flex flex-wrap gap-3 justify-center">
+            {playerHand.length === 0 ? (
+              <p className="text-red-300/60">Deal to see your hand.</p>
+            ) : (
+              playerHand.map((card, index) => (
+                <div
+                  key={index}
+                  className={cn(
+                    "w-20 h-28 bg-white rounded-md flex flex-col items-center justify-center text-xl font-bold border-2 border-gray-400",
+                    getCardColor(card.suit),
+                  )}
+                >
+                  <span>{card.rank}</span>
+                  <span className="text-3xl">{card.suit}</span>
+                </div>
+              ))
+            )}
           </div>
+        </div>
 
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Button
-              variant="outline"
-              className="border-red-500 text-red-400 hover:bg-red-500/10"
-              onClick={() => setGameState("waiting")}
-            >
-              Fold
-            </Button>
-            <Button
-              variant="outline"
-              className="border-yellow-500 text-yellow-400 hover:bg-yellow-500/10"
-              onClick={() => setCurrentBet(50)}
-            >
-              Check
-            </Button>
-            <Button
-              variant="outline"
-              className="border-blue-500 text-blue-400 hover:bg-blue-500/10"
-              onClick={() => setCurrentBet(100)}
-            >
-              Call (100 PSX)
-            </Button>
-            <Button
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-              onClick={() => setCurrentBet(200)}
-            >
-              Raise (200 PSX)
-            </Button>
-            <Button
-              className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700"
-              onClick={() => setCurrentBet(balance)}
-            >
-              All In
-            </Button>
-          </div>
+        <div className="text-center text-red-200 font-mono text-lg mt-2">{message}</div>
 
-          <div className="mt-6 text-center">
-            <p className="text-gray-400 text-sm">
-              Game is in demo mode. Connect your wallet to play with real PSX tokens.
-            </p>
+        {gamePhase === "betting" && (
+          <div className="w-full flex flex-col gap-4">
+            <input
+              type="number"
+              value={inputBet}
+              onChange={handleBetChange}
+              placeholder="Enter bet amount"
+              className="w-full p-3 rounded-md bg-red-900/30 border border-red-500/50 text-red-200 placeholder:text-red-400/70 focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+            <Button
+              onClick={startGame}
+              disabled={bet === 0 || bet > balance}
+              className="w-full bg-gradient-to-r from-red-600 to-pink-600 text-white text-xl py-6 font-bold uppercase tracking-wider shadow-lg shadow-red-500/30 hover:from-red-700 hover:to-pink-700"
+            >
+              PLACE BET & DEAL
+            </Button>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        )}
+
+        {gamePhase === "pre_flop" && (
+          <Button
+            onClick={dealFlop}
+            className="w-full bg-gradient-to-r from-red-600 to-pink-600 text-white text-xl py-6 font-bold uppercase tracking-wider shadow-lg shadow-red-500/30 hover:from-red-700 hover:to-pink-700"
+          >
+            DEAL FLOP
+          </Button>
+        )}
+
+        {gamePhase === "flop" && (
+          <Button
+            onClick={dealTurn}
+            className="w-full bg-gradient-to-r from-red-600 to-pink-600 text-white text-xl py-6 font-bold uppercase tracking-wider shadow-lg shadow-red-500/30 hover:from-red-700 hover:to-pink-700"
+          >
+            DEAL TURN
+          </Button>
+        )}
+
+        {gamePhase === "turn" && (
+          <Button
+            onClick={dealRiver}
+            className="w-full bg-gradient-to-r from-red-600 to-pink-600 text-white text-xl py-6 font-bold uppercase tracking-wider shadow-lg shadow-red-500/30 hover:from-red-700 hover:to-pink-700"
+          >
+            DEAL RIVER
+          </Button>
+        )}
+
+        {gamePhase === "river" && (
+          <Button
+            onClick={showdown}
+            className="w-full bg-gradient-to-r from-red-600 to-pink-600 text-white text-xl py-6 font-bold uppercase tracking-wider shadow-lg shadow-red-500/30 hover:from-red-700 hover:to-pink-700"
+          >
+            SHOWDOWN
+          </Button>
+        )}
+
+        {gamePhase === "results" && (
+          <Button
+            onClick={resetGame}
+            className="w-full bg-red-800/30 text-red-300 border-red-500/50 hover:bg-red-800/50 text-xl py-6 font-bold uppercase tracking-wider"
+          >
+            PLAY AGAIN
+          </Button>
+        )}
+      </CardContent>
+      <audio ref={dealSoundRef} src="/sounds/deal.mp3" preload="auto" />
+      <audio ref={chipSoundRef} src="/sounds/chip.mp3" preload="auto" />
+      <audio ref={winSoundRef} src="/sounds/win.mp3" preload="auto" />
+      <audio ref={loseSoundRef} src="/sounds/lose.mp3" preload="auto" />
+    </Card>
   )
 }
