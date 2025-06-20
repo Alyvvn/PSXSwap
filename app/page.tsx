@@ -78,10 +78,7 @@ export default function PSXLanding() {
 
   const contractAddress = "0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
 
-  // Force scroll to top on component mount to prevent unwanted initial scroll
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
+  /
 
   // Smooth scroll tracking
   useEffect(() => {
