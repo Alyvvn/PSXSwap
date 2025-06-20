@@ -271,15 +271,7 @@ export default function PSXLanding() {
             <div className="flex items-center gap-3">
               <Link href="/glizzy-world">
                 <button className="px-6 py-3 rounded-full font-medium transition-all duration-500 text-sm bg-gradient-to-r from-red-500/90 to-pink-500/90 text-white hover:from-red-600 hover:to-pink-600 shadow-lg shadow-red-500/30 font-mono relative overflow-hidden group hover:scale-105">
-                  <span className="relative z-10 flex items-center gap-2">
-                    <span className="text-sm">🎰</span>
-                    GLIZZY WORLD CASINO
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </button>
-              </Link>
-              <Link href="/meme-generator">
-                <button className="px-6 py-3 rounded-full font-medium transition-all duration-500 text-sm text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100 font-mono hover:scale-105">
+                              </buttoduration-500 text-sm text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100 font-mono hover:scale-105">
                   MEMES
                 </button>
               </Link>
@@ -363,10 +355,7 @@ export default function PSXLanding() {
                     onClick={() => setMobileMenuOpen(false)}
                     className="w-full px-6 py-4 rounded-xl font-medium transition-all duration-500 text-sm text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100 font-mono text-left"
                   >
-                    MEMES
-                  </button>
-                </Link>
-                <Link href="/pfp-generator" className="block">
+                    🌭🎰🌭tor" className="block">
                   <button
                     onClick={() => setMobileMenuOpen(false)}
                     className="w-full px-6 py-4 rounded-xl font-medium transition-all duration-500 text-sm text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100 font-mono text-left"
