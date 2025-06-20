@@ -2,6 +2,9 @@
 
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
+import dynamic from "next/dynamic"
+import Image from "next/image"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -10,7 +13,6 @@ import {
   Twitter,
   MessageCircle,
   BarChart3,
-  DiscIcon as Discord,
   Menu,
   X,
   Wifi,
@@ -20,10 +22,17 @@ import {
   Shield,
   Activity,
   Target,
+  Github,
 } from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
-import { SwapWidget } from "@/components/swap-widget"
+
+/**
+ *  The (heavy) Uniswap widget is loaded *only* in the browser so it can’t
+ *  break the server build nor the Next.js bundler.
+ */
+const SwapWidget = dynamic(() => import("@/components/swap-widget"), {
+  ssr: false,
+  loading: () => <p className="text-center py-8">Loading swap…</p>,
+})
 
 /* -------------------------------------------------------------------------- */
 /*                                 DUMMY DATA                                 */
@@ -367,7 +376,11 @@ export default function PSXLanding() {
               icon: BarChart3,
               label: "Chart",
             },
-            { href: "https://discord.gg/psxonbase", icon: Discord, label: "Discord" },
+            {
+              href: "https://github.com/your-repo",
+              icon: Github,
+              label: "GitHub",
+            },
             {
               href: "https://basescan.org/address/0x4444489570Afd4261d616df00DE1668dAd5F8ceE",
               icon: ExternalLink,
@@ -506,7 +519,7 @@ export default function PSXLanding() {
                   <h3 className="text-xl font-mono font-bold text-cyan-400 mb-6">QUICK ACTIONS</h3>
                   <Button
                     asChild
-                    className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-mono"
+                    className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-mono px-10 py-5 text-lg transition-all duration-500 hover:scale-[1.05] shadow-lg shadow-cyan-400/20"
                   >
                     <Link
                       href="https://dexscreener.com/base/0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
@@ -611,7 +624,7 @@ export default function PSXLanding() {
                     className="w-full mb-4 border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 font-mono"
                   >
                     <Link href="https://discord.gg/psxonbase" target="_blank">
-                      <Discord className="h-4 w-4 mr-2" /> AGENT SUPPORT
+                      <Twitter className="h-4 w-4 mr-2" /> AGENT SUPPORT
                     </Link>
                   </Button>
                   <Button
@@ -699,7 +712,7 @@ export default function PSXLanding() {
                     className="bg-red-500/90 hover:bg-red-600 text-white font-mono px-10 py-5 text-lg transition-all duration-500 hover:scale-[1.05] shadow-lg shadow-red-500/20"
                   >
                     <Link href="https://discord.gg/psxonbase" target="_blank" rel="noopener noreferrer">
-                      [ ENLIST NOW ] <Discord className="ml-3 h-5 w-5" />
+                      [ ENLIST NOW ] <Twitter className="ml-3 h-5 w-5" />
                     </Link>
                   </Button>
                 </div>
@@ -793,7 +806,6 @@ export default function PSXLanding() {
             {[
               ["https://t.me/psxonbase", MessageCircle],
               ["https://x.com/PSXonBase", Twitter],
-              ["https://discord.gg/psxonbase", Discord],
             ].map(([href, Icon]) => (
               <Link
                 key={href}
