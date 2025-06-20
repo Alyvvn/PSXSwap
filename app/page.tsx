@@ -209,7 +209,7 @@ export default function PSXLanding() {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-br from-cyan-400/90 to-purple-500/90 rounded-full flex items-center justify-center shadow-lg shadow-cyan-400/20 transition-all duration-500 hover:scale-110">
                 <Image
-                  src="/images/character-hero.png"
+                  src="/images/psx-attention.png"
                   alt="PSX Logo"
                   width={24}
                   height={24}
