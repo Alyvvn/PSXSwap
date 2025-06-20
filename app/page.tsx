@@ -25,8 +25,6 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { SwapWidget } from "@/components/swap-widget"
-import { GlizzyWorld } from "@/components/glizzy-world" // Import GlizzyWorld
-import { InteractiveRoadmap } from "@/components/interactive-roadmap" // Import InteractiveRoadmap
 
 export default function PSXLanding() {
   const [copied, setCopied] = useState(false)
@@ -40,8 +38,6 @@ export default function PSXLanding() {
   // Refs for scroll sections
   const homeRef = useRef<HTMLDivElement>(null)
   const swapRef = useRef<HTMLDivElement>(null)
-  const glizzyWorldRef = useRef<HTMLDivElement>(null) // Ref for GlizzyWorld section
-  const roadmapRef = useRef<HTMLDivElement>(null) // Ref for Roadmap section
   const intelRef = useRef<HTMLDivElement>(null)
 
   const contractAddress = "0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
@@ -164,8 +160,6 @@ export default function PSXLanding() {
   const navItems = [
     { id: "home", label: "Home", ref: homeRef },
     { id: "swap", label: "Trade", ref: swapRef },
-    { id: "glizzy-world", label: "Glizzy World", ref: glizzyWorldRef }, // Add Glizzy World to nav
-    { id: "roadmap", label: "Roadmap", ref: roadmapRef }, // Add Roadmap to nav
     { id: "intel", label: "Intel", ref: intelRef },
   ]
 
@@ -302,6 +296,21 @@ export default function PSXLanding() {
                   MEMES
                 </button>
               </Link>
+              <Link href="/pfp-generator">
+                <button className="px-6 py-3 rounded-full font-medium transition-all duration-500 text-sm text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100 font-mono hover:scale-105">
+                  PFP
+                </button>
+              </Link>
+              <Link href="/roadmap">
+                <button className="px-6 py-3 rounded-full font-medium transition-all duration-500 text-sm text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100 font-mono hover:scale-105">
+                  ROADMAP
+                </button>
+              </Link>
+              <Link href="/game-portal">
+                <button className="px-6 py-3 rounded-full font-medium transition-all duration-500 text-sm text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100 font-mono hover:scale-105">
+                  GAMES
+                </button>
+              </Link>
             </div>
           </div>
 
@@ -358,6 +367,30 @@ export default function PSXLanding() {
                     className="w-full px-6 py-4 rounded-xl font-medium transition-all duration-500 text-sm text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100 font-mono text-left"
                   >
                     MEMES
+                  </button>
+                </Link>
+                <Link href="/pfp-generator" className="block">
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full px-6 py-4 rounded-xl font-medium transition-all duration-500 text-sm text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100 font-mono text-left"
+                  >
+                    PFP
+                  </button>
+                </Link>
+                <Link href="/roadmap" className="block">
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full px-6 py-4 rounded-xl font-medium transition-all duration-500 text-sm text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100 font-mono text-left"
+                  >
+                    ROADMAP
+                  </button>
+                </Link>
+                <Link href="/game-portal" className="block">
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full px-6 py-4 rounded-xl font-medium transition-all duration-500 text-sm text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100 font-mono text-left"
+                  >
+                    GAMES
                   </button>
                 </Link>
               </div>
@@ -418,19 +451,14 @@ export default function PSXLanding() {
           <div className="mb-16 animate-in fade-in-50 duration-1000">
             <h1
               className="text-8xl md:text-[12rem] font-black text-white mb-8 tracking-tight transition-all duration-1000 ease-out"
-              style={{
-                transform: `translateY(${scrollY * 0.1}px)`,
-              }}
+              // Removed parallax transform: style={{ transform: `translateY(${scrollY * 0.1}px)` }}
             >
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-600 drop-shadow-[0_0_30px_rgba(168,85,247,0.4)] animate-pulse">
                 PSX
               </span>
             </h1>
             <div
-              className="transition-all duration-1000 delay-300 ease-out"
-              style={{
-                transform: `translateY(${scrollY * 0.05}px)`,
-              }}
+            // Removed parallax transform: style={{ transform: `translateY(${scrollY * 0.05}px)` }}
             >
               <p className="text-2xl md:text-4xl text-cyan-300 font-light tracking-wide font-mono mt-6 animate-in slide-in-from-bottom-5 duration-1000 delay-500">
                 PRECISION. STEALTH. EXECUTION.
@@ -877,16 +905,6 @@ export default function PSXLanding() {
         </div>
       </section>
 
-      {/* Glizzy World Section */}
-      <section ref={glizzyWorldRef} className="py-32 px-4 bg-black/80 backdrop-blur-sm border-y border-red-400/10">
-        <GlizzyWorld />
-      </section>
-
-      {/* Interactive Roadmap Section */}
-      <section ref={roadmapRef} className="py-32 px-4 bg-black/80 backdrop-blur-sm border-y border-purple-400/10">
-        <InteractiveRoadmap />
-      </section>
-
       {/* Enhanced Intelligence Reports Section */}
       <section ref={intelRef} className="py-32 px-4 bg-black/80 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto">
@@ -983,6 +1001,24 @@ export default function PSXLanding() {
                   className="text-cyan-300/70 hover:text-cyan-400 block font-mono transition-colors duration-300"
                 >
                   Meme Generator
+                </Link>
+                <Link
+                  href="/pfp-generator"
+                  className="text-cyan-300/70 hover:text-cyan-400 block font-mono transition-colors duration-300"
+                >
+                  PFP Generator
+                </Link>
+                <Link
+                  href="/roadmap"
+                  className="text-cyan-300/70 hover:text-cyan-400 block font-mono transition-colors duration-300"
+                >
+                  Interactive Roadmap
+                </Link>
+                <Link
+                  href="/game-portal"
+                  className="text-cyan-300/70 hover:text-cyan-400 block font-mono transition-colors duration-300"
+                >
+                  Game Portal
                 </Link>
                 <Link
                   href="#"
