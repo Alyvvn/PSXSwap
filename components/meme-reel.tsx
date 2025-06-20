@@ -1,26 +1,10 @@
 "use client"
 
-import { useRef, useEffect } from "react"
+import { useRef } from "react"
 import Image from "next/image"
 
 export function MemeReel() {
   const scrollRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const scrollContainer = scrollRef.current
-    if (!scrollContainer) return
-
-    const autoScroll = () => {
-      if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth - scrollContainer.clientWidth) {
-        scrollContainer.scrollLeft = 0
-      } else {
-        scrollContainer.scrollLeft += 1
-      }
-    }
-
-    const interval = setInterval(autoScroll, 30)
-    return () => clearInterval(interval)
-  }, [])
 
   const memes = [
     "/images/psx-hero.png",
