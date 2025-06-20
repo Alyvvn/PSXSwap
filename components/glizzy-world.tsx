@@ -236,7 +236,10 @@ export function GlizzyWorld() {
                   Access Gaming Portal
                 </Button>
               </Link>
-              <Button variant="outline" className="border-purple-500 text-purple-400 hover:bg-purple-500/10 py-3 px-8">
+              <Button
+                variant="outline"
+                className="bg-black text-white border-purple-500 hover:bg-purple-500/10 py-3 px-8"
+              >
                 Learn More
               </Button>
             </div>

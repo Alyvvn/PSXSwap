@@ -68,7 +68,6 @@ export default function PSXLanding() {
   const [copied, setCopied] = useState(false)
   const [activeNav, setActiveNav] = useState("home")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  // Removed terminalText state as it was not being used in the JSX
   const [currentIntel, setCurrentIntel] = useState(0)
   const [scrollY, setScrollY] = useState(0)
 
@@ -90,8 +89,6 @@ export default function PSXLanding() {
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
-
-  // Removed Smooth terminal typing effect as terminalText was not being used
 
   // Intel reports cycling
   useEffect(() => {
@@ -355,9 +352,6 @@ export default function PSXLanding() {
           </div>
         )}
       </nav>
-
-      {/* Removed Floating Agent Character */}
-      {/* Removed Enhanced Terminal Status */}
 
       {/* Hero Section - Enhanced */}
       <section

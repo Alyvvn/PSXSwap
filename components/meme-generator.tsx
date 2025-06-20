@@ -47,7 +47,7 @@ export function MemeGenerator() {
               onClick={randomizeTemplate}
               variant="outline"
               size="sm"
-              className="border-gray-700 text-gray-300 hover:bg-gray-900"
+              className="bg-black text-white border-gray-700 hover:bg-gray-900"
             >
               <RefreshCw className="h-4 w-4 mr-2" />
               Random
@@ -63,7 +63,7 @@ export function MemeGenerator() {
                 onClick={() => setSelectedTemplate(index)}
               >
                 <Image
-                  src={template || "/placeholder.svg"}
+                  src={template || "/placeholder.png"}
                   alt={`Template ${index + 1}`}
                   fill
                   className="object-cover"
@@ -100,7 +100,7 @@ export function MemeGenerator() {
           <h3 className="text-lg font-semibold text-white mb-4">Preview</h3>
           <div className="relative aspect-square bg-black rounded-lg overflow-hidden border border-gray-800">
             <Image
-              src={memeTemplates[selectedTemplate] || "/placeholder.svg"}
+              src={memeTemplates[selectedTemplate] || "/placeholder.png"}
               alt="Meme Preview"
               fill
               className="object-cover"
@@ -145,7 +145,7 @@ export function MemeGenerator() {
             <Download className="h-4 w-4 mr-2" />
             Download Meme
           </Button>
-          <Button variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-900">
+          <Button variant="outline" className="bg-black text-white border-gray-700 hover:bg-gray-900">
             Share
           </Button>
         </div>
@@ -164,7 +164,7 @@ export function MemeGenerator() {
                 key={index}
                 variant="outline"
                 size="sm"
-                className="border-gray-800 text-gray-400 hover:border-gray-700 hover:bg-gray-900"
+                className="bg-black text-white border-gray-800 hover:border-gray-700 hover:bg-gray-900"
                 onClick={() => {
                   setTopText(template.top)
                   setBottomText(template.bottom)

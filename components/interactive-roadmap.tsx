@@ -191,8 +191,8 @@ export function InteractiveRoadmap() {
             <div>
               <h4 className="text-lg font-semibold text-white mb-4">Deliverables</h4>
               <div className="space-y-3">
-                {roadmapPhases[selectedPhase].items.map((item, index) => (
-                  <div key={index} className="flex items-center gap-3">
+                {roadmapPhases[selectedPhase].items.map((item, itemIndex) => (
+                  <div key={itemIndex} className="flex items-center gap-3">
                     <div
                       className={`w-2 h-2 rounded-full ${
                         item.startsWith("✅") ? "bg-green-500" : item.startsWith("🔄") ? "bg-yellow-500" : "bg-gray-500"

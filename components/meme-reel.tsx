@@ -28,7 +28,7 @@ export function MemeReel() {
           key={index}
           className="flex-shrink-0 w-64 h-40 bg-black/30 rounded-lg overflow-hidden border border-white/10 relative"
         >
-          <Image src={src || "/placeholder.svg"} alt={`PSX Meme ${index + 1}`} fill className="object-cover" />
+          <Image src={src || "/placeholder.png"} alt={`PSX Meme ${index + 1}`} fill className="object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
           <div className="absolute bottom-2 left-2 text-white text-xs font-mono">INTEL_FILE_{index + 1}.jpg</div>
         </div>

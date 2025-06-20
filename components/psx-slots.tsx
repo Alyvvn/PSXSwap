@@ -111,7 +111,7 @@ export function PSXSlots() {
                       }`}
                     >
                       <Image
-                        src={symbols[symbolIndex].image || "/placeholder.svg"}
+                        src={symbols[symbolIndex].image || "/placeholder.png"}
                         alt={symbols[symbolIndex].name}
                         width={80}
                         height={80}
@@ -222,7 +222,7 @@ export function PSXSlots() {
               {symbols.map((symbol, index) => (
                 <div key={index} className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
-                    <Image src={symbol.image || "/placeholder.svg"} alt={symbol.name} width={20} height={20} />
+                    <Image src={symbol.image || "/placeholder.png"} alt={symbol.name} width={20} height={20} />
                     <span className="text-gray-300">{symbol.name}</span>
                   </div>
                   <span className="text-yellow-400">{symbol.multiplier}x</span>

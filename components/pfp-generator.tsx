@@ -153,7 +153,7 @@ export function PFPGenerator() {
           <Button
             onClick={generateRandom}
             variant="outline"
-            className="flex-1 border-gray-800 text-purple-400 hover:bg-gray-800/50"
+            className="bg-black text-white flex-1 border-gray-800 hover:bg-gray-800/50"
           >
             <RefreshCw className="h-4 w-4 mr-2" />
             Random
