@@ -14,21 +14,22 @@ export function GamePortal() {
   const [showPassword, setShowPassword] = useState(false)
   const [password, setPassword] = useState("")
   const [applicationText, setApplicationText] = useState("")
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(true) // Changed to true for direct access
   const [activeGame, setActiveGame] = useState<string | null>(null)
 
-  const handlePasswordSubmit = () => {
-    if (password === "iranglizzy") {
-      setIsAuthenticated(true)
-    } else {
-      alert("Incorrect password. Try 'glizzy123' for demo.")
-    }
-  }
+  // Removed password and application logic as per user request for direct access
+  // const handlePasswordSubmit = () => {
+  //   if (password === "iranglizzy") {
+  //     setIsAuthenticated(true)
+  //   } else {
+  //     alert("Incorrect password. Try 'glizzy123' for demo.")
+  //   }
+  // }
 
-  const handleApplicationSubmit = () => {
-    alert("Application submitted! You'll hear back from the agency soon.")
-    setApplicationText("")
-  }
+  // const handleApplicationSubmit = () => {
+  //   alert("Application submitted! You'll hear back from the agency soon.")
+  //   setApplicationText("")
+  // }
 
   const games = [
     {
@@ -209,6 +210,7 @@ export function GamePortal() {
     )
   }
 
+  // This section is now effectively unreachable due to isAuthenticated being true by default
   return (
     <div className="max-w-2xl mx-auto" data-section="game-portal">
       <div className="text-center mb-8">
@@ -234,7 +236,7 @@ export function GamePortal() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter classified password..."
                 className="bg-gray-900 border-gray-600 text-white pr-10"
-                onKeyPress={(e) => e.key === "Enter" && handlePasswordSubmit()}
+                onKeyPress={(e) => e.key === "Enter" && console.log("Password submit disabled")} // Changed to log
               />
               <button
                 type="button"
@@ -247,7 +249,9 @@ export function GamePortal() {
             <p className="text-xs text-gray-500 mt-1">Hint: Try 'glizzy123' for demo access</p>
           </div>
 
-          <Button onClick={handlePasswordSubmit} className="w-full bg-red-600 hover:bg-red-700">
+          <Button onClick={() => console.log("Authenticate disabled")} className="w-full bg-red-600 hover:bg-red-700">
+            {" "}
+            {/* Changed to log */}
             Authenticate
           </Button>
 
@@ -263,7 +267,7 @@ export function GamePortal() {
               className="w-full h-24 p-3 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-400 resize-none"
             />
             <Button
-              onClick={handleApplicationSubmit}
+              onClick={() => console.log("Application submit disabled")} // Changed to log
               variant="outline"
               className="w-full mt-4 border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
             >

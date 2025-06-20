@@ -70,7 +70,13 @@ export function PFPGenerator() {
           <div className="relative aspect-square bg-gray-900 rounded-lg overflow-hidden border border-gray-600 max-w-64 mx-auto">
             <div className={`absolute inset-0 bg-gradient-to-br ${backgrounds[selectedBackground].color}`}></div>
             <div className="absolute inset-4 flex items-center justify-center">
-              <Image src="/images/psx-hero.png" alt="Character" width={150} height={150} className="object-contain" />
+              <Image
+                src="/images/pfp-character.png"
+                alt="Character"
+                width={150}
+                height={150}
+                className="object-contain"
+              />
             </div>
             {selectedAccessory > 0 && (
               <div className="absolute top-4 right-4">

@@ -13,12 +13,12 @@ export function MemeGenerator() {
   const [bottomText, setBottomText] = useState("")
 
   const memeTemplates = [
-    "/images/psx-hero.png",
-    "/images/psx-store.png",
-    "/images/psx-meme.png",
-    "/images/psx-computer.png",
-    "/images/psx-dream.png",
-    "/images/psx-attention.png",
+    "/images/meme-templates/template-1.png",
+    "/images/meme-templates/template-2.png",
+    "/images/meme-templates/template-3.png",
+    "/images/meme-templates/template-4.png",
+    "/images/meme-templates/template-5.png",
+    "/images/meme-templates/template-6.png",
   ]
 
   const handleDownload = () => {

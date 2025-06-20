@@ -7,8 +7,11 @@ import { GamePortal } from "@/components/game-portal"
 
 export default function GamePortalPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black">
-      <div className="max-w-6xl mx-auto p-4">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black relative">
+      <div className="absolute inset-0 opacity-20 pointer-events-none">
+        <img src="/images/game-portal-bg.png" alt="Game Portal Background" className="w-full h-full object-cover" />
+      </div>
+      <div className="max-w-6xl mx-auto p-4 relative z-10">
         <div className="pt-8 mb-8">
           <Link href="/">
             <Button variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800 mb-6">

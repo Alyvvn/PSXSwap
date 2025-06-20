@@ -13,9 +13,7 @@ import {
   DiscIcon as Discord,
   Menu,
   X,
-  Terminal,
   Wifi,
-  Eye,
   Lock,
   Zap,
   ArrowRight,
@@ -24,13 +22,13 @@ import {
   Target,
 } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image" // Import Image component
 import { SwapWidget } from "@/components/swap-widget"
 
 export default function PSXLanding() {
   const [copied, setCopied] = useState(false)
   const [activeNav, setActiveNav] = useState("home")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [glitchActive, setGlitchActive] = useState(false)
   const [terminalText, setTerminalText] = useState("")
   const [currentIntel, setCurrentIntel] = useState(0)
   const [scrollY, setScrollY] = useState(0)
@@ -88,18 +86,6 @@ export default function PSXLanding() {
       priority: "CRITICAL",
     },
   ]
-
-  // Optimized glitch effect
-  useEffect(() => {
-    const interval = setInterval(
-      () => {
-        setGlitchActive(true)
-        setTimeout(() => setGlitchActive(false), 100)
-      },
-      15000 + Math.random() * 10000,
-    )
-    return () => clearInterval(interval)
-  }, [])
 
   // Smooth terminal typing effect
   useEffect(() => {
@@ -194,7 +180,7 @@ export default function PSXLanding() {
       {/* Enhanced background effects */}
       <div className="fixed inset-0 opacity-30 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-transparent to-purple-900/20"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,255,136,0.03)_1px,transparent_1px)] bg-[length:60px_60px] animate-pulse"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,255,136,0.03)_1px,transparent_1px)] bg-[length:60px_60px]"></div>
         <div
           className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30 transition-transform duration-300 ease-out"
           style={{
@@ -202,11 +188,6 @@ export default function PSXLanding() {
           }}
         ></div>
       </div>
-
-      {/* Subtle glitch overlay */}
-      {glitchActive && (
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/3 to-purple-500/3 pointer-events-none animate-pulse" />
-      )}
 
       {/* Ultra-sleek Header Terminal */}
       <div className="fixed top-0 left-0 right-0 z-50 w-full bg-black/90 backdrop-blur-3xl border-b border-cyan-400/20 transition-all duration-700 ease-out">
@@ -241,24 +222,31 @@ export default function PSXLanding() {
         </div>
       </div>
 
-      {/* Ultra-sleek Navigation Bar - Enhanced */}
+      {/* Ultra-sleek Navigation Bar - Redesigned */}
       <nav className="fixed top-12 left-1/2 transform -translate-x-1/2 z-40 w-full max-w-5xl px-4 transition-all duration-1000 ease-out">
         <div
-          className="bg-black/70 backdrop-blur-3xl rounded-full border border-cyan-400/30 shadow-2xl shadow-cyan-400/10 transition-all duration-1000 ease-out"
+          className="bg-black/50 backdrop-blur-3xl rounded-full border border-cyan-400/30 shadow-2xl shadow-cyan-400/10 transition-all duration-1000 ease-out"
           style={{
             transform: `translateY(${Math.min(scrollY * 0.05, 10)}px)`,
             opacity: Math.max(0.85, 1 - scrollY * 0.0005),
           }}
         >
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center justify-between px-8 py-4">
+          <div className="hidden lg:flex items-center justify-between px-8 py-2">
+            {" "}
+            {/* Reduced py */}
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-br from-cyan-400/90 to-purple-500/90 rounded-full flex items-center justify-center shadow-lg shadow-cyan-400/20 transition-all duration-500 hover:scale-110">
-                <Eye className="h-5 w-5 text-black animate-pulse" />
+                <Image
+                  src="/images/character-hero.png"
+                  alt="PSX Logo"
+                  width={24}
+                  height={24}
+                  className="object-contain"
+                />
               </div>
               <span className="text-cyan-400 font-bold text-xl font-mono tracking-wider">PSX</span>
             </div>
-
             <div className="flex items-center space-x-2">
               {navItems.map((item) => (
                 <button
@@ -280,7 +268,6 @@ export default function PSXLanding() {
                 </button>
               ))}
             </div>
-
             <div className="flex items-center gap-3">
               <Link href="/glizzy-world">
                 <button className="px-6 py-3 rounded-full font-medium transition-all duration-500 text-sm bg-gradient-to-r from-red-500/90 to-pink-500/90 text-white hover:from-red-600 hover:to-pink-600 shadow-lg shadow-red-500/30 font-mono relative overflow-hidden group hover:scale-105">
@@ -315,10 +302,18 @@ export default function PSXLanding() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="lg:hidden flex items-center justify-between px-6 py-4">
+          <div className="lg:hidden flex items-center justify-between px-6 py-2">
+            {" "}
+            {/* Reduced py */}
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-br from-cyan-400/90 to-purple-500/90 rounded-full flex items-center justify-center shadow-lg shadow-cyan-400/20">
-                <Eye className="h-5 w-5 text-black animate-pulse" />
+                <Image
+                  src="/images/character-hero.png"
+                  alt="PSX Logo"
+                  width={24}
+                  height={24}
+                  className="object-contain"
+                />
               </div>
               <span className="text-cyan-400 font-bold text-xl font-mono">PSX</span>
             </div>
@@ -334,7 +329,9 @@ export default function PSXLanding() {
         {/* Mobile Menu - Enhanced */}
         {mobileMenuOpen && (
           <div className="lg:hidden mt-4 bg-black/85 backdrop-blur-3xl rounded-2xl border border-cyan-400/30 shadow-2xl animate-in slide-in-from-top-5 duration-700 ease-out">
-            <div className="p-6 space-y-4">
+            <div className="p-4 space-y-4">
+              {" "}
+              {/* Reduced p */}
               {navItems.map((item) => (
                 <button
                   key={item.id}
@@ -399,47 +396,8 @@ export default function PSXLanding() {
         )}
       </nav>
 
-      {/* Floating Agent Character - Enhanced */}
-      <div
-        className="fixed top-36 right-8 z-30 hidden lg:block transition-all duration-1000 ease-out"
-        style={{
-          transform: `translateY(${Math.sin(Date.now() * 0.001) * 10}px) translateX(${scrollY * 0.03}px)`,
-        }}
-      >
-        <div className="w-16 h-16 bg-gradient-to-br from-cyan-400/90 to-purple-500/90 rounded-2xl flex items-center justify-center border border-cyan-400/40 shadow-2xl shadow-cyan-400/30 backdrop-blur-sm animate-pulse hover:scale-110 transition-transform duration-500">
-          <Eye className="h-7 w-7 text-black" />
-        </div>
-      </div>
-
-      {/* Enhanced Terminal Status */}
-      <div
-        className="fixed top-36 left-8 z-30 hidden xl:block transition-all duration-1000 ease-out"
-        style={{
-          transform: `translateY(${scrollY * 0.02}px)`,
-          opacity: Math.max(0.8, 1 - scrollY * 0.001),
-        }}
-      >
-        <div className="bg-black/80 border border-cyan-400/30 backdrop-blur-3xl rounded-2xl p-5 min-w-[240px] shadow-2xl shadow-cyan-400/10">
-          <div className="flex items-center gap-3 mb-4">
-            <Terminal className="h-5 w-5 text-cyan-400 animate-pulse" />
-            <span className="text-cyan-400 font-mono text-sm font-bold">SYSTEM.LOG</span>
-            <div className="ml-auto w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></div>
-          </div>
-          <div className="bg-black/70 p-4 rounded-xl border border-cyan-400/20">
-            <div className="text-green-400 font-mono text-xs">
-              <div className="mb-3">
-                {">"} {terminalText}
-                <span className="animate-pulse">_</span>
-              </div>
-              <div className="text-cyan-400/70 text-xs space-y-1.5">
-                <div>STATUS: OPERATIONAL</div>
-                <div>AGENTS: 1337 ACTIVE</div>
-                <div>UPTIME: 99.9%</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Removed Floating Agent Character */}
+      {/* Removed Enhanced Terminal Status */}
 
       {/* Hero Section - Enhanced */}
       <section
@@ -449,17 +407,12 @@ export default function PSXLanding() {
         <div className="relative z-10 text-center max-w-5xl mx-auto">
           {/* Main Title - Enhanced */}
           <div className="mb-16 animate-in fade-in-50 duration-1000">
-            <h1
-              className="text-8xl md:text-[12rem] font-black text-white mb-8 tracking-tight transition-all duration-1000 ease-out"
-              // Removed parallax transform: style={{ transform: `translateY(${scrollY * 0.1}px)` }}
-            >
+            <h1 className="text-8xl md:text-[12rem] font-black text-white mb-8 tracking-tight transition-all duration-1000 ease-out">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-600 drop-shadow-[0_0_30px_rgba(168,85,247,0.4)] animate-pulse">
                 PSX
               </span>
             </h1>
-            <div
-            // Removed parallax transform: style={{ transform: `translateY(${scrollY * 0.05}px)` }}
-            >
+            <div>
               <p className="text-2xl md:text-4xl text-cyan-300 font-light tracking-wide font-mono mt-6 animate-in slide-in-from-bottom-5 duration-1000 delay-500">
                 PRECISION. STEALTH. EXECUTION.
               </p>

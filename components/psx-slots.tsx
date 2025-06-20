@@ -17,12 +17,12 @@ export function PSXSlots() {
   const [spinCount, setSpinCount] = useState(0)
 
   const symbols = [
-    { name: "PSX", multiplier: 10, image: "/images/psx-hero.png" },
-    { name: "Diamond", multiplier: 5, image: "/images/psx-chart.png" },
-    { name: "Star", multiplier: 3, image: "/images/psx-attention.png" },
-    { name: "Cherry", multiplier: 2, image: "/images/psx-meme.png" },
-    { name: "Bell", multiplier: 1.5, image: "/images/psx-computer.png" },
-    { name: "Seven", multiplier: 1, image: "/images/psx-dream.png" },
+    { name: "PSX", multiplier: 10, image: "/images/pfp-character.png" }, // Updated image
+    { name: "Diamond", multiplier: 5, image: "/images/meme-templates/template-1.png" }, // Updated image
+    { name: "Star", multiplier: 3, image: "/images/meme-templates/template-2.png" }, // Updated image
+    { name: "Cherry", multiplier: 2, image: "/images/meme-templates/template-3.png" }, // Updated image
+    { name: "Bell", multiplier: 1.5, image: "/images/meme-templates/template-4.png" }, // Updated image
+    { name: "Seven", multiplier: 1, image: "/images/meme-templates/template-5.png" }, // Updated image
   ]
 
   const spin = () => {
