@@ -14,7 +14,6 @@ import {
   Menu,
   X,
   Wifi,
-  Lock,
   Zap,
   ArrowRight,
   Shield,
@@ -23,6 +22,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import dynamic from "next/dynamic"
+import Image from "next/image" // Import Image component
 
 const SwapWidget = dynamic(() => import("@/components/swap-widget"), {
   ssr: false,
@@ -201,18 +201,43 @@ export default function PSXLanding() {
       {/* Hero section */}
       <section
         ref={homeRef}
-        className="min-h-screen flex flex-col justify-center items-center pt-32 pb-24 px-4 text-center"
+        className="min-h-screen flex flex-col justify-center items-center pt-32 pb-24 px-4 text-center relative"
       >
-        <h1 className="text-8xl md:text-[12rem] font-black bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-600 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_30px_rgba(168,85,247,0.4)]">
+        {/* PSX Character Main */}
+        <Image
+          src="/images/psx-character-main.png"
+          alt="PSX Main Character"
+          width={600}
+          height={800}
+          className="absolute inset-0 w-full h-full object-contain opacity-70 animate-float-delayed z-0"
+          style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
+        />
+
+        {/* PSX Logo Character */}
+        <Image
+          src="/images/psx-logo-character.png"
+          alt="PSX Logo with Character"
+          width={400}
+          height={400}
+          className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-90 animate-fade-in z-10"
+        />
+
+        <h1 className="text-8xl md:text-[12rem] font-black bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-600 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_30px_rgba(168,85,247,0.4)] z-20">
           PSX
         </h1>
-        <p className="mt-6 text-2xl md:text-4xl font-mono text-cyan-300">PRECISION. STEALTH. EXECUTION.</p>
-        <p className="mt-2 text-sm md:text-base font-mono text-cyan-400/70 uppercase tracking-wider">
+        <Image
+          src="/images/psx-please-stop-xisting.png"
+          alt="Please Stop Xisting"
+          width={500}
+          height={100}
+          className="mt-6 md:mt-12 max-w-full h-auto animate-fade-in z-20"
+        />
+        <p className="mt-2 text-sm md:text-base font-mono text-cyan-400/70 uppercase tracking-wider z-20">
           PLEASE STOP XISTING. // Base Network Protocol
         </p>
 
         {/* Contract address */}
-        <div className="mt-16 bg-black/70 border border-cyan-400/30 rounded-3xl p-1.5 backdrop-blur-sm shadow-2xl">
+        <div className="mt-16 bg-black/70 border border-cyan-400/30 rounded-3xl p-1.5 backdrop-blur-sm shadow-2xl z-20">
           <Button
             onClick={copyToClipboard}
             className={`bg-black/70 hover:bg-cyan-400/15 font-mono transition ${
@@ -234,7 +259,7 @@ export default function PSXLanding() {
         </div>
 
         {/* Social icons */}
-        <div className="mt-24 flex gap-8 justify-center">
+        <div className="mt-24 flex gap-8 justify-center z-20">
           {[
             { href: "https://t.me/psxonbase", icon: MessageCircle, label: "Telegram" },
             { href: "https://x.com/PSXonBase", icon: Twitter, label: "Twitter" },
@@ -264,7 +289,7 @@ export default function PSXLanding() {
         </div>
 
         {/* Call to action cards */}
-        <div className="mt-24 grid md:grid-cols-2 gap-8 max-w-6xl w-full">
+        <div className="mt-24 grid md:grid-cols-2 gap-8 max-w-6xl w-full z-20">
           {/* Trade card */}
           <Card
             className="bg-black/50 border-cyan-400/30 backdrop-blur-3xl cursor-pointer hover:bg-black/70 hover:-translate-y-2 transition"
@@ -278,30 +303,13 @@ export default function PSXLanding() {
               <p className="mt-4 text-sm text-cyan-300/80">
                 Deploy advanced swap protocols to acquire PSX tokens with optimal rates.
               </p>
-              <span className="mt-6 inline-flex items-center gap-2 text-sm font-mono text-cyan-400">
+              <Button variant="cyber" className="mt-6 inline-flex items-center gap-2 text-sm font-mono">
                 ACCESS TRADING TERMINAL <ArrowRight className="h-4 w-4" />
-              </span>
+              </Button>
             </CardContent>
           </Card>
 
-          {/* Glizzy Portal card */}
-          <Link href="/glizzy-world" className="block">
-            <Card className="bg-black/50 border-red-400/30 backdrop-blur-3xl hover:bg-black/70 hover:-translate-y-2 transition relative overflow-hidden">
-              <CardContent className="p-8 text-center relative z-10">
-                <div className="w-18 h-18 flex items-center justify-center mx-auto mb-6 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 text-white shadow-lg">
-                  <Lock className="h-9 w-9" />
-                </div>
-                <h3 className="text-2xl font-mono font-bold text-red-400">GLIZZY PORTAL</h3>
-                <p className="mt-4 text-sm text-red-300/80">
-                  Password-protected gaming suite exclusively for verified PSX agents.
-                </p>
-                <span className="mt-6 inline-flex items-center gap-2 text-sm font-mono text-red-400">
-                  CLASSIFIED ACCESS <Shield className="h-4 w-4" />
-                </span>
-              </CardContent>
-              <span className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-pink-500/10 opacity-0 hover:opacity-100 transition" />
-            </Card>
-          </Link>
+          {/* Removed Glizzy Portal Card - now accessible via hot dog icon in footer */}
         </div>
       </section>
 
@@ -311,6 +319,15 @@ export default function PSXLanding() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,255,136,0.15)_0%,transparent_50%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.15)_0%,transparent_50%)]" />
         </div>
+
+        {/* PSX Graffiti Image */}
+        <Image
+          src="/images/psx-graffiti.png"
+          alt="PSX Graffiti"
+          width={400}
+          height={400}
+          className="absolute top-1/2 left-0 -translate-y-1/2 opacity-20 animate-glitch z-0 hidden md:block"
+        />
 
         <div className="relative z-10 max-w-7xl mx-auto">
           <header className="text-center mb-24">
@@ -504,6 +521,21 @@ export default function PSXLanding() {
             </div>
           </div>
         </div>
+        {/* Decorative Glitch Face and Body Images */}
+        <Image
+          src="/images/psx-glitch-face.png"
+          alt="Glitch Face"
+          width={150}
+          height={150}
+          className="absolute bottom-10 left-10 opacity-10 animate-glitch z-0 hidden lg:block"
+        />
+        <Image
+          src="/images/psx-glitch-body.png"
+          alt="Glitch Body"
+          width={200}
+          height={200}
+          className="absolute top-20 right-20 opacity-10 animate-glitch z-0 hidden lg:block"
+        />
       </section>
 
       {/* Footer */}
@@ -519,7 +551,7 @@ export default function PSXLanding() {
             {
               title: "Quick Access",
               links: [
-                { label: "Glizzy Portal", href: "/glizzy-world" },
+                // Glizzy Portal moved to hot dog icon
                 { label: "Meme Forge", href: "/meme-generator" },
                 { label: "Roadmap", href: "/roadmap" },
                 { label: "Game Portal", href: "/game-portal" },
@@ -580,7 +612,7 @@ export default function PSXLanding() {
             </p>
           </div>
 
-          <div className="flex gap-6">
+          <div className="flex gap-6 items-center">
             {[
               { href: "https://t.me/psxonbase", icon: MessageCircle },
               { href: "https://x.com/PSXonBase", icon: Twitter },
@@ -596,6 +628,17 @@ export default function PSXLanding() {
                 <Icon className="h-5 w-5" />
               </Link>
             ))}
+            {/* Miniscule hot dog for Glizzy World */}
+            <Link href="/glizzy-world" className="ml-4">
+              <Image
+                src="/images/hot-dog.png"
+                alt="Glizzy World Portal"
+                width={30}
+                height={30}
+                className="opacity-70 hover:opacity-100 transition-opacity"
+                title="Glizzy World Portal"
+              />
+            </Link>
           </div>
         </div>
       </footer>
