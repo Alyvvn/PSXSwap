@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { GlizzySlots } from "@/components/glizzy-slots"
 import { GlizzyPoker } from "@/components/glizzy-poker"
 import { GlizzyBlackjack } from "@/components/glizzy-blackjack"
-import { ArrowLeft, Trophy, Users, DollarSign } from "lucide-react"
+import { ArrowLeft, Trophy, Users, DollarSign, Lock } from "lucide-react"
 import Link from "next/link"
 
 export default function GlizzyWorldCasinoPage() {
