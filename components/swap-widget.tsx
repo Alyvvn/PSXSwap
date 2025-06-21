@@ -1,24 +1,38 @@
 "use client"
 
-import { Card, CardContent } from "@/components/ui/card"
 
 export function SwapWidget() {
-  return (
-    <Card className="w-full max-w-md bg-black/80 border border-purple-500/50 rounded-xl overflow-hidden">
-      {/* Removed CardHeader for a simpler widget */}
-      <CardContent className="p-0">
-        {/* Removed inner div wrapper, iframe directly inside CardContent */}
-        <iframe
-          src="https://app.uniswap.org/#/swap?outputCurrency=0x4444489570Afd4261d616df00DE1668dAd5F8ceE&chain=base&theme=dark"
-          width="100%"
-          height="400px"
-          style={{ border: "0", margin: "0", display: "block", borderRadius: "10px" }}
-          title="Uniswap Widget"
-          scrolling="no"
-        />
-      </CardContent>
-    </Card>
-  )
-}
+ return (
+   <div className="w-full max-w-3xl mx-auto">
+     {/* Swap Container */}
+     <div className="bg-slate-900/90 backdrop-blur-xl rounded-3xl p-1 border border-cyan-400/30 shadow-2xl">
+       <div className="bg-black/50 rounded-[22px] overflow-hidden">
+         <iframe
+           src="https://app.uniswap.org/#/swap?outputCurrency=0x4444489570Afd4261d616df00DE1668dAd5F8ceE&chain=base"
+           width="100%"
+           height="660"
+           style={{
+             border: "none",
+             borderRadius: "22px",
+             overflow: "hidden",
+             display: "block",
+             margin: 0,
+             padding: 0,
+           }}
+           allow="clipboard-write; clipboard-read; web-share"
+           className="w-full h-[660px]"
+         />
+       </div>
+     </div>
 
-export default SwapWidget
+
+     {/* Branding Badge */}
+     <div className="text-center mt-4">
+       <div className="inline-flex items-center gap-2 bg-slate-900/80 backdrop-blur-sm rounded-full px-4 py-2 border border-cyan-400/20">
+         <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+         <span className="text-cyan-400 font-mono text-xs">POWERED BY UNISWAP</span>
+       </div>
+     </div>
+   </div>
+ )
+}
