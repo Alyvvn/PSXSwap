@@ -72,11 +72,6 @@ export default function PSXLanding() {
     return () => clearInterval(id)
   }, [])
 
-  useEffect(() => {
-    // Removed any explicit scrollIntoView or window.scrollTo calls to fix scroll-to-bottom bug
-    // window.scrollTo({ top: 0, behavior: "auto" }) // This line was previously removed or commented out
-  }, [])
-
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(contractAddress)
