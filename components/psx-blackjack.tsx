@@ -1,334 +1,333 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect, useRef } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Sparkles } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Coins, RotateCcw, TrendingUp } from "lucide-react"
 
-type BlackjackCard = {
-  suit: string
-  rank: string
-  value: number
-}
-
-const suits = ["♠️", "♥️", "♦️", "♣️"]
-const ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
-
-const getCardValue = (rank: string): number => {
-  if (["J", "Q", "K"].includes(rank)) return 10
-  if (rank === "A") return 11 // Handled separately for soft/hard totals
-  return Number.parseInt(rank)
-}
-
-const createDeck = (): BlackjackCard[] => {
-  const deck: BlackjackCard[] = []
-  for (const suit of suits) {
-    for (const rank of ranks) {
-      deck.push({ suit, rank, value: getCardValue(rank) })
-    }
-  }
-  return shuffleDeck(deck)
-}
-
-const shuffleDeck = (deck: BlackjackCard[]): BlackjackCard[] => {
-  for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[deck[i], deck[j]] = [deck[j], deck[i]]
-  }
-  return deck
-}
-
-const calculateHandValue = (hand: BlackjackCard[]): number => {
-  let value = hand.reduce((sum, card) => sum + card.value, 0)
-  let aces = hand.filter((card) => card.rank === "A").length
-
-  while (value > 21 && aces > 0) {
-    value -= 10
-    aces -= 1
-  }
-  return value
-}
-
-export function PsxBlackjack() {
-  const [deck, setDeck] = useState<BlackjackCard[]>([])
-  const [playerHand, setPlayerHand] = useState<BlackjackCard[]>([])
-  const [dealerHand, setDealerHand] = useState<BlackjackCard[]>([])
+export function PSXBlackjack() {
+  const [balance, setBalance] = useState(2500)
+  const [bet, setBet] = useState(25)
+  const [gameState, setGameState] = useState<"betting" | "playing" | "finished">("betting")
+  const [playerCards, setPlayerCards] = useState<number[]>([])
+  const [dealerCards, setDealerCards] = useState<number[]>([])
   const [playerScore, setPlayerScore] = useState(0)
   const [dealerScore, setDealerScore] = useState(0)
-  const [balance, setBalance] = useState(1000)
-  const [bet, setBet] = useState(0)
-  const [message, setMessage] = useState("Place your bet to start!")
-  const [gamePhase, setGamePhase] = useState<"betting" | "dealing" | "player_turn" | "dealer_turn" | "results">(
-    "betting",
-  )
-  const [inputBet, setInputBet] = useState("")
+  const [gameResult, setGameResult] = useState<string>("")
+  const [wins, setWins] = useState(0)
+  const [losses, setLosses] = useState(0)
 
-  const dealSoundRef = useRef<HTMLAudioElement>(null)
-  const chipSoundRef = useRef<HTMLAudioElement>(null)
-  const winSoundRef = useRef<HTMLAudioElement>(null)
-  const loseSoundRef = useRef<HTMLAudioElement>(null)
-
-  useEffect(() => {
-    // Preload sounds
-    if (dealSoundRef.current) dealSoundRef.current.load()
-    if (chipSoundRef.current) chipSoundRef.current.load()
-    if (winSoundRef.current) winSoundRef.current.load()
-    if (loseSoundRef.current) loseSoundRef.current.load()
-  }, [])
-
-  const playSound = (audioRef: React.RefObject<HTMLAudioElement>) => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0
-      audioRef.current.play().catch((e) => console.error("Error playing sound:", e))
-    }
+  const getCardValue = (card: number) => {
+    if (card > 10) return 10
+    return card
   }
 
-  const startGame = () => {
-    if (bet <= 0 || bet > balance) {
-      setMessage("Invalid bet amount!")
-      return
-    }
-    playSound(chipSoundRef)
-    setBalance((prev) => prev - bet)
-    const newDeck = createDeck()
-    const newPlayerHand = [newDeck.pop()!, newDeck.pop()!]
-    const newDealerHand = [newDeck.pop()!, newDeck.pop()!]
+  const calculateScore = (cards: number[]) => {
+    let score = 0
+    let aces = 0
 
-    setDeck(newDeck)
-    setPlayerHand(newPlayerHand)
-    setDealerHand(newDealerHand)
-    setPlayerScore(calculateHandValue(newPlayerHand))
-    setDealerScore(calculateHandValue([newDealerHand[0]])) // Only show first dealer card
-    setMessage("Dealing cards...")
-    setGamePhase("dealing")
-
-    setTimeout(() => {
-      playSound(dealSoundRef)
-      setPlayerScore(calculateHandValue(newPlayerHand))
-      setDealerScore(calculateHandValue([newDealerHand[0]])) // Still only show first dealer card
-      if (calculateHandValue(newPlayerHand) === 21) {
-        setMessage("Blackjack! Player wins!")
-        setBalance((prev) => prev + bet * 2.5) // Blackjack payout 1.5x bet
-        playSound(winSoundRef)
-        setGamePhase("results")
+    for (const card of cards) {
+      if (card === 1) {
+        aces++
+        score += 11
       } else {
-        setMessage("Your turn!")
-        setGamePhase("player_turn")
+        score += getCardValue(card)
       }
-    }, 1000)
+    }
+
+    while (score > 21 && aces > 0) {
+      score -= 10
+      aces--
+    }
+
+    return score
+  }
+
+  const drawCard = () => Math.floor(Math.random() * 13) + 1
+
+  const startGame = () => {
+    if (balance < bet) return
+
+    setBalance(balance - bet)
+    const newPlayerCards = [drawCard(), drawCard()]
+    const newDealerCards = [drawCard(), drawCard()]
+
+    setPlayerCards(newPlayerCards)
+    setDealerCards(newDealerCards)
+    setPlayerScore(calculateScore(newPlayerCards))
+    setDealerScore(calculateScore(newDealerCards))
+    setGameState("playing")
+    setGameResult("")
   }
 
   const hit = () => {
-    if (gamePhase !== "player_turn") return
+    const newCard = drawCard()
+    const newPlayerCards = [...playerCards, newCard]
+    const newScore = calculateScore(newPlayerCards)
 
-    playSound(dealSoundRef)
-    const newDeck = [...deck]
-    const newCard = newDeck.pop()!
-    const updatedPlayerHand = [...playerHand, newCard]
-    const newPlayerScore = calculateHandValue(updatedPlayerHand)
+    setPlayerCards(newPlayerCards)
+    setPlayerScore(newScore)
 
-    setDeck(newDeck)
-    setPlayerHand(updatedPlayerHand)
-    setPlayerScore(newPlayerScore)
-
-    if (newPlayerScore > 21) {
-      setMessage("Bust! Dealer wins.")
-      playSound(loseSoundRef)
-      setGamePhase("results")
+    if (newScore > 21) {
+      setGameResult("Bust! Dealer wins.")
+      setLosses(losses + 1)
+      setGameState("finished")
     }
   }
 
   const stand = () => {
-    if (gamePhase !== "player_turn") return
+    const newDealerCards = [...dealerCards]
+    let newDealerScore = dealerScore
 
-    setMessage("Dealer's turn...")
-    setGamePhase("dealer_turn")
-    setTimeout(dealerTurn, 1000)
-  }
-
-  const dealerTurn = () => {
-    const currentDealerHand = [...dealerHand]
-    let currentDealerScore = calculateHandValue(currentDealerHand)
-
-    while (currentDealerScore < 17) {
-      playSound(dealSoundRef)
-      const newDeck = [...deck]
-      const newCard = newDeck.pop()!
-      currentDealerHand.push(newCard)
-      setDeck(newDeck)
-      setDealerHand(currentDealerHand)
-      currentDealerScore = calculateHandValue(currentDealerHand)
-      setDealerScore(currentDealerScore)
+    while (newDealerScore < 17) {
+      const newCard = drawCard()
+      newDealerCards.push(newCard)
+      newDealerScore = calculateScore(newDealerCards)
     }
 
-    setTimeout(() => {
-      determineWinner(playerScore, currentDealerScore)
-    }, 1000)
-  }
+    setDealerCards(newDealerCards)
+    setDealerScore(newDealerScore)
 
-  const determineWinner = (pScore: number, dScore: number) => {
-    setDealerScore(dScore) // Reveal dealer's full score
-    if (pScore > 21) {
-      setMessage("Bust! Dealer wins.")
-      playSound(loseSoundRef)
-    } else if (dScore > 21) {
-      setMessage("Dealer busts! Player wins!")
-      setBalance((prev) => prev + bet * 2)
-      playSound(winSoundRef)
-    } else if (pScore > dScore) {
-      setMessage("Player wins!")
-      setBalance((prev) => prev + bet * 2)
-      playSound(winSoundRef)
-    } else if (dScore > pScore) {
-      setMessage("Dealer wins.")
-      playSound(loseSoundRef)
+    let result = ""
+    let winAmount = 0
+
+    if (newDealerScore > 21) {
+      result = "Dealer busts! You win!"
+      winAmount = bet * 2
+      setWins(wins + 1)
+    } else if (playerScore > newDealerScore) {
+      result = "You win!"
+      winAmount = bet * 2
+      setWins(wins + 1)
+    } else if (playerScore < newDealerScore) {
+      result = "Dealer wins!"
+      setLosses(losses + 1)
     } else {
-      setMessage("Push!")
-      setBalance((prev) => prev + bet) // Return bet
+      result = "Push! It's a tie."
+      winAmount = bet
     }
-    setGamePhase("results")
+
+    setBalance(balance + winAmount)
+    setGameResult(result)
+    setGameState("finished")
   }
 
-  const resetGame = () => {
-    setPlayerHand([])
-    setDealerHand([])
+  const newGame = () => {
+    setGameState("betting")
+    setPlayerCards([])
+    setDealerCards([])
     setPlayerScore(0)
     setDealerScore(0)
-    setBet(0)
-    setInputBet("")
-    setMessage("Place your bet to start!")
-    setGamePhase("betting")
+    setGameResult("")
   }
 
-  const handleBetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setInputBet(value)
-    const numValue = Number.parseInt(value)
-    if (!isNaN(numValue) && numValue > 0 && numValue <= balance) {
-      setBet(numValue)
-    } else {
-      setBet(0)
+  const resetStats = () => {
+    setBalance(2500)
+    setWins(0)
+    setLosses(0)
+    newGame()
+  }
+
+  const renderCard = (card: number, hidden = false) => {
+    if (hidden) {
+      return (
+        <div className="w-16 h-24 bg-blue-900 rounded border-2 border-blue-700 flex items-center justify-center">
+          <span className="text-white text-xs">PSX</span>
+        </div>
+      )
     }
-  }
 
-  const getCardColor = (suit: string) => {
-    return suit === "♥️" || suit === "♦️" ? "text-red-500" : "text-black"
+    const suits = ["♠", "♥", "♦", "♣"]
+    const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+    const suit = suits[Math.floor(Math.random() * 4)]
+    const value = values[card - 1]
+    const isRed = suit === "♥" || suit === "♦"
+
+    return (
+      <div className="w-16 h-24 bg-white rounded border-2 border-gray-300 flex flex-col items-center justify-center">
+        <span className={`text-lg font-bold ${isRed ? "text-red-500" : "text-black"}`}>{value}</span>
+        <span className={`text-lg ${isRed ? "text-red-500" : "text-black"}`}>{suit}</span>
+      </div>
+    )
   }
 
   return (
-    <div className="w-full max-w-2xl bg-black/70 border-red-500/30 backdrop-blur-xl shadow-red-500/20">
-      <div className="text-center">
-        <div className="text-4xl font-bold text-red-400 flex items-center justify-center gap-2">
-          <Sparkles className="h-8 w-8 text-pink-400 animate-pulse" />
-          Glizzy Blackjack
-          <Sparkles className="h-8 w-8 text-pink-400 animate-pulse" />
-        </div>
-        <p className="text-red-300/80 text-sm mt-2">Beat the dealer, win the Glizzy!</p>
-      </div>
-      <div className="flex flex-col items-center gap-6 p-6">
-        <div className="w-full flex justify-between items-center text-red-300 font-mono text-lg">
-          <span>BALANCE: ${balance}</span>
-          <span>BET: ${bet}</span>
-        </div>
+    <div className="max-w-4xl mx-auto">
+      <div className="grid md:grid-cols-3 gap-6">
+        {/* Game Area */}
+        <div className="md:col-span-2">
+          <Card className="bg-gradient-to-br from-green-900/50 to-green-800/50 border-green-500/30">
+            <CardHeader>
+              <CardTitle className="text-white text-center text-2xl">PSX BLACKJACK</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Dealer's Hand */}
+              <div className="text-center">
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  Dealer {gameState === "playing" ? "(Hidden)" : `(${dealerScore})`}
+                </h3>
+                <div className="flex gap-2 justify-center mb-4">
+                  {dealerCards.map((card, index) => (
+                    <div key={index}>{renderCard(card, gameState === "playing" && index === 1)}</div>
+                  ))}
+                </div>
+              </div>
 
-        {/* Dealer's Hand */}
-        <div className="w-full bg-red-900/20 rounded-lg p-4 border border-red-500/30 shadow-inner">
-          <h3 className="text-red-400 font-mono text-lg mb-2">DEALER ({dealerScore})</h3>
-          <div className="flex flex-wrap gap-3 justify-center">
-            {dealerHand.map((card, index) => (
-              <div
-                key={index}
-                className={cn(
-                  "w-20 h-28 bg-white rounded-md flex flex-col items-center justify-center text-xl font-bold border-2 border-gray-400",
-                  getCardColor(card.suit),
-                  gamePhase === "player_turn" && index === 1 && "bg-gray-700 text-gray-700", // Hidden card
-                )}
-              >
-                {gamePhase === "player_turn" && index === 1 ? (
-                  <span className="text-4xl text-white">?</span>
-                ) : (
+              {/* Player's Hand */}
+              <div className="text-center">
+                <h3 className="text-lg font-semibold text-white mb-2">Your Hand ({playerScore})</h3>
+                <div className="flex gap-2 justify-center mb-4">
+                  {playerCards.map((card, index) => (
+                    <div key={index}>{renderCard(card)}</div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Game Result */}
+              {gameResult && (
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-yellow-400 mb-4">{gameResult}</div>
+                </div>
+              )}
+
+              {/* Game Controls */}
+              <div className="space-y-4">
+                {gameState === "betting" && (
                   <>
-                    <span>{card.rank}</span>
-                    <span className="text-3xl">{card.suit}</span>
+                    <div className="flex items-center gap-4">
+                      <div className="flex-1">
+                        <label className="text-sm text-gray-300 mb-1 block">Bet Amount</label>
+                        <Input
+                          type="number"
+                          value={bet}
+                          onChange={(e) =>
+                            setBet(Math.max(25, Math.min(balance, Number.parseInt(e.target.value) || 25)))
+                          }
+                          className="bg-gray-800 border-gray-600 text-white"
+                          min="25"
+                          max={balance}
+                        />
+                      </div>
+                      <Button
+                        onClick={() => setBet(Math.min(balance, 100))}
+                        variant="outline"
+                        className="border-green-500/30 text-green-400 hover:bg-green-500/10"
+                      >
+                        Max Bet
+                      </Button>
+                    </div>
+                    <Button
+                      onClick={startGame}
+                      disabled={balance < bet}
+                      className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-4 text-lg"
+                    >
+                      Deal Cards
+                    </Button>
                   </>
                 )}
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Player's Hand */}
-        <div className="w-full bg-red-900/20 rounded-lg p-4 border border-red-500/30 shadow-inner">
-          <h3 className="text-red-400 font-mono text-lg mb-2">YOU ({playerScore})</h3>
-          <div className="flex flex-wrap gap-3 justify-center">
-            {playerHand.map((card, index) => (
-              <div
-                key={index}
-                className={cn(
-                  "w-20 h-28 bg-white rounded-md flex flex-col items-center justify-center text-xl font-bold border-2 border-gray-400",
-                  getCardColor(card.suit),
+                {gameState === "playing" && (
+                  <div className="flex gap-4">
+                    <Button
+                      onClick={hit}
+                      className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                    >
+                      Hit
+                    </Button>
+                    <Button
+                      onClick={stand}
+                      className="flex-1 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700"
+                    >
+                      Stand
+                    </Button>
+                  </div>
                 )}
-              >
-                <span>{card.rank}</span>
-                <span className="text-3xl">{card.suit}</span>
+
+                {gameState === "finished" && (
+                  <Button
+                    onClick={newGame}
+                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 text-lg"
+                  >
+                    New Game
+                  </Button>
+                )}
               </div>
-            ))}
-          </div>
+            </CardContent>
+          </Card>
         </div>
 
-        <div className="text-center text-red-200 font-mono text-lg mt-2">{message}</div>
+        {/* Stats Panel */}
+        <div className="space-y-6">
+          {/* Balance */}
+          <Card className="bg-black/80 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Coins className="h-5 w-5" />
+                Balance
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-400">{balance} PSX</div>
+              <p className="text-gray-400 text-sm">Available to bet</p>
+            </CardContent>
+          </Card>
 
-        {gamePhase === "betting" && (
-          <div className="w-full flex flex-col gap-4">
-            <input
-              type="number"
-              value={inputBet}
-              onChange={handleBetChange}
-              placeholder="Enter bet amount"
-              className="w-full p-3 rounded-md bg-red-900/30 border border-red-500/50 text-red-200 placeholder:text-red-400/70 focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
-            <Button
-              onClick={startGame}
-              disabled={bet === 0 || bet > balance}
-              className="w-full bg-gradient-to-r from-red-600 to-pink-600 text-white text-xl py-6 font-bold uppercase tracking-wider shadow-lg shadow-red-500/30 hover:from-red-700 hover:to-pink-700"
-            >
-              PLACE BET
-            </Button>
-          </div>
-        )}
+          {/* Stats */}
+          <Card className="bg-black/80 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                Session Stats
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex justify-between">
+                <span className="text-gray-400">Wins:</span>
+                <span className="text-green-400">{wins}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Losses:</span>
+                <span className="text-red-400">{losses}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Win Rate:</span>
+                <span className="text-white">
+                  {wins + losses > 0 ? ((wins / (wins + losses)) * 100).toFixed(1) : 0}%
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Current Bet:</span>
+                <span className="text-yellow-400">{bet} PSX</span>
+              </div>
+            </CardContent>
+          </Card>
 
-        {gamePhase === "player_turn" && (
-          <div className="w-full flex justify-center gap-4">
-            <Button
-              onClick={hit}
-              className="flex-1 bg-gradient-to-r from-red-600 to-pink-600 text-white text-xl py-6 font-bold uppercase tracking-wider shadow-lg shadow-red-500/30 hover:from-red-700 hover:to-pink-700"
-            >
-              HIT
-            </Button>
-            <Button
-              onClick={stand}
-              className="flex-1 bg-red-800/30 text-red-300 border-red-500/50 hover:bg-red-800/50 text-xl py-6 font-bold uppercase tracking-wider"
-            >
-              STAND
-            </Button>
-          </div>
-        )}
+          {/* Rules */}
+          <Card className="bg-black/80 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white text-sm">Quick Rules</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-xs text-gray-400">
+              <p>• Get as close to 21 as possible</p>
+              <p>• Aces count as 1 or 11</p>
+              <p>• Face cards count as 10</p>
+              <p>• Dealer must hit on 16</p>
+              <p>• Blackjack pays 3:2</p>
+            </CardContent>
+          </Card>
 
-        {gamePhase === "results" && (
+          {/* Reset */}
           <Button
-            onClick={resetGame}
-            className="w-full bg-red-800/30 text-red-300 border-red-500/50 hover:bg-red-800/50 text-xl py-6 font-bold uppercase tracking-wider"
+            onClick={resetStats}
+            variant="outline"
+            className="w-full border-gray-700 text-gray-300 hover:bg-gray-800"
           >
-            PLAY AGAIN
+            <RotateCcw className="h-4 w-4 mr-2" />
+            Reset Game
           </Button>
-        )}
+        </div>
       </div>
-      <audio ref={dealSoundRef} src="/sounds/deal.mp3" preload="auto" />
-      <audio ref={chipSoundRef} src="/sounds/chip.mp3" preload="auto" />
-      <audio ref={winSoundRef} src="/sounds/win.mp3" preload="auto" />
-      <audio ref={loseSoundRef} src="/sounds/lose.mp3" preload="auto" />
     </div>
   )
 }
