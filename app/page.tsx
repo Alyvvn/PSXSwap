@@ -22,7 +22,6 @@ import {
   X,
   Wifi,
 } from "lucide-react"
-import Image from "next/image"
 import Link from "next/link"
 import dynamic from "next/dynamic"
 
@@ -86,7 +85,7 @@ export default function PSXLanding() {
   /* ------------------------------  Refs  ----------------------------------- */
   const homeRef = useRef<HTMLDivElement>(null)
   const swapRef = useRef<HTMLDivElement>(null)
-  const intelRef = useRef<HTMLDivElement>(null)
+  const intelRef = useRef<HTMLDivElement>(null) // Keep for now, but not in nav
 
   /* ---------------------------   Constants   ------------------------------- */
   const contractAddress = "0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
@@ -94,8 +93,10 @@ export default function PSXLanding() {
 
   const navItems = [
     { id: "home", label: "Home", ref: homeRef },
-    { id: "swap", label: "Trade", ref: swapRef },
-    { id: "intel", label: "Intel", ref: intelRef },
+    { id: "buy-psx", label: "Buy PSX", ref: swapRef },
+    { id: "roadmap", label: "Roadmap", href: "/roadmap" },
+    { id: "glizzy-portal", label: "Glizzy Portal", href: "/glizzy-world" },
+    { id: "meme-forge", label: "Meme Forge", href: "/meme-generator" },
   ]
 
   /* --------------------------   Effects   ---------------------------------- */
@@ -116,21 +117,6 @@ export default function PSXLanding() {
   // Scroll to top on initial mount
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" })
-  }, [])
-
-  // Silence the "MetaMask extension not found" noise that originates
-  // from third-party widgets (it is harmless, but pollutes the console).
-  useEffect(() => {
-    const originalError = console.error
-    console.error = (...args: unknown[]) => {
-      if (typeof args[0] === "string" && args[0].includes("MetaMask extension not found")) {
-        return // swallow the message
-      }
-      originalError(...args)
-    }
-    return () => {
-      console.error = originalError // restore on unmount
-    }
   }, [])
 
   /* ---------------------------   Helpers   --------------------------------- */
@@ -196,53 +182,25 @@ export default function PSXLanding() {
           }}
         >
           {/* -------- DESKTOP NAV -------- */}
-          <div className="hidden lg:flex items-center justify-between px-8 py-2">
-            <Link href="/" className="flex items-center gap-3 text-xl font-mono font-bold text-cyan-400">
-              <span className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400/90 to-purple-500/90 flex items-center justify-center shadow-lg shadow-cyan-400/20">
-                <Image
-                  src="/images/psx-attention.png"
-                  alt="PSX Logo"
-                  width={24}
-                  height={24}
-                  className="object-contain"
-                />
-              </span>
-              PSX
-            </Link>
-
+          <div className="hidden lg:flex items-center justify-center px-8 py-2">
             <div className="flex gap-2">
               {navItems.map((n) => (
-                <Button
-                  key={n.id}
-                  onClick={() => {
-                    setActiveNav(n.id)
-                    scrollToSection(n.ref)
-                  }}
-                  className={`relative px-6 py-3 rounded-full text-sm font-mono transition-all ${
-                    activeNav === n.id
-                      ? "bg-cyan-400/25 text-cyan-100 shadow-lg shadow-cyan-400/25"
-                      : "text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100"
-                  }`}
-                >
-                  {n.label}
-                  {activeNav === n.id && (
-                    <span className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-400/20 to-purple-400/20 animate-pulse" />
-                  )}
-                </Button>
-              ))}
-            </div>
-
-            <div className="flex gap-3">
-              {[
-                { href: "/meme-generator", label: "MEME GENERATOR" },
-                { href: "/pfp-generator", label: "PFP GENERATOR" },
-                { href: "/roadmap", label: "ROADMAP" },
-                { href: "/game-portal", label: "GAME PORTAL" },
-                { href: "/glizzy-world", label: "GLIZZY WORLD" }, // Link to Glizzy World Auth Page
-              ].map((item, i) => (
-                <Link key={i} href={item.href}>
-                  <Button className="px-6 py-3 text-sm font-mono text-cyan-400/90 rounded-full transition hover:bg-cyan-400/15 hover:text-cyan-100">
-                    {item.label}
+                <Link key={n.id} href={n.href || "#"} passHref>
+                  <Button
+                    onClick={() => {
+                      setActiveNav(n.id)
+                      if (n.ref) scrollToSection(n.ref)
+                    }}
+                    className={`relative px-6 py-3 rounded-full text-sm font-mono transition-all ${
+                      activeNav === n.id
+                        ? "bg-cyan-400/25 text-cyan-100 shadow-lg shadow-cyan-400/25"
+                        : "text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100"
+                    }`}
+                  >
+                    {n.label}
+                    {activeNav === n.id && (
+                      <span className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-400/20 to-purple-400/20 animate-pulse" />
+                    )}
                   </Button>
                 </Link>
               ))}
@@ -251,18 +209,7 @@ export default function PSXLanding() {
 
           {/* -------- MOBILE NAV BUTTON -------- */}
           <div className="lg:hidden flex items-center justify-between px-6 py-2">
-            <Link href="/" className="flex items-center gap-3 text-xl font-mono font-bold text-cyan-400">
-              <span className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400/90 to-purple-500/90 flex items-center justify-center shadow-lg shadow-cyan-400/20">
-                <Image
-                  src="/images/psx-attention.png"
-                  alt="PSX Logo"
-                  width={24}
-                  height={24}
-                  className="object-contain"
-                />
-              </span>
-              PSX
-            </Link>
+            <span className="text-xl font-mono font-bold text-cyan-400">PSX</span>
             <button
               onClick={() => setMobileMenuOpen((o) => !o)}
               className="p-3 text-cyan-400 hover:bg-cyan-400/15 rounded-full transition"
@@ -276,38 +223,23 @@ export default function PSXLanding() {
         {mobileMenuOpen && (
           <div className="lg:hidden mt-4 bg-black/85 border border-cyan-400/30 rounded-2xl backdrop-blur-3xl p-4 space-y-4">
             {navItems.map((n) => (
-              <Button
-                key={n.id}
-                onClick={() => {
-                  setActiveNav(n.id)
-                  scrollToSection(n.ref)
-                  setMobileMenuOpen(false)
-                }}
-                className={`w-full text-left px-6 py-4 rounded-xl text-sm font-mono transition ${
-                  activeNav === n.id
-                    ? "bg-cyan-400/25 text-cyan-100 border border-cyan-400/40"
-                    : "text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100"
-                }`}
-              >
-                {n.label}
-              </Button>
+              <Link key={n.id} href={n.href || "#"} passHref>
+                <Button
+                  onClick={() => {
+                    setActiveNav(n.id)
+                    if (n.ref) scrollToSection(n.ref)
+                    setMobileMenuOpen(false)
+                  }}
+                  className={`w-full text-left px-6 py-4 rounded-xl text-sm font-mono transition ${
+                    activeNav === n.id
+                      ? "bg-cyan-400/25 text-cyan-100 border border-cyan-400/40"
+                      : "text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100"
+                  }`}
+                >
+                  {n.label}
+                </Button>
+              </Link>
             ))}
-
-            <div className="pt-4 border-t border-cyan-400/30 space-y-4">
-              {[
-                { href: "/meme-generator", label: "MEME GENERATOR" },
-                { href: "/pfp-generator", label: "PFP GENERATOR" },
-                { href: "/roadmap", label: "ROADMAP" },
-                { href: "/game-portal", label: "GAME PORTAL" },
-                { href: "/glizzy-world", label: "GLIZZY WORLD" }, // Link to Glizzy World Auth Page
-              ].map((item) => (
-                <Link key={item.label} href={item.href} onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full text-left px-6 py-4 rounded-xl text-sm font-mono text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100">
-                    {item.label}
-                  </Button>
-                </Link>
-              ))}
-            </div>
           </div>
         )}
       </nav>
@@ -642,10 +574,9 @@ export default function PSXLanding() {
             {
               title: "Quick Access",
               links: [
-                { label: "Glizzy World Casino", href: "/glizzy-world" }, // Link to Glizzy World Auth Page
-                { label: "Meme Generator", href: "/meme-generator" },
-                { label: "PFP Generator", href: "/pfp-generator" },
-                { label: "Interactive Roadmap", href: "/roadmap" },
+                { label: "Glizzy Portal", href: "/glizzy-world" },
+                { label: "Meme Forge", href: "/meme-generator" },
+                { label: "Roadmap", href: "/roadmap" },
                 { label: "Game Portal", href: "/game-portal" },
               ],
             },

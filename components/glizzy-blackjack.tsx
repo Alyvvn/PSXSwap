@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { Sparkles } from "lucide-react"
+import { Sparkles } from 'lucide-react'
 import { cn } from "@/lib/utils"
 
 type GameCard = {
@@ -79,9 +79,28 @@ export function GlizzyBlackjack() {
   }, [])
 
   const playSound = (audioRef: React.RefObject<HTMLAudioElement>) => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0
-      audioRef.current.play().catch((e) => console.error("Error playing sound:", e))
+    const audioEl = audioRef.current
+    if (!audioEl) return
+
+    // Only try to play if the browser reports it can handle MP3/OGG
+    const supported =
+      audioEl.canPlayType("audio/mpeg") ||
+      audioEl.canPlayType("audio/mp3") ||
+      audioEl.canPlayType("audio/ogg")
+
+    if (!supported) {
+      console.warn("Audio type not supported in this browser.")
+      return
+    }
+
+    try {
+      audioEl.currentTime = 0
+      // play() returns a promise - catch & swallow user-gesture errors
+      audioEl.play().catch((err) => {
+        console.warn("Audio playback prevented:", err)
+      })
+    } catch (err) {
+      console.warn("Audio play threw:", err)
     }
   }
 

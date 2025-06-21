@@ -1,260 +1,306 @@
 "use client"
 
-import { useEffect } from "react"
 import type React from "react"
-import { useState, useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Sparkles, Download, Text, Eraser, RefreshCw } from "lucide-react"
-import Image from "next/image"
 
-export function MemeGenerator() {
+import { useState, useRef, useEffect, useCallback } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Slider } from "@/components/ui/slider"
+import { Download, RefreshCw, Text, ImageIcon, Palette } from "lucide-react"
+
+const backgrounds = [
+  "/images/psx-computer.png",
+  "/images/psx-dream.png",
+  "/images/psx-hero.png",
+  "/images/psx-meme.png",
+  "/images/psx-open.png",
+  "/images/psx-store.png",
+]
+
+const characters = [
+  "/placeholder.svg?height=200&width=200&text=Character+1",
+  "/placeholder.svg?height=200&width=200&text=Character+2",
+  "/placeholder.svg?height=200&width=200&text=Character+3",
+]
+
+export default function MemeGenerator() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const [topText, setTopText] = useState("TOP TEXT")
   const [bottomText, setBottomText] = useState("BOTTOM TEXT")
-  const [selectedBackground, setSelectedBackground] = useState("/backgrounds/04ec0d58249731679fee7a7a277385d4.jpg")
-  const [selectedCharacter, setSelectedCharacter] = useState("/completed Photos/1.png")
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const backgroundRef = useRef<HTMLImageElement>(null)
-  const characterRef = useRef<HTMLImageElement>(null)
+  const [selectedBackground, setSelectedBackground] = useState(backgrounds[0])
+  const [selectedCharacter, setSelectedCharacter] = useState(characters[0])
+  const [textColor, setTextColor] = useState("#FFFFFF")
+  const [fontSize, setFontSize] = useState([48])
+  const [characterSize, setCharacterSize] = useState([100])
+  const [characterPosition, setCharacterPosition] = useState({ x: 50, y: 50 })
 
-  const backgroundImages = [
-    "/backgrounds/04ec0d58249731679fee7a7a277385d4.jpg",
-    "/backgrounds/0553ecc5e17807d0f6343d3fa3d1eabf.jpg",
-    "/backgrounds/07018bbf5a070faede30c1fcbcf50ff9.jpg",
-    "/backgrounds/0e0da999edb51ce664c91d0bafd947cf.jpg",
-    "/backgrounds/2086c5cf4f263ece85d9553f01c73c06.jpg",
-  ]
-
-  const characterImages = [
-    "/completed Photos/1.png",
-    "/completed Photos/2.png",
-    "/completed Photos/3.png",
-    "/completed Photos/4.png",
-    "/completed Photos/5.png",
-  ]
-
-  const drawMeme = () => {
+  const drawMeme = useCallback(() => {
     const canvas = canvasRef.current
-    const background = backgroundRef.current
-    const character = characterRef.current
-
-    if (!canvas || !background || !character) return
+    if (!canvas) return
 
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
-    // Set canvas dimensions to match background image
-    canvas.width = background.naturalWidth
-    canvas.height = background.naturalHeight
+    const loadImage = (src: string): Promise<HTMLImageElement> => {
+      return new Promise((resolve, reject) => {
+        const img = new window.Image()
+        img.crossOrigin = "anonymous" // Crucial for CORS if images are from different origins
+        img.onload = () => resolve(img)
+        img.onerror = (e) => reject(new Error(`Failed to load image: ${src}. Event: ${e}`))
+        img.src = src
+      })
+    }
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.drawImage(background, 0, 0, canvas.width, canvas.height)
+    Promise.all([loadImage(selectedBackground), loadImage(selectedCharacter)])
+      .then(([bgImg, charImg]) => {
+        // Set canvas dimensions to background image dimensions
+        canvas.width = bgImg.naturalWidth
+        canvas.height = bgImg.naturalHeight
 
-    // Draw character in the center bottom
-    const charWidth = canvas.width * 0.3 // Adjust size as needed
-    const charHeight = (character.naturalHeight / character.naturalWidth) * charWidth
-    const charX = (canvas.width - charWidth) / 2
-    const charY = canvas.height - charHeight - canvas.height * 0.05 // 5% from bottom
-    ctx.drawImage(character, charX, charY, charWidth, charHeight)
+        // Draw background
+        ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height)
 
-    ctx.fillStyle = "white"
-    ctx.textAlign = "center"
-    ctx.textBaseline = "top"
+        // Draw character
+        const charWidth = (charImg.naturalWidth * characterSize[0]) / 100
+        const charHeight = (charImg.naturalHeight * characterSize[0]) / 100
+        const charX = (canvas.width * characterPosition.x) / 100 - charWidth / 2
+        const charY = (canvas.height * characterPosition.y) / 100 - charHeight / 2
+        ctx.drawImage(charImg, charX, charY, charWidth, charHeight)
 
-    // Calculate font size based on canvas width
-    const fontSize = canvas.width * 0.06 // Adjust as needed
-    ctx.font = `${fontSize}px Impact, sans-serif`
+        // Text settings
+        ctx.fillStyle = textColor
+        ctx.textAlign = "center"
+        ctx.font = `${fontSize[0]}px Impact, sans-serif`
+        ctx.textBaseline = "top" // For top text
+        ctx.lineWidth = 0 // No border for text
 
-    // Top text
-    ctx.fillText(topText.toUpperCase(), canvas.width / 2, canvas.height * 0.05)
+        // Draw top text
+        ctx.fillText(topText.toUpperCase(), canvas.width / 2, 20)
 
-    // Bottom text
-    ctx.textBaseline = "bottom"
-    ctx.fillText(bottomText.toUpperCase(), canvas.width / 2, canvas.height * 0.95)
-  }
+        ctx.textBaseline = "bottom" // For bottom text
+        // Draw bottom text
+        ctx.fillText(bottomText.toUpperCase(), canvas.width / 2, canvas.height - 20)
+      })
+      .catch((error) => {
+        console.error("Error drawing meme:", error)
+        // Optionally draw an error message on the canvas
+        if (ctx) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          ctx.fillStyle = "red"
+          ctx.font = "24px Arial"
+          ctx.fillText("Error loading images!", canvas.width / 2, canvas.height / 2)
+        }
+      })
+  }, [
+    topText,
+    bottomText,
+    selectedBackground,
+    selectedCharacter,
+    textColor,
+    fontSize,
+    characterSize,
+    characterPosition,
+  ])
 
-  // Redraw meme when text or images change
   useEffect(() => {
-    const loadImage = (src: string, ref: React.MutableRefObject<HTMLImageElement | null>, callback: () => void) => {
-      const img = new Image()
-      img.src = src
-      img.crossOrigin = "anonymous" // Crucial for CORS when drawing to canvas
-      img.onload = () => {
-        ref.current = img
-        callback()
-      }
-      img.onerror = (e) => {
-        console.error("Error loading image:", src, e)
-      }
-    }
+    drawMeme()
+  }, [drawMeme])
 
-    let backgroundLoaded = false
-    let characterLoaded = false
-
-    const checkAndDraw = () => {
-      if (backgroundLoaded && characterLoaded) {
-        drawMeme()
-      }
-    }
-
-    loadImage(selectedBackground, backgroundRef, () => {
-      backgroundLoaded = true
-      checkAndDraw()
-    })
-    loadImage(selectedCharacter, characterRef, () => {
-      characterLoaded = true
-      checkAndDraw()
-    })
-  }, [selectedBackground, selectedCharacter, topText, bottomText])
-
-  const downloadMeme = () => {
+  const handleDownload = () => {
     const canvas = canvasRef.current
     if (canvas) {
+      const image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream")
       const link = document.createElement("a")
-      link.download = "psx-meme.png"
-      link.href = canvas.toDataURL("image/png")
+      link.download = "glizzy-meme.png"
+      link.href = image
       link.click()
     }
   }
 
   const randomizeBackground = () => {
-    const randomIndex = Math.floor(Math.random() * backgroundImages.length)
-    setSelectedBackground(backgroundImages[randomIndex])
+    const randomIndex = Math.floor(Math.random() * backgrounds.length)
+    setSelectedBackground(backgrounds[randomIndex])
   }
 
   const randomizeCharacter = () => {
-    const randomIndex = Math.floor(Math.random() * characterImages.length)
-    setSelectedCharacter(characterImages[randomIndex])
+    const randomIndex = Math.floor(Math.random() * characters.length)
+    setSelectedCharacter(characters[randomIndex])
   }
 
-  const resetGenerator = () => {
-    setTopText("TOP TEXT")
-    setBottomText("BOTTOM TEXT")
-    setSelectedBackground(backgroundImages[0])
-    setSelectedCharacter(characterImages[0])
-  }
+  const handleCharacterDrag = useCallback(
+    (e: React.MouseEvent) => {
+      const canvas = canvasRef.current
+      if (!canvas) return
+
+      const rect = canvas.getBoundingClientRect()
+      const scaleX = canvas.width / rect.width
+      const scaleY = canvas.height / rect.height
+
+      const startX = (e.clientX - rect.left) * scaleX
+      const startY = (e.clientY - rect.top) * scaleY
+
+      const initialCharX = (canvas.width * characterPosition.x) / 100
+      const initialCharY = (canvas.height * characterPosition.y) / 100
+
+      const offsetX = startX - initialCharX
+      const offsetY = startY - initialCharY
+
+      const onMouseMove = (moveEvent: MouseEvent) => {
+        const newX = (moveEvent.clientX - rect.left) * scaleX - offsetX
+        const newY = (moveEvent.clientY - rect.top) * scaleY - offsetY
+
+        setCharacterPosition({
+          x: (newX / canvas.width) * 100,
+          y: (newY / canvas.height) * 100,
+        })
+      }
+
+      const onMouseUp = () => {
+        window.removeEventListener("mousemove", onMouseMove)
+        window.removeEventListener("mouseup", onMouseUp)
+      }
+
+      window.addEventListener("mousemove", onMouseMove)
+      window.addEventListener("mouseup", onMouseUp)
+    },
+    [characterPosition],
+  )
 
   return (
-    <Card className="w-full bg-black/70 border-cyan-500/30 backdrop-blur-xl shadow-cyan-500/20">
-      <CardHeader className="text-center">
-        <CardTitle className="text-4xl font-bold text-cyan-400 flex items-center justify-center gap-2">
-          <Sparkles className="h-8 w-8 text-purple-400 animate-pulse" />
-          Meme Generator
-          <Sparkles className="h-8 w-8 text-purple-400 animate-pulse" />
-        </CardTitle>
-        <p className="text-cyan-300/80 text-sm mt-2">Craft your viral PSX memes.</p>
-      </CardHeader>
-      <CardContent className="flex flex-col items-center gap-6 p-6">
-        {/* Meme Preview */}
-        <div className="relative w-full max-w-xl aspect-video bg-gray-900 rounded-lg overflow-hidden border border-cyan-400/30 shadow-lg">
-          <canvas ref={canvasRef} className="w-full h-full object-contain" />
-        </div>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-black py-12 text-white">
+      <h1 className="mb-8 text-5xl font-bold text-cyan-400">Meme Forge</h1>
+      <p className="mb-12 text-lg text-gray-300">Craft your legendary PSX memes.</p>
 
-        {/* Controls */}
-        <div className="w-full space-y-4">
-          <div className="flex items-center gap-2">
-            <Text className="h-5 w-5 text-cyan-400" />
-            <Input
-              placeholder="Top Text"
-              value={topText}
-              onChange={(e) => setTopText(e.target.value)}
-              className="bg-cyan-900/30 border-cyan-500/50 text-cyan-200 placeholder:text-cyan-400/70 focus:ring-cyan-500"
+      <div className="grid w-full max-w-6xl grid-cols-1 gap-8 md:grid-cols-2">
+        {/* Canvas Section */}
+        <Card className="bg-black/70 border-cyan-400/30 backdrop-blur-xl shadow-cyan-400/20">
+          <CardContent className="flex aspect-video items-center justify-center p-4">
+            <canvas
+              ref={canvasRef}
+              className="max-h-[500px] w-full rounded-lg border border-cyan-400/50 shadow-inner shadow-cyan-400/20"
+              onMouseDown={handleCharacterDrag}
+              style={{ cursor: "grab" }}
             />
-          </div>
-          <div className="flex items-center gap-2">
-            <Text className="h-5 w-5 text-cyan-400" />
-            <Input
-              placeholder="Bottom Text"
-              value={bottomText}
-              onChange={(e) => setBottomText(e.target.value)}
-              className="bg-cyan-900/30 border-cyan-500/50 text-cyan-200 placeholder:text-cyan-400/70 focus:ring-cyan-500"
-            />
-          </div>
+          </CardContent>
+        </Card>
 
-          {/* Background Selection */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white">Choose Background</h3>
+        {/* Controls Section */}
+        <Card className="bg-black/70 border-cyan-400/30 backdrop-blur-xl shadow-cyan-400/20">
+          <CardContent className="p-6 space-y-6">
+            {/* Text Inputs */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-cyan-400 flex items-center gap-2">
+                <Text className="h-5 w-5" /> Meme Text
+              </h3>
+              <Input
+                placeholder="TOP TEXT"
+                value={topText}
+                onChange={(e) => setTopText(e.target.value)}
+                className="bg-black/50 border-cyan-400/50 text-white placeholder:text-cyan-300/70 focus:border-cyan-400"
+              />
+              <Input
+                placeholder="BOTTOM TEXT"
+                value={bottomText}
+                onChange={(e) => setBottomText(e.target.value)}
+                className="bg-black/50 border-cyan-400/50 text-white placeholder:text-cyan-300/70 focus:border-cyan-400"
+              />
+            </div>
+
+            {/* Text Color & Font Size */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <h3 className="text-xl font-bold text-cyan-400 flex items-center gap-2 mb-2">
+                  <Palette className="h-5 w-5" /> Color
+                </h3>
+                <Input
+                  type="color"
+                  value={textColor}
+                  onChange={(e) => setTextColor(e.target.value)}
+                  className="h-10 w-full cursor-pointer rounded-md border border-cyan-400/50 bg-black/50 p-1"
+                />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-cyan-400 flex items-center gap-2 mb-2">
+                  <Text className="h-5 w-5" /> Size
+                </h3>
+                <Slider min={20} max={100} step={1} value={fontSize} onValueChange={setFontSize} className="w-full" />
+                <span className="text-sm text-cyan-300/70 mt-2 block text-center">{fontSize[0]}px</span>
+              </div>
+            </div>
+
+            {/* Background Selection */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-cyan-400 flex items-center gap-2">
+                <ImageIcon className="h-5 w-5" /> Background
+              </h3>
+              <div className="grid grid-cols-3 gap-2">
+                {backgrounds.map((bg, i) => (
+                  <img
+                    key={i}
+                    src={bg || "/placeholder.svg"}
+                    alt={`Background ${i + 1}`}
+                    className={`cursor-pointer rounded-md border-2 ${
+                      selectedBackground === bg ? "border-cyan-400" : "border-transparent"
+                    } hover:border-cyan-300 transition`}
+                    onClick={() => setSelectedBackground(bg)}
+                  />
+                ))}
+              </div>
               <Button
                 onClick={randomizeBackground}
-                variant="outline"
-                size="sm"
-                className="bg-black text-white border-gray-700 hover:bg-gray-900"
+                className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold flex items-center gap-2"
               >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Random
+                <RefreshCw className="h-4 w-4" /> Random Background
               </Button>
             </div>
-            <div className="grid grid-cols-3 gap-2">
-              {backgroundImages.map((bg, index) => (
-                <div
-                  key={index}
-                  className={`relative aspect-square cursor-pointer rounded-lg overflow-hidden border-2 transition-all ${
-                    selectedBackground === bg ? "border-cyan-600" : "border-gray-800 hover:border-gray-700"
-                  }`}
-                  onClick={() => setSelectedBackground(bg)}
-                >
-                  <Image src={bg || "/placeholder.svg"} alt={`Background ${index + 1}`} fill className="object-cover" />
-                </div>
-              ))}
-            </div>
-          </div>
 
-          {/* Character Selection */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white">Choose Character</h3>
+            {/* Character Selection & Size */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-cyan-400 flex items-center gap-2">
+                <ImageIcon className="h-5 w-5" /> Character
+              </h3>
+              <div className="grid grid-cols-3 gap-2">
+                {characters.map((char, i) => (
+                  <img
+                    key={i}
+                    src={char || "/placeholder.svg"}
+                    alt={`Character ${i + 1}`}
+                    className={`cursor-pointer rounded-md border-2 ${
+                      selectedCharacter === char ? "border-cyan-400" : "border-transparent"
+                    } hover:border-cyan-300 transition`}
+                    onClick={() => setSelectedCharacter(char)}
+                  />
+                ))}
+              </div>
               <Button
                 onClick={randomizeCharacter}
-                variant="outline"
-                size="sm"
-                className="bg-black text-white border-gray-700 hover:bg-gray-900"
+                className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold flex items-center gap-2"
               >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Random
+                <RefreshCw className="h-4 w-4" /> Random Character
               </Button>
+              <h4 className="text-lg font-bold text-cyan-400 flex items-center gap-2 mt-4">Size</h4>
+              <Slider
+                min={10}
+                max={200}
+                step={1}
+                value={characterSize}
+                onValueChange={setCharacterSize}
+                className="w-full"
+              />
+              <span className="text-sm text-cyan-300/70 mt-2 block text-center">{characterSize[0]}%</span>
             </div>
-            <div className="grid grid-cols-3 gap-2">
-              {characterImages.map((char, index) => (
-                <div
-                  key={index}
-                  className={`relative aspect-square cursor-pointer rounded-lg overflow-hidden border-2 transition-all ${
-                    selectedCharacter === char ? "border-cyan-600" : "border-gray-800 hover:border-gray-700"
-                  }`}
-                  onClick={() => setSelectedCharacter(char)}
-                >
-                  <Image
-                    src={char || "/placeholder.svg"}
-                    alt={`Character ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
 
-        {/* Action Buttons */}
-        <div className="w-full flex flex-col sm:flex-row gap-4">
-          <Button
-            onClick={downloadMeme}
-            className="flex-1 bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-lg py-6 font-bold uppercase tracking-wider shadow-lg shadow-cyan-500/30 hover:from-cyan-700 hover:to-blue-700"
-          >
-            <Download className="h-5 w-5 mr-2" />
-            DOWNLOAD MEME
-          </Button>
-          <Button
-            onClick={resetGenerator}
-            variant="outline"
-            className="flex-1 bg-cyan-800/30 text-cyan-300 border-cyan-500/50 hover:bg-cyan-800/50 text-lg py-6 font-bold uppercase tracking-wider"
-          >
-            <Eraser className="h-5 w-5 mr-2" />
-            RESET
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+            {/* Download Button */}
+            <Button
+              onClick={handleDownload}
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-lg py-6 font-bold uppercase tracking-wider shadow-lg shadow-purple-500/30 hover:from-purple-700 hover:to-pink-700 flex items-center gap-2"
+            >
+              <Download className="h-5 w-5" /> Download Meme
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   )
 }
