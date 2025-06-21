@@ -1,35 +1,30 @@
 "use client"
 
 import type React from "react"
-
-import { useEffect, useRef, useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
-  DiscIcon,
-  Zap,
-  ArrowRight,
-  Lock,
-  Shield,
-  Activity,
-  Target,
-  MessageCircle,
-  Twitter,
-  BarChart3,
-  ExternalLink,
   Copy,
+  ExternalLink,
+  Twitter,
+  MessageCircle,
+  BarChart3,
+  DiscIcon as Discord,
   Menu,
   X,
   Wifi,
+  Lock,
+  Zap,
+  ArrowRight,
+  Shield,
+  Activity,
+  Target,
 } from "lucide-react"
 import Link from "next/link"
 import dynamic from "next/dynamic"
 
 const SwapWidget = dynamic(() => import("@/components/swap-widget"), { ssr: false })
-
-/* -------------------------------------------------------------------------- */
-/*                                 DUMMY DATA                                 */
-/* -------------------------------------------------------------------------- */
 
 const intelReports = [
   {
@@ -41,55 +36,22 @@ const intelReports = [
     status: "COMPLETED",
     priority: "HIGH",
   },
-  {
-    id: "INTEL-002",
-    timestamp: "2024-12-17 09:15:42",
-    classification: "CLASSIFIED",
-    title: "Market Infiltration Analysis",
-    content: "PSX token showing strong community adoption. Meme warfare tactics proving effective.",
-    status: "ONGOING",
-    priority: "MEDIUM",
-  },
-  {
-    id: "INTEL-003",
-    timestamp: "2024-12-16 22:08:19",
-    classification: "CONFIDENTIAL",
-    title: "Agent Network Expansion",
-    content: "Discord recruitment successful. 1 337 verified agents now active in the field.",
-    status: "COMPLETED",
-    priority: "HIGH",
-  },
-  {
-    id: "INTEL-004",
-    timestamp: "2024-12-16 16:45:33",
-    classification: "SECRET",
-    title: "Blockchain Security Assessment",
-    content: "Base network integration secure. Smart contract audits passed. Ready for phase 2.",
-    status: "VERIFIED",
-    priority: "CRITICAL",
-  },
+  // ... other intel reports
 ]
 
-/* -------------------------------------------------------------------------- */
-/*                                MAIN PAGE                                   */
-/* -------------------------------------------------------------------------- */
-
 export default function PSXLanding() {
-  /* ------------------------------   State   -------------------------------- */
   const [copied, setCopied] = useState(false)
   const [activeNav, setActiveNav] = useState("home")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [currentIntel, setCurrentIntel] = useState(0)
   const [scrollY, setScrollY] = useState(0)
 
-  /* ------------------------------  Refs  ----------------------------------- */
   const homeRef = useRef<HTMLDivElement>(null)
   const swapRef = useRef<HTMLDivElement>(null)
-  const intelRef = useRef<HTMLDivElement>(null) // Keep for now, but not in nav
+  const intelRef = useRef<HTMLDivElement>(null)
 
-  /* ---------------------------   Constants   ------------------------------- */
   const contractAddress = "0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
-  const displayAddress = contractAddress // ensure it is a string
+  const displayAddress = contractAddress
 
   const navItems = [
     { id: "home", label: "Home", ref: homeRef },
@@ -99,27 +61,20 @@ export default function PSXLanding() {
     { id: "meme-forge", label: "Meme Forge", href: "/meme-generator" },
   ]
 
-  /* --------------------------   Effects   ---------------------------------- */
-
-  // Track page scroll for parallax & navbar opacity
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY)
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Rotate intel reports every 5 s
   useEffect(() => {
     const id = setInterval(() => setCurrentIntel((p) => (p + 1) % intelReports.length), 5000)
     return () => clearInterval(id)
   }, [])
 
-  // Scroll to top on initial mount
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" })
   }, [])
-
-  /* ---------------------------   Helpers   --------------------------------- */
 
   const copyToClipboard = async () => {
     try {
@@ -135,13 +90,9 @@ export default function PSXLanding() {
     section.current?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
-  /* -------------------------------------------------------------------------- */
-  /*                                   JSX                                      */
-  /* -------------------------------------------------------------------------- */
-
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
-      {/* ------------------------------  BACKGROUND LAYERS  ------------------------------ */}
+      {/* Background layers */}
       <div className="fixed inset-0 opacity-30 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-transparent to-purple-900/20" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,255,136,0.04)_1px,transparent_1px)] bg-[length:60px_60px]" />
@@ -151,7 +102,7 @@ export default function PSXLanding() {
         />
       </div>
 
-      {/* ------------------------------  HEADER / TERMINAL BAR  ------------------------------ */}
+      {/* Header/Terminal bar */}
       <header className="fixed top-0 inset-x-0 z-50 bg-black/90 backdrop-blur-md border-b border-cyan-400/10">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3 text-xs font-mono text-cyan-400">
           <div className="flex gap-1.5">
@@ -172,7 +123,7 @@ export default function PSXLanding() {
         </div>
       </header>
 
-      {/* ------------------------------  NAVBAR  ------------------------------ */}
+      {/* Navigation */}
       <nav className="fixed top-12 left-1/2 -translate-x-1/2 z-40 w-full max-w-5xl px-4">
         <div
           className="bg-black/60 backdrop-blur-md border border-cyan-400/20 rounded-full shadow-2xl shadow-cyan-400/10 transition-all duration-700"
@@ -181,7 +132,7 @@ export default function PSXLanding() {
             opacity: Math.max(0.9, 1 - scrollY * 0.0005),
           }}
         >
-          {/* -------- DESKTOP NAV -------- */}
+          {/* Desktop nav */}
           <div className="hidden lg:flex items-center justify-center px-8 py-2">
             <div className="flex gap-2">
               {navItems.map((n) => (
@@ -207,7 +158,7 @@ export default function PSXLanding() {
             </div>
           </div>
 
-          {/* -------- MOBILE NAV BUTTON -------- */}
+          {/* Mobile nav button */}
           <div className="lg:hidden flex items-center justify-between px-6 py-2">
             <span className="text-xl font-mono font-bold text-cyan-400">PSX</span>
             <button
@@ -219,7 +170,7 @@ export default function PSXLanding() {
           </div>
         </div>
 
-        {/* -------- MOBILE PANEL -------- */}
+        {/* Mobile panel */}
         {mobileMenuOpen && (
           <div className="lg:hidden mt-4 bg-black/85 border border-cyan-400/30 rounded-2xl backdrop-blur-3xl p-4 space-y-4">
             {navItems.map((n) => (
@@ -244,10 +195,7 @@ export default function PSXLanding() {
         )}
       </nav>
 
-      {/* ===================================================================== */}
-      {/*                                HERO                                   */}
-      {/* ===================================================================== */}
-
+      {/* Hero section */}
       <section
         ref={homeRef}
         className="min-h-screen flex flex-col justify-center items-center pt-32 pb-24 px-4 text-center"
@@ -260,7 +208,7 @@ export default function PSXLanding() {
           PLEASE STOP XISTING. // Base Network Protocol
         </p>
 
-        {/* -------- CONTRACT ADDRESS -------- */}
+        {/* Contract address */}
         <div className="mt-16 bg-black/70 border border-cyan-400/30 rounded-3xl p-1.5 backdrop-blur-sm shadow-2xl">
           <Button
             onClick={copyToClipboard}
@@ -282,7 +230,7 @@ export default function PSXLanding() {
           </Button>
         </div>
 
-        {/* -------- SOCIAL ICON ROW -------- */}
+        {/* Social icons */}
         <div className="mt-24 flex gap-8 justify-center">
           {[
             { href: "https://t.me/psxonbase", icon: MessageCircle, label: "Telegram" },
@@ -292,7 +240,7 @@ export default function PSXLanding() {
               icon: BarChart3,
               label: "Chart",
             },
-            { href: "https://discord.gg/psxonbase", icon: DiscIcon, label: "Discord" },
+            { href: "https://discord.gg/psxonbase", icon: Discord, label: "Discord" },
             {
               href: "https://basescan.org/address/0x4444489570Afd4261d616df00DE1668dAd5F8ceE",
               icon: ExternalLink,
@@ -312,7 +260,7 @@ export default function PSXLanding() {
           ))}
         </div>
 
-        {/* -------- CALL TO ACTION CARDS -------- */}
+        {/* Call to action cards */}
         <div className="mt-24 grid md:grid-cols-2 gap-8 max-w-6xl w-full">
           {/* Trade card */}
           <Card
@@ -333,14 +281,14 @@ export default function PSXLanding() {
             </CardContent>
           </Card>
 
-          {/* Casino card */}
+          {/* Glizzy Portal card */}
           <Link href="/glizzy-world" className="block">
             <Card className="bg-black/50 border-red-400/30 backdrop-blur-3xl hover:bg-black/70 hover:-translate-y-2 transition relative overflow-hidden">
               <CardContent className="p-8 text-center relative z-10">
                 <div className="w-18 h-18 flex items-center justify-center mx-auto mb-6 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 text-white shadow-lg">
                   <Lock className="h-9 w-9" />
                 </div>
-                <h3 className="text-2xl font-mono font-bold text-red-400">GLIZZY WORLD CASINO</h3>
+                <h3 className="text-2xl font-mono font-bold text-red-400">GLIZZY PORTAL</h3>
                 <p className="mt-4 text-sm text-red-300/80">
                   Password-protected gaming suite exclusively for verified PSX agents.
                 </p>
@@ -354,10 +302,7 @@ export default function PSXLanding() {
         </div>
       </section>
 
-      {/* ===================================================================== */}
-      {/*                              SWAP SECTION                              */}
-      {/* ===================================================================== */}
-
+      {/* Swap section */}
       <section ref={swapRef} className="py-32 px-4 bg-gradient-to-b from-black via-black/80 to-black relative">
         <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,255,136,0.15)_0%,transparent_50%)]" />
@@ -377,11 +322,11 @@ export default function PSXLanding() {
             </p>
           </header>
 
-          {/* ------------------------------  THREE COLUMN GRID  ------------------------------ */}
+          {/* Three column grid */}
           <div className="grid xl:grid-cols-3 gap-12">
-            {/* ---------- STATS / INFO ---------- */}
+            {/* Left column - stats/info */}
             <div className="space-y-8">
-              {/* live market */}
+              {/* Live market */}
               <Card className="bg-black/60 border-cyan-400/20 backdrop-blur-3xl hover:bg-black/80 transition">
                 <CardContent className="p-8">
                   <div className="flex items-center gap-3 mb-6">
@@ -390,10 +335,10 @@ export default function PSXLanding() {
                   </div>
                   <div className="space-y-6">
                     {[
-                      ["24h Volume", "$127 420"],
-                      ["Market Cap", "$2.1 M"],
-                      ["Holders", "1 337"],
-                      ["Liquidity", "$456 K"],
+                      ["24h Volume", "$127,420"],
+                      ["Market Cap", "$2.1M"],
+                      ["Holders", "1,337"],
+                      ["Liquidity", "$456K"],
                     ].map(([label, value]) => (
                       <div key={label} className="flex justify-between">
                         <span className="text-sm text-cyan-300/70">{label}</span>
@@ -407,7 +352,7 @@ export default function PSXLanding() {
                 </CardContent>
               </Card>
 
-              {/* security */}
+              {/* Security */}
               <Card className="bg-black/60 border-cyan-400/20 backdrop-blur-3xl hover:bg-black/80 transition">
                 <CardContent className="p-8">
                   <div className="flex items-center gap-3 mb-6">
@@ -425,7 +370,7 @@ export default function PSXLanding() {
                 </CardContent>
               </Card>
 
-              {/* quick actions */}
+              {/* Quick actions */}
               <Card className="bg-black/60 border-cyan-400/20 backdrop-blur-3xl hover:bg-black/80 transition">
                 <CardContent className="p-8 space-y-4">
                   <h3 className="text-xl font-mono font-bold text-cyan-400 mb-4">QUICK ACTIONS</h3>
@@ -463,16 +408,16 @@ export default function PSXLanding() {
               </Card>
             </div>
 
-            {/* ---------- SWAP WIDGET ---------- */}
+            {/* Center column - swap widget */}
             <div className="flex justify-center">
               <div className="w-full max-w-md">
                 <SwapWidget />
               </div>
             </div>
 
-            {/* ---------- GUIDE / STATUS ---------- */}
+            {/* Right column - guide/status */}
             <div className="space-y-8">
-              {/* steps */}
+              {/* Steps */}
               <Card className="bg-black/60 border-cyan-400/20 backdrop-blur-3xl hover:bg-black/80 transition">
                 <CardContent className="p-8">
                   <div className="flex items-center gap-3 mb-6">
@@ -499,7 +444,7 @@ export default function PSXLanding() {
                 </CardContent>
               </Card>
 
-              {/* network */}
+              {/* Network */}
               <Card className="bg-black/60 border-cyan-400/20 backdrop-blur-3xl hover:bg-black/80 transition">
                 <CardContent className="p-8">
                   <div className="flex items-center gap-3 mb-6">
@@ -526,7 +471,7 @@ export default function PSXLanding() {
                 </CardContent>
               </Card>
 
-              {/* support */}
+              {/* Support */}
               <Card className="bg-black/60 border-cyan-400/20 backdrop-blur-3xl hover:bg-black/80 transition">
                 <CardContent className="p-8">
                   <h3 className="text-xl font-mono font-bold text-cyan-400 mb-6">NEED ASSISTANCE?</h3>
@@ -536,7 +481,7 @@ export default function PSXLanding() {
                     className="w-full mb-4 border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 font-mono"
                   >
                     <Link href="https://discord.gg/psxonbase" target="_blank">
-                      <DiscIcon className="h-4 w-4 mr-2" /> AGENT SUPPORT
+                      <Discord className="h-4 w-4 mr-2" /> AGENT SUPPORT
                     </Link>
                   </Button>
                   <Button
@@ -558,10 +503,7 @@ export default function PSXLanding() {
         </div>
       </section>
 
-      {/* ===================================================================== */}
-      {/*                               FOOTER                                  */}
-      {/* ===================================================================== */}
-
+      {/* Footer */}
       <footer className="bg-black/80 backdrop-blur-sm border-t border-cyan-400/10 py-20 px-4">
         <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-12">
           <div>
@@ -585,7 +527,7 @@ export default function PSXLanding() {
               links: [
                 { label: "Discord HQ", href: "https://discord.gg/psxonbase" },
                 { label: "Telegram Channel", href: "https://t.me/psxonbase" },
-                { label: "Twitter /X", href: "https://x.com/PSXonBase" },
+                { label: "Twitter/X", href: "https://x.com/PSXonBase" },
                 { label: "BaseScan", href: `https://basescan.org/address/${contractAddress}` },
               ],
             },
@@ -593,9 +535,9 @@ export default function PSXLanding() {
               title: "Operations",
               links: [
                 { label: "Live Chart", href: `https://dexscreener.com/base/${contractAddress}` },
-                { label: "Contract Address", href: "#copy-contract" }, // Use a hash to trigger copy
+                { label: "Contract Address", href: "#copy-contract" },
                 { label: "Audit Reports", href: "#" },
-                { label: "White-paper", href: "#" },
+                { label: "Whitepaper", href: "#" },
               ],
             },
           ].map(({ title, links }) => (
@@ -639,7 +581,7 @@ export default function PSXLanding() {
             {[
               { href: "https://t.me/psxonbase", icon: MessageCircle },
               { href: "https://x.com/PSXonBase", icon: Twitter },
-              { href: "https://discord.gg/psxonbase", icon: DiscIcon },
+              { href: "https://discord.gg/psxonbase", icon: Discord },
             ].map(({ href, icon: Icon }) => (
               <Link
                 key={href}
