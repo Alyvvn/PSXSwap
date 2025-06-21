@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Slider } from "@/components/ui/slider"
-import { Download, RefreshCw, Text, ImageIcon, Palette } from "lucide-react"
+import { Download, RefreshCw, Text, ImageIcon, Palette, Upload } from "lucide-react"
 
 const backgrounds = [
   "/images/psx-computer.png",
@@ -19,9 +19,11 @@ const backgrounds = [
 ]
 
 const characters = [
-  "/placeholder.svg?height=200&width=200&text=Character+1",
-  "/placeholder.svg?height=200&width=200&text=Character+2",
-  "/placeholder.svg?height=200&width=200&text=Character+3",
+  "/completed Photos/1.png",
+  "/completed Photos/2.png",
+  "/completed Photos/3.png",
+  "/completed Photos/4.png",
+  "/completed Photos/5.png",
 ]
 
 export function MemeGenerator() {
@@ -31,9 +33,19 @@ export function MemeGenerator() {
   const [selectedBackground, setSelectedBackground] = useState(backgrounds[0])
   const [selectedCharacter, setSelectedCharacter] = useState(characters[0])
   const [textColor, setTextColor] = useState("#FFFFFF")
-  const [fontSize, setFontSize] = useState([48])
+  const [fontSize, setFontSize] = useState([60]) // Increased default font size
   const [characterSize, setCharacterSize] = useState([100])
   const [characterPosition, setCharacterPosition] = useState({ x: 50, y: 50 })
+
+  const loadImage = useCallback((src: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image()
+      img.crossOrigin = "anonymous" // Crucial for CORS if images are from different origins
+      img.onload = () => resolve(img)
+      img.onerror = (e) => reject(new Error(`Failed to load image: ${src}. Event: ${e}`))
+      img.src = src
+    })
+  }, [])
 
   const drawMeme = useCallback(() => {
     const canvas = canvasRef.current
@@ -41,16 +53,6 @@ export function MemeGenerator() {
 
     const ctx = canvas.getContext("2d")
     if (!ctx) return
-
-    const loadImage = (src: string): Promise<HTMLImageElement> => {
-      return new Promise((resolve, reject) => {
-        const img = new window.Image()
-        img.crossOrigin = "anonymous" // Crucial for CORS if images are from different origins
-        img.onload = () => resolve(img)
-        img.onerror = (e) => reject(new Error(`Failed to load image: ${src}. Event: ${e}`))
-        img.src = src
-      })
-    }
 
     Promise.all([loadImage(selectedBackground), loadImage(selectedCharacter)])
       .then(([bgImg, charImg]) => {
@@ -101,6 +103,7 @@ export function MemeGenerator() {
     fontSize,
     characterSize,
     characterPosition,
+    loadImage,
   ])
 
   useEffect(() => {
@@ -167,6 +170,20 @@ export function MemeGenerator() {
     [characterPosition],
   )
 
+  const handleImageUpload = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    setImage: React.Dispatch<React.SetStateAction<string>>,
+  ) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImage(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-black py-12 text-white">
       <h1 className="mb-8 text-5xl font-bold text-cyan-400">Meme Forge</h1>
@@ -224,7 +241,8 @@ export function MemeGenerator() {
                 <h3 className="text-xl font-bold text-cyan-400 flex items-center gap-2 mb-2">
                   <Text className="h-5 w-5" /> Size
                 </h3>
-                <Slider min={20} max={100} step={1} value={fontSize} onValueChange={setFontSize} className="w-full" />
+                <Slider min={20} max={150} step={1} value={fontSize} onValueChange={setFontSize} className="w-full" />{" "}
+                {/* Increased max font size */}
                 <span className="text-sm text-cyan-300/70 mt-2 block text-center">{fontSize[0]}px</span>
               </div>
             </div>
@@ -247,6 +265,23 @@ export function MemeGenerator() {
                   />
                 ))}
               </div>
+              <label htmlFor="upload-background" className="w-full">
+                <Button
+                  asChild
+                  className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold flex items-center gap-2 cursor-pointer"
+                >
+                  <span>
+                    <Upload className="h-4 w-4" /> Upload Background
+                  </span>
+                </Button>
+              </label>
+              <input
+                id="upload-background"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handleImageUpload(e, setSelectedBackground)}
+              />
               <Button
                 onClick={randomizeBackground}
                 className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold flex items-center gap-2"
@@ -273,6 +308,23 @@ export function MemeGenerator() {
                   />
                 ))}
               </div>
+              <label htmlFor="upload-character" className="w-full">
+                <Button
+                  asChild
+                  className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold flex items-center gap-2 cursor-pointer"
+                >
+                  <span>
+                    <Upload className="h-4 w-4" /> Upload Character
+                  </span>
+                </Button>
+              </label>
+              <input
+                id="upload-character"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handleImageUpload(e, setSelectedCharacter)}
+              />
               <Button
                 onClick={randomizeCharacter}
                 className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold flex items-center gap-2"
