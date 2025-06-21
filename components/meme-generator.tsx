@@ -13,27 +13,27 @@ export function MemeGenerator() {
   const [topText, setTopText] = useState("TOP TEXT")
   const [bottomText, setBottomText] = useState("BOTTOM TEXT")
   const [selectedBackground, setSelectedBackground] = useState(
-    "/placeholder.svg?height=400&width=600&text=Background+1",
+    "/backgrounds/04ec0d58249731679fee7a7a277385d4.jpg",
   )
-  const [selectedCharacter, setSelectedCharacter] = useState("/placeholder.svg?height=200&width=200&text=Character+1")
+  const [selectedCharacter, setSelectedCharacter] = useState("/completed Photos/1.png")
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const backgroundRef = useRef<HTMLImageElement>(null)
   const characterRef = useRef<HTMLImageElement>(null)
 
   const backgroundImages = [
-    "/placeholder.svg?height=400&width=600&text=Background+1",
-    "/placeholder.svg?height=400&width=600&text=Background+2",
-    "/placeholder.svg?height=400&width=600&text=Background+3",
-    "/placeholder.svg?height=400&width=600&text=Background+4",
-    "/placeholder.svg?height=400&width=600&text=Background+5",
+    "/backgrounds/04ec0d58249731679fee7a7a277385d4.jpg",
+    "/backgrounds/0553ecc5e17807d0f6343d3fa3d1eabf.jpg",
+    "/backgrounds/07018bbf5a070faede30c1fcbcf50ff9.jpg",
+    "/backgrounds/0e0da999edb51ce664c91d0bafd947cf.jpg",
+    "/backgrounds/2086c5cf4f263ece85d9553f01c73c06.jpg",
   ]
 
   const characterImages = [
-    "/placeholder.svg?height=200&width=200&text=Character+1",
-    "/placeholder.svg?height=200&width=200&text=Character+2",
-    "/placeholder.svg?height=200&width=200&text=Character+3",
-    "/placeholder.svg?height=200&width=200&text=Character+4",
-    "/placeholder.svg?height=200&width=200&text=Character+5",
+    "/completed Photos/1.png",
+    "/completed Photos/2.png",
+    "/completed Photos/3.png",
+    "/completed Photos/4.png",
+    "/completed Photos/5.png",
   ]
 
   const drawMeme = () => {
