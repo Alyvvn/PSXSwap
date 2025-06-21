@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { Sparkles } from 'lucide-react'
+import { Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type GameCard = {
@@ -79,17 +79,9 @@ export function GlizzyBlackjack() {
   }, [])
 
   const playSound = (audioRef: React.RefObject<HTMLAudioElement>) => {
-    const audio = audioRef.current
-    if (!audio) return
-
-    // Browser can’t play MP3 or the src is missing ➜ abort gracefully
-    if (audio.readyState === 0 || audio.canPlayType("audio/mpeg") === "") return
-
-    try {
-      audio.currentTime = 0
-      audio.play().catch((e) => console.error("Error playing sound:", e))
-    } catch (e) {
-      console.error("Error playing sound:", e)
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0
+      audioRef.current.play().catch((e) => console.error("Error playing sound:", e))
     }
   }
 

@@ -118,6 +118,21 @@ export default function PSXLanding() {
     window.scrollTo({ top: 0, behavior: "auto" })
   }, [])
 
+  // Silence the "MetaMask extension not found" noise that originates
+  // from third-party widgets (it is harmless, but pollutes the console).
+  useEffect(() => {
+    const originalError = console.error
+    console.error = (...args: unknown[]) => {
+      if (typeof args[0] === "string" && args[0].includes("MetaMask extension not found")) {
+        return // swallow the message
+      }
+      originalError(...args)
+    }
+    return () => {
+      console.error = originalError // restore on unmount
+    }
+  }, [])
+
   /* ---------------------------   Helpers   --------------------------------- */
 
   const copyToClipboard = async () => {
