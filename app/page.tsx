@@ -24,7 +24,17 @@ import {
 import Link from "next/link"
 import dynamic from "next/dynamic"
 
-const SwapWidget = dynamic(() => import("@/components/swap-widget"), { ssr: false })
+const SwapWidget = dynamic(
+  () => import("@/components/swap-widget").then((mod) => mod.default),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="w-full max-w-md p-8 text-center text-cyan-400 rounded-xl bg-black/50 border border-cyan-400/20">
+        Loading swap interface...
+      </div>
+    )
+  }
+)
 
 const intelReports = [
   {
@@ -36,7 +46,6 @@ const intelReports = [
     status: "COMPLETED",
     priority: "HIGH",
   },
-  // ... other intel reports
 ]
 
 export default function PSXLanding() {
@@ -51,7 +60,7 @@ export default function PSXLanding() {
   const intelRef = useRef<HTMLDivElement>(null)
 
   const contractAddress = "0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
-  const displayAddress = contractAddress
+  const displayAddress = `${contractAddress.slice(0, 12)}…${contractAddress.slice(-12)}`
 
   const navItems = [
     { id: "home", label: "Home", ref: homeRef },
