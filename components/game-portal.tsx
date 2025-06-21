@@ -6,29 +6,40 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Lock, Gamepad2, Trophy, Eye, EyeOff, Play, Coins, Users, BarChart3 } from "lucide-react"
+
 import { PSXSlots } from "@/components/psx-slots"
 import { PSXPoker } from "@/components/psx-poker"
 import { PSXBlackjack } from "@/components/psx-blackjack"
 
 export function GamePortal() {
+  /* -------------------------------------------------
+   * local state
+   * ------------------------------------------------- */
   const [showPassword, setShowPassword] = useState(false)
   const [password, setPassword] = useState("")
   const [applicationText, setApplicationText] = useState("")
-  const [isAuthenticated, setIsAuthenticated] = useState(true) // Changed to true for direct access
+  const [isAuthenticated, setIsAuthenticated] = useState(true) // ← set to true for demo
   const [activeGame, setActiveGame] = useState<string | null>(null)
 
-   if (password === "glizzy123") {
-  setIsAuthenticated(true)
-  } else {
-     alert("Incorrect password. Try 'glizzy123' for demo.")
+  /* -------------------------------------------------
+   * handlers
+   * ------------------------------------------------- */
+  const handleAuthenticate = () => {
+    if (password === "glizzy123") {
+      setIsAuthenticated(true)
+    } else {
+      alert("Incorrect password. Try 'glizzy123' for demo.")
     }
-}
+  }
 
- const handleApplicationSubmit = () => {
-  alert("Application submitted! You'll hear back from the agency soon.")
- setApplicationText("")
-}
+  const handleApplicationSubmit = () => {
+    alert("Application submitted! You'll hear back from the agency soon.")
+    setApplicationText("")
+  }
 
+  /* -------------------------------------------------
+   * static data
+   * ------------------------------------------------- */
   const games = [
     {
       id: "slots",
@@ -38,7 +49,7 @@ export function GamePortal() {
       players: 234,
       component: PSXSlots,
       minBet: "10 PSX",
-      maxBet: "1,000 PSX",
+      maxBet: "1 000 PSX",
       rtp: "96.5%",
     },
     {
@@ -49,7 +60,7 @@ export function GamePortal() {
       players: 67,
       component: PSXPoker,
       minBet: "50 PSX",
-      maxBet: "5,000 PSX",
+      maxBet: "5 000 PSX",
       rtp: "98.2%",
     },
     {
@@ -60,12 +71,16 @@ export function GamePortal() {
       players: 89,
       component: PSXBlackjack,
       minBet: "25 PSX",
-      maxBet: "2,500 PSX",
+      maxBet: "2 500 PSX",
       rtp: "99.1%",
     },
   ]
 
+  /* -------------------------------------------------
+   * authenticated flow
+   * ------------------------------------------------- */
   if (isAuthenticated) {
+    // 1) a specific game view
     if (activeGame) {
       const game = games.find((g) => g.id === activeGame)
       if (game) {
@@ -91,6 +106,7 @@ export function GamePortal() {
       }
     }
 
+    // 2) game directory + leaderboard
     return (
       <div className="max-w-6xl mx-auto" data-section="game-portal">
         <div className="text-center mb-8">
@@ -98,7 +114,9 @@ export function GamePortal() {
           <Badge className="bg-green-600">Authenticated Agent</Badge>
         </div>
 
-        {/* Game Selection */}
+        {/* ---------------------------------------------
+         * game selection cards
+         * ------------------------------------------- */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           {games.map((game) => (
             <Card key={game.id} className="bg-black/80 border-gray-700 hover:border-purple-500/50 transition-all">
@@ -145,7 +163,9 @@ export function GamePortal() {
           ))}
         </div>
 
-        {/* Leaderboard */}
+        {/* ---------------------------------------------
+         * leaderboard
+         * ------------------------------------------- */}
         <Card className="bg-black/80 border-gray-700">
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
@@ -155,6 +175,7 @@ export function GamePortal() {
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-8">
+              {/* top players */}
               <div>
                 <h4 className="text-lg font-semibold text-white mb-4">Top Players This Week</h4>
                 <div className="space-y-3">
@@ -176,6 +197,7 @@ export function GamePortal() {
                 </div>
               </div>
 
+              {/* live stats */}
               <div>
                 <h4 className="text-lg font-semibold text-white mb-4">Live Stats</h4>
                 <div className="grid grid-cols-2 gap-4">
@@ -186,12 +208,12 @@ export function GamePortal() {
                   </div>
                   <div className="bg-gray-900/50 rounded-lg p-4 text-center">
                     <Coins className="h-6 w-6 text-green-400 mx-auto mb-2" />
-                    <div className="text-xl font-bold text-white">2.5M</div>
+                    <div className="text-xl font-bold text-white">2.5 M</div>
                     <div className="text-xs text-gray-400">PSX in Play</div>
                   </div>
                   <div className="bg-gray-900/50 rounded-lg p-4 text-center">
                     <Trophy className="h-6 w-6 text-yellow-400 mx-auto mb-2" />
-                    <div className="text-xl font-bold text-white">125K</div>
+                    <div className="text-xl font-bold text-white">125 K</div>
                     <div className="text-xs text-gray-400">Biggest Win</div>
                   </div>
                   <div className="bg-gray-900/50 rounded-lg p-4 text-center">
@@ -208,7 +230,9 @@ export function GamePortal() {
     )
   }
 
-  // This section is now effectively unreachable due to isAuthenticated being true by default
+  /* -------------------------------------------------
+   * unauthenticated flow
+   * ------------------------------------------------- */
   return (
     <div className="max-w-2xl mx-auto" data-section="game-portal">
       <div className="text-center mb-8">
@@ -224,7 +248,7 @@ export function GamePortal() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Password Entry */}
+          {/* password entry */}
           <div>
             <label className="text-sm font-medium text-gray-300 mb-2 block">Agent Password</label>
             <div className="relative">
@@ -234,12 +258,11 @@ export function GamePortal() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter classified password..."
                 className="bg-gray-900 border-gray-600 text-white pr-10"
-                onKeyPress={(e) => e.key === "Enter" && console.log("Password submit disabled")} // Changed to log
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -247,9 +270,7 @@ export function GamePortal() {
             <p className="text-xs text-gray-500 mt-1">Hint: Try 'glizzy123' for demo access</p>
           </div>
 
-          <Button onClick={() => console.log("Authenticate disabled")} className="w-full bg-red-600 hover:bg-red-700">
-            {" "}
-            {/* Changed to log */}
+          <Button onClick={handleAuthenticate} className="w-full bg-red-600 hover:bg-red-700">
             Authenticate
           </Button>
 
@@ -263,9 +284,9 @@ export function GamePortal() {
               onChange={(e) => setApplicationText(e.target.value)}
               placeholder="Tell us why you want to become a PSX agent..."
               className="w-full h-24 p-3 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-400 resize-none"
-            />
+            ></textarea>
             <Button
-              onClick={() => console.log("Application submit disabled")} // Changed to log
+              onClick={handleApplicationSubmit}
               variant="outline"
               className="w-full mt-4 border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
             >
@@ -273,15 +294,15 @@ export function GamePortal() {
             </Button>
           </div>
 
-          {/* Game Preview */}
+          {/* preview panel */}
           <div className="bg-gray-900/50 rounded-lg p-4">
             <h4 className="text-white font-semibold mb-2">What awaits inside:</h4>
             <ul className="text-sm text-gray-300 space-y-1">
-              <li>• PSX-themed slot machines with progressive jackpots</li>
-              <li>• Live poker tables with real PSX stakes</li>
-              <li>• Blackjack with crypto multipliers</li>
-              <li>• Exclusive agent tournaments</li>
-              <li>• Real-time leaderboards and rewards</li>
+              <li>&bull; PSX-themed slot machines with progressive jackpots</li>
+              <li>&bull; Live poker tables with real PSX stakes</li>
+              <li>&bull; Blackjack with crypto multipliers</li>
+              <li>&bull; Exclusive agent tournaments</li>
+              <li>&bull; Real-time leaderboards and rewards</li>
             </ul>
           </div>
         </CardContent>
