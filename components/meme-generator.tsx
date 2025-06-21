@@ -16,12 +16,23 @@ const backgrounds = [
   "/images/psx-meme.png",
   "/images/psx-open.png",
   "/images/psx-store.png",
+  "/images/meme-backgrounds/fde8e62c9a28e0433518dbd99e3b5a26.jpg",
+  "/images/meme-backgrounds/dcf335780d1950a819bf05240441659b.jpg",
+  "/images/meme-backgrounds/e6e2bcfb6129db9a9991469f736da3da.jpg",
+  "/images/meme-backgrounds/ba74b57164c8e2aee12483de4a6753e6.jpg",
+  "/images/meme-backgrounds/f861494e62559f3cc29890be9df9cb35.jpg",
+  "/images/meme-backgrounds/photo_2025-03-26_20-55-15.jpg",
+  "/images/meme-backgrounds/psx_1.png",
+  "/images/meme-backgrounds/psx_2.png",
+  "/images/meme-backgrounds/New Project (1).png",
 ]
 
 const characters = [
-  "/placeholder.svg?height=200&width=200",
-  "/placeholder.svg?height=200&width=200",
-  "/placeholder.svg?height=200&width=200",
+  "/images/meme-characters/1.png",
+  "/images/meme-characters/2.png",
+  "/images/meme-characters/3.png",
+  "/images/meme-characters/4.png",
+  "/images/meme-characters/5.png",
 ]
 
 export function MemeGenerator() {
