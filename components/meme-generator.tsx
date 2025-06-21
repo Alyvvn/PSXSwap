@@ -24,7 +24,7 @@ const characters = [
   "/placeholder.svg?height=200&width=200&text=Character+3",
 ]
 
-export default function MemeGenerator() {
+export function MemeGenerator() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [topText, setTopText] = useState("TOP TEXT")
   const [bottomText, setBottomText] = useState("BOTTOM TEXT")
@@ -304,3 +304,5 @@ export default function MemeGenerator() {
     </div>
   )
 }
+
+export default MemeGenerator
