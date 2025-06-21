@@ -18,13 +18,13 @@ const backgrounds = [
   "/images/psx-store.png",
   "/images/meme-backgrounds/fde8e62c9a28e0433518dbd99e3b5a26.jpg",
   "/images/meme-backgrounds/dcf335780d1950a819bf05240441659b.jpg",
-  "/images/meme-backgrounds/e6e2bcfb6129db9a9991469f736da3da.jpg",
+  "/images/meme-backgrounds/e6e2bcfb6129db9a9991469f736da3da.jpeg",
   "/images/meme-backgrounds/ba74b57164c8e2aee12483de4a6753e6.jpg",
   "/images/meme-backgrounds/f861494e62559f3cc29890be9df9cb35.jpg",
   "/images/meme-backgrounds/photo_2025-03-26_20-55-15.jpg",
   "/images/meme-backgrounds/psx_1.png",
   "/images/meme-backgrounds/psx_2.png",
-  "/images/meme-backgrounds/New Project (1).png",
+  "/images/meme-backgrounds/new-project-1.png",
 ]
 
 const characters = [
@@ -49,10 +49,12 @@ export function MemeGenerator() {
   const loadImage = useCallback((src: string): Promise<HTMLImageElement> => {
     return new Promise((resolve, reject) => {
       const img = new window.Image()
-      img.crossOrigin = "anonymous" // Crucial for CORS if images are from different origins
+      img.crossOrigin = "anonymous"
       img.onload = () => resolve(img)
       img.onerror = (e) => reject(new Error(`Failed to load image: ${src}. Event: ${e}`))
-      img.src = src
+
+      // Encode any special characters (spaces, etc.)
+      img.src = encodeURI(src)
     })
   }, [])
 
