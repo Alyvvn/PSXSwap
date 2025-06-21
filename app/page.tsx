@@ -201,43 +201,37 @@ export default function PSXLanding() {
       {/* Hero section */}
       <section
         ref={homeRef}
-        className="min-h-screen flex flex-col justify-center items-center pt-32 pb-24 px-4 text-center relative"
+        className="min-h-screen flex flex-col justify-center items-center pt-32 pb-24 px-4 text-center relative overflow-hidden"
       >
-        {/* PSX Character Main */}
+        {/* PSX Character Main as background */}
         <Image
           src="/images/psx-character-main.png"
           alt="PSX Main Character"
-          width={600}
-          height={800}
-          className="absolute inset-0 w-full h-full object-contain opacity-70 animate-float-delayed z-0"
-          style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
+          width={800}
+          height={1000}
+          className="absolute inset-0 w-full h-full object-cover opacity-20 animate-float-delayed z-0"
+          style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)", filter: "blur(2px)" }}
         />
 
-        {/* PSX Logo Character */}
+        {/* PSX Logo Character as background */}
         <Image
           src="/images/psx-logo-character.png"
           alt="PSX Logo with Character"
-          width={400}
-          height={400}
-          className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-90 animate-fade-in z-10"
+          width={600}
+          height={600}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10 animate-spin-slow z-0"
         />
 
-        <h1 className="text-8xl md:text-[12rem] font-black bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-600 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_30px_rgba(168,85,247,0.4)] z-20">
+        <h1 className="text-8xl md:text-[12rem] font-black bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-600 bg-clip-text text-transparent animate-pulse drop-shadow-[0_0_30px_rgba(168,85,247,0.4)] z-10">
           PSX
         </h1>
-        <Image
-          src="/images/psx-please-stop-xisting.png"
-          alt="Please Stop Xisting"
-          width={500}
-          height={100}
-          className="mt-6 md:mt-12 max-w-full h-auto animate-fade-in z-20"
-        />
-        <p className="mt-2 text-sm md:text-base font-mono text-cyan-400/70 uppercase tracking-wider z-20">
+        <p className="mt-6 text-2xl md:text-4xl font-mono text-cyan-300 z-10">PRECISION. STEALTH. EXECUTION.</p>
+        <p className="mt-2 text-sm md:text-base font-mono text-cyan-400/70 uppercase tracking-wider z-10">
           PLEASE STOP XISTING. // Base Network Protocol
         </p>
 
         {/* Contract address */}
-        <div className="mt-16 bg-black/70 border border-cyan-400/30 rounded-3xl p-1.5 backdrop-blur-sm shadow-2xl z-20">
+        <div className="mt-16 bg-black/70 border border-cyan-400/30 rounded-3xl p-1.5 backdrop-blur-sm shadow-2xl z-10">
           <Button
             onClick={copyToClipboard}
             className={`bg-black/70 hover:bg-cyan-400/15 font-mono transition ${
@@ -259,7 +253,7 @@ export default function PSXLanding() {
         </div>
 
         {/* Social icons */}
-        <div className="mt-24 flex gap-8 justify-center z-20">
+        <div className="mt-24 flex gap-8 justify-center z-10">
           {[
             { href: "https://t.me/psxonbase", icon: MessageCircle, label: "Telegram" },
             { href: "https://x.com/PSXonBase", icon: Twitter, label: "Twitter" },
@@ -289,7 +283,7 @@ export default function PSXLanding() {
         </div>
 
         {/* Call to action cards */}
-        <div className="mt-24 grid md:grid-cols-2 gap-8 max-w-6xl w-full z-20">
+        <div className="mt-24 grid md:grid-cols-2 gap-8 max-w-6xl w-full z-10">
           {/* Trade card */}
           <Card
             className="bg-black/50 border-cyan-400/30 backdrop-blur-3xl cursor-pointer hover:bg-black/70 hover:-translate-y-2 transition"
