@@ -1,47 +1,54 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useEffect } from "react"
 import Image from "next/image"
-import { Card, CardContent } from "@/components/ui/card"
-
-const memes = [
-  "/placeholder.png?height=300&width=400",
-  "/placeholder.png?height=300&width=400",
-  "/placeholder.png?height=300&width=400",
-  "/placeholder.png?height=300&width=400",
-  "/placeholder.png?height=300&width=400",
-  "/placeholder.png?height=300&width=400",
-  "/placeholder.png?height=300&width=400",
-  "/placeholder.png?height=300&width=400",
-  "/placeholder.png?height=300&width=400",
-  "/placeholder.png?height=300&width=400",
-]
 
 export function MemeReel() {
-  const reelRef = useRef<HTMLDivElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const scrollContainer = scrollRef.current
+    if (!scrollContainer) return
+
+    const autoScroll = () => {
+      if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth - scrollContainer.clientWidth) {
+        scrollContainer.scrollLeft = 0
+      } else {
+        scrollContainer.scrollLeft += 1
+      }
+    }
+
+    const interval = setInterval(autoScroll, 30)
+    return () => clearInterval(interval)
+  }, [])
+
+  const memes = [
+    "/images/psx-hero.png",
+    "/images/psx-store.png",
+    "/images/psx-meme.png",
+    "/images/psx-computer.png",
+    "/images/psx-dream.png",
+    "/images/psx-attention.png",
+    "/images/psx-chart.png",
+  ]
 
   return (
-    <div className="w-full py-8 bg-black/70 border-t border-b border-cyan-400/30 shadow-inner shadow-cyan-400/10">
-      <h2 className="text-center text-3xl font-bold text-cyan-400 mb-8">Agent Meme Feed</h2>
-      <div ref={reelRef} className="flex overflow-x-auto scrollbar-hide py-4 px-2 space-x-6 snap-x snap-mandatory">
-        {memes.map((meme, index) => (
-          <Card
-            key={index}
-            className="flex-shrink-0 w-[300px] h-[250px] bg-black/50 border-cyan-400/30 backdrop-blur-lg shadow-lg snap-center hover:scale-105 transition-transform duration-300"
-          >
-            <CardContent className="p-0 flex items-center justify-center w-full h-full">
-              <Image
-                src={meme || "/placeholder.png"}
-                alt={`Meme ${index + 1}`}
-                width={300}
-                height={250}
-                className="object-cover w-full h-full rounded-lg"
-              />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-      <p className="text-center text-cyan-300/70 text-sm mt-6">Scroll to see more classified memes.</p>
+    <div
+      ref={scrollRef}
+      className="flex overflow-x-auto scrollbar-hide gap-4 py-2"
+      style={{ scrollBehavior: "smooth" }}
+    >
+      {/* Double the memes for continuous scrolling */}
+      {[...memes, ...memes].map((src, index) => (
+        <div
+          key={index}
+          className="flex-shrink-0 w-64 h-40 bg-black/30 rounded-lg overflow-hidden border border-white/10 relative"
+        >
+          <Image src={src || "/placeholder.svg"} alt={`PSX Meme ${index + 1}`} fill className="object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          <div className="absolute bottom-2 left-2 text-white text-xs font-mono">INTEL_FILE_{index + 1}.jpg</div>
+        </div>
+      ))}
     </div>
   )
 }

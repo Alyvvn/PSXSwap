@@ -77,7 +77,7 @@ export default function GlizzyWorldPage() {
                   ← Back to Games
                 </Button>
                 <Link href="/">
-                  <Button variant="outline" className="bg-black text-white border-gray-700 hover:bg-gray-800">
+                  <Button variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Home
                   </Button>
@@ -100,7 +100,7 @@ export default function GlizzyWorldPage() {
         <div className="text-center mb-8 pt-8">
           <div className="flex items-center justify-between mb-4">
             <Link href="/">
-              <Button variant="outline" className="bg-black text-white border-gray-700 hover:bg-gray-800">
+              <Button variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to PSX
               </Button>
