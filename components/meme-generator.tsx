@@ -25,26 +25,29 @@ const backgrounds = [
   "/images/meme-backgrounds/psx_1.png",
   "/images/meme-backgrounds/psx_2.png",
   "/images/meme-backgrounds/new-project-1.png",
+  "/images/meme-backgrounds/photo_2025-03-26_20-55-15 (2).jpg",
+  "/images/meme-backgrounds/e3950bfc4dd44b1684856dd5a6587a6c.jpg",
+  "/images/meme-backgrounds/0885898432d089676305eb9a53d9832b.jpg",
+  "/images/meme-backgrounds/ebe9614fe194336cfe426b4e5301f6ee.jpg",
+  "/images/meme-backgrounds/85cb804965d4765c7388b3bbb7739b26.jpg",
+  "/images/meme-backgrounds/photo_2025-03-26_20-55-15-2.jpg",
+  "/images/meme-backgrounds/psx_3.png",
+  "/images/meme-backgrounds/psx_4.png",
+  "/images/meme-backgrounds/psx_9.png",
+  "/images/meme-backgrounds/psx_8.png",
 ]
 
-const characters = [
-  "/images/meme-characters/1.png",
-  "/images/meme-characters/2.png",
-  "/images/meme-characters/3.png",
-  "/images/meme-characters/4.png",
-  "/images/meme-characters/5.png",
-]
+interface MemeGeneratorProps {
+  onMemeGenerated: (memeDataUrl: string) => void
+}
 
-export function MemeGenerator() {
+export function MemeGenerator({ onMemeGenerated }: MemeGeneratorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [topText, setTopText] = useState("TOP TEXT")
   const [bottomText, setBottomText] = useState("BOTTOM TEXT")
   const [selectedBackground, setSelectedBackground] = useState(backgrounds[0])
-  const [selectedCharacter, setSelectedCharacter] = useState(characters[0])
   const [textColor, setTextColor] = useState("#FFFFFF")
   const [fontSize, setFontSize] = useState([60]) // Increased default font size
-  const [characterSize, setCharacterSize] = useState([100])
-  const [characterPosition, setCharacterPosition] = useState({ x: 50, y: 50 })
 
   const loadImage = useCallback((src: string): Promise<HTMLImageElement> => {
     return new Promise((resolve, reject) => {
@@ -52,8 +55,6 @@ export function MemeGenerator() {
       img.crossOrigin = "anonymous"
       img.onload = () => resolve(img)
       img.onerror = (e) => reject(new Error(`Failed to load image: ${src}. Event: ${e}`))
-
-      // Encode any special characters (spaces, etc.)
       img.src = encodeURI(src)
     })
   }, [])
@@ -65,30 +66,11 @@ export function MemeGenerator() {
     if (!ctx) return
 
     try {
-      // Always await the background first (required)
       const bgImg = await loadImage(selectedBackground)
 
-      // Character is optional – wrap in try/catch
-      let charImg: HTMLImageElement | null = null
-      try {
-        charImg = await loadImage(selectedCharacter)
-      } catch {
-        charImg = null
-      }
-
-      // Canvas dims from background
       canvas.width = bgImg.naturalWidth
       canvas.height = bgImg.naturalHeight
       ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height)
-
-      // Draw character if it loaded
-      if (charImg) {
-        const charWidth = (charImg.naturalWidth * characterSize[0]) / 100
-        const charHeight = (charImg.naturalHeight * characterSize[0]) / 100
-        const charX = (canvas.width * characterPosition.x) / 100 - charWidth / 2
-        const charY = (canvas.height * characterPosition.y) / 100 - charHeight / 2
-        ctx.drawImage(charImg, charX, charY, charWidth, charHeight)
-      }
 
       // Text
       ctx.fillStyle = textColor
@@ -105,17 +87,7 @@ export function MemeGenerator() {
       ctx.font = "24px Arial"
       ctx.fillText("Error loading images!", canvas.width / 2, canvas.height / 2)
     }
-  }, [
-    topText,
-    bottomText,
-    selectedBackground,
-    selectedCharacter,
-    textColor,
-    fontSize,
-    characterSize,
-    characterPosition,
-    loadImage,
-  ])
+  }, [topText, bottomText, selectedBackground, textColor, fontSize, loadImage])
 
   useEffect(() => {
     drawMeme()
@@ -124,7 +96,11 @@ export function MemeGenerator() {
   const handleDownload = () => {
     const canvas = canvasRef.current
     if (canvas) {
-      const image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream")
+      const image = canvas.toDataURL("image/png")
+      // Add to feed
+      onMemeGenerated(image)
+
+      // Download
       const link = document.createElement("a")
       link.download = "glizzy-meme.png"
       link.href = image
@@ -136,50 +112,6 @@ export function MemeGenerator() {
     const randomIndex = Math.floor(Math.random() * backgrounds.length)
     setSelectedBackground(backgrounds[randomIndex])
   }
-
-  const randomizeCharacter = () => {
-    const randomIndex = Math.floor(Math.random() * characters.length)
-    setSelectedCharacter(characters[randomIndex])
-  }
-
-  const handleCharacterDrag = useCallback(
-    (e: React.MouseEvent) => {
-      const canvas = canvasRef.current
-      if (!canvas) return
-
-      const rect = canvas.getBoundingClientRect()
-      const scaleX = canvas.width / rect.width
-      const scaleY = canvas.height / rect.height
-
-      const startX = (e.clientX - rect.left) * scaleX
-      const startY = (e.clientY - rect.top) * scaleY
-
-      const initialCharX = (canvas.width * characterPosition.x) / 100
-      const initialCharY = (canvas.height * characterPosition.y) / 100
-
-      const offsetX = startX - initialCharX
-      const offsetY = startY - initialCharY
-
-      const onMouseMove = (moveEvent: MouseEvent) => {
-        const newX = (moveEvent.clientX - rect.left) * scaleX - offsetX
-        const newY = (moveEvent.clientY - rect.top) * scaleY - offsetY
-
-        setCharacterPosition({
-          x: (newX / canvas.width) * 100,
-          y: (newY / canvas.height) * 100,
-        })
-      }
-
-      const onMouseUp = () => {
-        window.removeEventListener("mousemove", onMouseMove)
-        window.removeEventListener("mouseup", onMouseUp)
-      }
-
-      window.addEventListener("mousemove", onMouseMove)
-      window.addEventListener("mouseup", onMouseUp)
-    },
-    [characterPosition],
-  )
 
   const handleImageUpload = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -207,8 +139,6 @@ export function MemeGenerator() {
             <canvas
               ref={canvasRef}
               className="max-h-[500px] w-full rounded-lg border border-cyan-400/50 shadow-inner shadow-cyan-400/20"
-              onMouseDown={handleCharacterDrag}
-              style={{ cursor: "grab" }}
             />
           </CardContent>
         </Card>
@@ -299,59 +229,6 @@ export function MemeGenerator() {
               >
                 <RefreshCw className="h-4 w-4" /> Random Background
               </Button>
-            </div>
-
-            {/* Character Selection & Size */}
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-cyan-400 flex items-center gap-2">
-                <ImageIcon className="h-5 w-5" /> Character
-              </h3>
-              <div className="grid grid-cols-3 gap-2">
-                {characters.map((char, i) => (
-                  <img
-                    key={i}
-                    src={char || "/placeholder.svg"}
-                    alt={`Character ${i + 1}`}
-                    className={`cursor-pointer rounded-md border-2 ${
-                      selectedCharacter === char ? "border-cyan-400" : "border-transparent"
-                    } hover:border-cyan-300 transition`}
-                    onClick={() => setSelectedCharacter(char)}
-                  />
-                ))}
-              </div>
-              <label htmlFor="upload-character" className="w-full">
-                <Button
-                  asChild
-                  className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold flex items-center gap-2 cursor-pointer"
-                >
-                  <span>
-                    <Upload className="h-4 w-4" /> Upload Character
-                  </span>
-                </Button>
-              </label>
-              <input
-                id="upload-character"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => handleImageUpload(e, setSelectedCharacter)}
-              />
-              <Button
-                onClick={randomizeCharacter}
-                className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold flex items-center gap-2"
-              >
-                <RefreshCw className="h-4 w-4" /> Random Character
-              </Button>
-              <h4 className="text-lg font-bold text-cyan-400 flex items-center gap-2 mt-4">Size</h4>
-              <Slider
-                min={10}
-                max={200}
-                step={1}
-                value={characterSize}
-                onValueChange={setCharacterSize}
-                className="w-full"
-              />
-              <span className="text-sm text-cyan-300/70 mt-2 block text-center">{characterSize[0]}%</span>
             </div>
 
             {/* Download Button */}
