@@ -19,11 +19,9 @@ const backgrounds = [
 ]
 
 const characters = [
-  "/completed Photos/1.png",
-  "/completed Photos/2.png",
-  "/completed Photos/3.png",
-  "/completed Photos/4.png",
-  "/completed Photos/5.png",
+  "/placeholder.svg?height=200&width=200",
+  "/placeholder.svg?height=200&width=200",
+  "/placeholder.svg?height=200&width=200",
 ]
 
 export function MemeGenerator() {
@@ -47,53 +45,53 @@ export function MemeGenerator() {
     })
   }, [])
 
-  const drawMeme = useCallback(() => {
+  const drawMeme = useCallback(async () => {
     const canvas = canvasRef.current
     if (!canvas) return
-
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
-    Promise.all([loadImage(selectedBackground), loadImage(selectedCharacter)])
-      .then(([bgImg, charImg]) => {
-        // Set canvas dimensions to background image dimensions
-        canvas.width = bgImg.naturalWidth
-        canvas.height = bgImg.naturalHeight
+    try {
+      // Always await the background first (required)
+      const bgImg = await loadImage(selectedBackground)
 
-        // Draw background
-        ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height)
+      // Character is optional – wrap in try/catch
+      let charImg: HTMLImageElement | null = null
+      try {
+        charImg = await loadImage(selectedCharacter)
+      } catch {
+        charImg = null
+      }
 
-        // Draw character
+      // Canvas dims from background
+      canvas.width = bgImg.naturalWidth
+      canvas.height = bgImg.naturalHeight
+      ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height)
+
+      // Draw character if it loaded
+      if (charImg) {
         const charWidth = (charImg.naturalWidth * characterSize[0]) / 100
         const charHeight = (charImg.naturalHeight * characterSize[0]) / 100
         const charX = (canvas.width * characterPosition.x) / 100 - charWidth / 2
         const charY = (canvas.height * characterPosition.y) / 100 - charHeight / 2
         ctx.drawImage(charImg, charX, charY, charWidth, charHeight)
+      }
 
-        // Text settings
-        ctx.fillStyle = textColor
-        ctx.textAlign = "center"
-        ctx.font = `${fontSize[0]}px Impact, sans-serif`
-        ctx.textBaseline = "top" // For top text
-        ctx.lineWidth = 0 // No border for text
-
-        // Draw top text
-        ctx.fillText(topText.toUpperCase(), canvas.width / 2, 20)
-
-        ctx.textBaseline = "bottom" // For bottom text
-        // Draw bottom text
-        ctx.fillText(bottomText.toUpperCase(), canvas.width / 2, canvas.height - 20)
-      })
-      .catch((error) => {
-        console.error("Error drawing meme:", error)
-        // Optionally draw an error message on the canvas
-        if (ctx) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height)
-          ctx.fillStyle = "red"
-          ctx.font = "24px Arial"
-          ctx.fillText("Error loading images!", canvas.width / 2, canvas.height / 2)
-        }
-      })
+      // Text
+      ctx.fillStyle = textColor
+      ctx.textAlign = "center"
+      ctx.font = `${fontSize[0]}px Impact, sans-serif`
+      ctx.textBaseline = "top"
+      ctx.fillText(topText.toUpperCase(), canvas.width / 2, 20)
+      ctx.textBaseline = "bottom"
+      ctx.fillText(bottomText.toUpperCase(), canvas.width / 2, canvas.height - 20)
+    } catch (err) {
+      console.error("Error drawing meme:", err)
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.fillStyle = "red"
+      ctx.font = "24px Arial"
+      ctx.fillText("Error loading images!", canvas.width / 2, canvas.height / 2)
+    }
   }, [
     topText,
     bottomText,
