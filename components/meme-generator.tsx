@@ -55,6 +55,8 @@ export function MemeGenerator({ onMemeGenerated }: MemeGeneratorProps) {
       img.crossOrigin = "anonymous"
       img.onload = () => resolve(img)
       img.onerror = (e) => reject(new Error(`Failed to load image: ${src}. Event: ${e}`))
+
+      // Encode any special characters (spaces, etc.)
       img.src = encodeURI(src)
     })
   }, [])
@@ -93,11 +95,11 @@ export function MemeGenerator({ onMemeGenerated }: MemeGeneratorProps) {
     drawMeme()
   }, [drawMeme])
 
-  const handleDownload = () => {
+  const handleDownloadAndPublish = () => {
     const canvas = canvasRef.current
     if (canvas) {
       const image = canvas.toDataURL("image/png")
-      // Add to feed
+      // Publish to feed
       onMemeGenerated(image)
 
       // Download
@@ -233,10 +235,10 @@ export function MemeGenerator({ onMemeGenerated }: MemeGeneratorProps) {
 
             {/* Download Button */}
             <Button
-              onClick={handleDownload}
+              onClick={handleDownloadAndPublish}
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-lg py-6 font-bold uppercase tracking-wider shadow-lg shadow-purple-500/30 hover:from-purple-700 hover:to-pink-700 flex items-center gap-2"
             >
-              <Download className="h-5 w-5" /> Download Meme
+              <Download className="h-5 w-5" /> Download & Publish Meme
             </Button>
           </CardContent>
         </Card>
