@@ -79,28 +79,17 @@ export function GlizzyBlackjack() {
   }, [])
 
   const playSound = (audioRef: React.RefObject<HTMLAudioElement>) => {
-    const audioEl = audioRef.current
-    if (!audioEl) return
+    const audio = audioRef.current
+    if (!audio) return
 
-    // Only try to play if the browser reports it can handle MP3/OGG
-    const supported =
-      audioEl.canPlayType("audio/mpeg") ||
-      audioEl.canPlayType("audio/mp3") ||
-      audioEl.canPlayType("audio/ogg")
-
-    if (!supported) {
-      console.warn("Audio type not supported in this browser.")
-      return
-    }
+    // Browser can’t play MP3 or the src is missing ➜ abort gracefully
+    if (audio.readyState === 0 || audio.canPlayType("audio/mpeg") === "") return
 
     try {
-      audioEl.currentTime = 0
-      // play() returns a promise - catch & swallow user-gesture errors
-      audioEl.play().catch((err) => {
-        console.warn("Audio playback prevented:", err)
-      })
-    } catch (err) {
-      console.warn("Audio play threw:", err)
+      audio.currentTime = 0
+      audio.play().catch((e) => console.error("Error playing sound:", e))
+    } catch (e) {
+      console.error("Error playing sound:", e)
     }
   }
 
