@@ -1,13 +1,26 @@
 "use client"
 
 import { useEffect } from "react"
-import type React from "react"
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Sparkles, Download, Text, Eraser, RefreshCw } from "lucide-react"
 import Image from "next/image"
+
+// --- add this utility just above the component definition ---
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.crossOrigin = "anonymous"
+    img.onload = () => resolve(img)
+    img.onerror = (ev) => {
+      console.error("Error loading image:", src, ev)
+      reject(new Error(`Failed to load ${src}`))
+    }
+    img.src = src
+  })
+}
 
 export function MemeGenerator() {
   const [topText, setTopText] = useState("TOP TEXT")
@@ -76,36 +89,20 @@ export function MemeGenerator() {
 
   // Redraw meme when text or images change
   useEffect(() => {
-    const loadImage = (src: string, ref: React.MutableRefObject<HTMLImageElement | null>, callback: () => void) => {
-      const img = new Image()
-      img.src = src
-      img.crossOrigin = "anonymous" // Crucial for CORS when drawing to canvas
-      img.onload = () => {
-        ref.current = img
-        callback()
-      }
-      img.onerror = (e) => {
-        console.error("Error loading image:", src, e)
-      }
-    }
+    let isMounted = true
 
-    let backgroundLoaded = false
-    let characterLoaded = false
-
-    const checkAndDraw = () => {
-      if (backgroundLoaded && characterLoaded) {
+    Promise.all([loadImage(selectedBackground), loadImage(selectedCharacter)])
+      .then(([bg, ch]) => {
+        if (!isMounted) return
+        backgroundRef.current = bg
+        characterRef.current = ch
         drawMeme()
-      }
-    }
+      })
+      .catch((err) => console.error(err))
 
-    loadImage(selectedBackground, backgroundRef, () => {
-      backgroundLoaded = true
-      checkAndDraw()
-    })
-    loadImage(selectedCharacter, characterRef, () => {
-      characterLoaded = true
-      checkAndDraw()
-    })
+    return () => {
+      isMounted = false
+    }
   }, [selectedBackground, selectedCharacter, topText, bottomText])
 
   const downloadMeme = () => {
