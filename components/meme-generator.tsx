@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
+import type React from "react"
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -8,43 +9,29 @@ import { Input } from "@/components/ui/input"
 import { Sparkles, Download, Text, Eraser, RefreshCw } from "lucide-react"
 import Image from "next/image"
 
-// --- add this utility just above the component definition ---
-function loadImage(src: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const img = new Image()
-    img.crossOrigin = "anonymous"
-    img.onload = () => resolve(img)
-    img.onerror = (ev) => {
-      console.error("Error loading image:", src, ev)
-      reject(new Error(`Failed to load ${src}`))
-    }
-    img.src = src
-  })
-}
-
 export function MemeGenerator() {
   const [topText, setTopText] = useState("TOP TEXT")
   const [bottomText, setBottomText] = useState("BOTTOM TEXT")
-  const [selectedBackground, setSelectedBackground] = useState("/placeholder.svg?height=400&width=600")
-  const [selectedCharacter, setSelectedCharacter] = useState("/placeholder.svg?height=200&width=200")
+  const [selectedBackground, setSelectedBackground] = useState("/backgrounds/04ec0d58249731679fee7a7a277385d4.jpg")
+  const [selectedCharacter, setSelectedCharacter] = useState("/completed Photos/1.png")
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const backgroundRef = useRef<HTMLImageElement>(null)
   const characterRef = useRef<HTMLImageElement>(null)
 
   const backgroundImages = [
-    "/placeholder.svg?height=400&width=600",
-    "/placeholder.svg?height=400&width=600",
-    "/placeholder.svg?height=400&width=600",
-    "/placeholder.svg?height=400&width=600",
-    "/placeholder.svg?height=400&width=600",
+    "/backgrounds/04ec0d58249731679fee7a7a277385d4.jpg",
+    "/backgrounds/0553ecc5e17807d0f6343d3fa3d1eabf.jpg",
+    "/backgrounds/07018bbf5a070faede30c1fcbcf50ff9.jpg",
+    "/backgrounds/0e0da999edb51ce664c91d0bafd947cf.jpg",
+    "/backgrounds/2086c5cf4f263ece85d9553f01c73c06.jpg",
   ]
 
   const characterImages = [
-    "/placeholder.svg?height=200&width=200",
-    "/placeholder.svg?height=200&width=200",
-    "/placeholder.svg?height=200&width=200",
-    "/placeholder.svg?height=200&width=200",
-    "/placeholder.svg?height=200&width=200",
+    "/completed Photos/1.png",
+    "/completed Photos/2.png",
+    "/completed Photos/3.png",
+    "/completed Photos/4.png",
+    "/completed Photos/5.png",
   ]
 
   const drawMeme = () => {
@@ -89,20 +76,36 @@ export function MemeGenerator() {
 
   // Redraw meme when text or images change
   useEffect(() => {
-    let isMounted = true
-
-    Promise.all([loadImage(selectedBackground), loadImage(selectedCharacter)])
-      .then(([bg, ch]) => {
-        if (!isMounted) return
-        backgroundRef.current = bg
-        characterRef.current = ch
-        drawMeme()
-      })
-      .catch((err) => console.error(err))
-
-    return () => {
-      isMounted = false
+    const loadImage = (src: string, ref: React.MutableRefObject<HTMLImageElement | null>, callback: () => void) => {
+      const img = new Image()
+      img.src = src
+      img.crossOrigin = "anonymous" // Crucial for CORS when drawing to canvas
+      img.onload = () => {
+        ref.current = img
+        callback()
+      }
+      img.onerror = (e) => {
+        console.error("Error loading image:", src, e)
+      }
     }
+
+    let backgroundLoaded = false
+    let characterLoaded = false
+
+    const checkAndDraw = () => {
+      if (backgroundLoaded && characterLoaded) {
+        drawMeme()
+      }
+    }
+
+    loadImage(selectedBackground, backgroundRef, () => {
+      backgroundLoaded = true
+      checkAndDraw()
+    })
+    loadImage(selectedCharacter, characterRef, () => {
+      characterLoaded = true
+      checkAndDraw()
+    })
   }, [selectedBackground, selectedCharacter, topText, bottomText])
 
   const downloadMeme = () => {

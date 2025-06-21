@@ -25,7 +25,6 @@ import {
 import Image from "next/image"
 import Link from "next/link"
 import dynamic from "next/dynamic"
-import { GlizzyWorld } from "@/components/glizzy-world" // Import the GlizzyWorld authentication component
 
 const SwapWidget = dynamic(() => import("@/components/swap-widget"), { ssr: false })
 
@@ -88,7 +87,6 @@ export default function PSXLanding() {
   const homeRef = useRef<HTMLDivElement>(null)
   const swapRef = useRef<HTMLDivElement>(null)
   const intelRef = useRef<HTMLDivElement>(null)
-  const glizzyWorldAuthRef = useRef<HTMLDivElement>(null) // Ref for Glizzy World Auth section
 
   /* ---------------------------   Constants   ------------------------------- */
   const contractAddress = "0x4444489570Afd4261d616df00DE1668dAd5F8ceE"
@@ -153,7 +151,7 @@ export default function PSXLanding() {
       </div>
 
       {/* ------------------------------  HEADER / TERMINAL BAR  ------------------------------ */}
-      <header className="fixed top-0 inset-x-0 z-50 bg-black/90 backdrop-blur-3xl border-b border-cyan-400/20">
+      <header className="fixed top-0 inset-x-0 z-50 bg-black/90 backdrop-blur-md border-b border-cyan-400/10">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3 text-xs font-mono text-cyan-400">
           <div className="flex gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
@@ -176,10 +174,10 @@ export default function PSXLanding() {
       {/* ------------------------------  NAVBAR  ------------------------------ */}
       <nav className="fixed top-12 left-1/2 -translate-x-1/2 z-40 w-full max-w-5xl px-4">
         <div
-          className="bg-black/50 backdrop-blur-3xl border border-cyan-400/30 rounded-full shadow-2xl shadow-cyan-400/10 transition-all duration-700"
+          className="bg-black/60 backdrop-blur-md border border-cyan-400/20 rounded-full shadow-2xl shadow-cyan-400/10 transition-all duration-700"
           style={{
             transform: `translateY(${Math.min(scrollY * 0.05, 10)}px)`,
-            opacity: Math.max(0.85, 1 - scrollY * 0.0005),
+            opacity: Math.max(0.9, 1 - scrollY * 0.0005),
           }}
         >
           {/* -------- DESKTOP NAV -------- */}
@@ -225,7 +223,7 @@ export default function PSXLanding() {
                 { href: "/pfp-generator", label: "PFP GENERATOR" },
                 { href: "/roadmap", label: "ROADMAP" },
                 { href: "/game-portal", label: "GAME PORTAL" },
-                { href: "#glizzy-world-auth", label: "GLIZZY WORLD" }, // Link to auth section on main page
+                { href: "/glizzy-world", label: "GLIZZY WORLD" }, // Link to Glizzy World Auth Page
               ].map((item, i) => (
                 <Link key={i} href={item.href}>
                   <Button className="px-6 py-3 text-sm font-mono text-cyan-400/90 rounded-full transition hover:bg-cyan-400/15 hover:text-cyan-100">
@@ -286,7 +284,7 @@ export default function PSXLanding() {
                 { href: "/pfp-generator", label: "PFP GENERATOR" },
                 { href: "/roadmap", label: "ROADMAP" },
                 { href: "/game-portal", label: "GAME PORTAL" },
-                { href: "#glizzy-world-auth", label: "GLIZZY WORLD" }, // Link to auth section on main page
+                { href: "/glizzy-world", label: "GLIZZY WORLD" }, // Link to Glizzy World Auth Page
               ].map((item) => (
                 <Link key={item.label} href={item.href} onClick={() => setMobileMenuOpen(false)}>
                   <Button className="w-full text-left px-6 py-4 rounded-xl text-sm font-mono text-cyan-400/90 hover:bg-cyan-400/15 hover:text-cyan-100">
@@ -389,24 +387,23 @@ export default function PSXLanding() {
           </Card>
 
           {/* Casino card */}
-          <Card
-            className="bg-black/50 border-red-400/30 backdrop-blur-3xl cursor-pointer hover:bg-black/70 hover:-translate-y-2 transition relative overflow-hidden"
-            onClick={() => scrollToSection(glizzyWorldAuthRef)} // Scroll to auth section
-          >
-            <CardContent className="p-8 text-center relative z-10">
-              <div className="w-18 h-18 flex items-center justify-center mx-auto mb-6 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 text-white shadow-lg">
-                <Lock className="h-9 w-9" />
-              </div>
-              <h3 className="text-2xl font-mono font-bold text-red-400">GLIZZY WORLD CASINO</h3>
-              <p className="mt-4 text-sm text-red-300/80">
-                Password-protected gaming suite exclusively for verified PSX agents.
-              </p>
-              <span className="mt-6 inline-flex items-center gap-2 text-sm font-mono text-red-400">
-                CLASSIFIED ACCESS <Shield className="h-4 w-4" />
-              </span>
-            </CardContent>
-            <span className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-pink-500/10 opacity-0 hover:opacity-100 transition" />
-          </Card>
+          <Link href="/glizzy-world" className="block">
+            <Card className="bg-black/50 border-red-400/30 backdrop-blur-3xl hover:bg-black/70 hover:-translate-y-2 transition relative overflow-hidden">
+              <CardContent className="p-8 text-center relative z-10">
+                <div className="w-18 h-18 flex items-center justify-center mx-auto mb-6 rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 text-white shadow-lg">
+                  <Lock className="h-9 w-9" />
+                </div>
+                <h3 className="text-2xl font-mono font-bold text-red-400">GLIZZY WORLD CASINO</h3>
+                <p className="mt-4 text-sm text-red-300/80">
+                  Password-protected gaming suite exclusively for verified PSX agents.
+                </p>
+                <span className="mt-6 inline-flex items-center gap-2 text-sm font-mono text-red-400">
+                  CLASSIFIED ACCESS <Shield className="h-4 w-4" />
+                </span>
+              </CardContent>
+              <span className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-pink-500/10 opacity-0 hover:opacity-100 transition" />
+            </Card>
+          </Link>
         </div>
       </section>
 
@@ -615,17 +612,6 @@ export default function PSXLanding() {
       </section>
 
       {/* ===================================================================== */}
-      {/*                              GLIZZY WORLD AUTH SECTION                */}
-      {/* ===================================================================== */}
-      <section
-        id="glizzy-world-auth"
-        ref={glizzyWorldAuthRef}
-        className="py-32 px-4 bg-gradient-to-b from-black via-black/80 to-black relative flex justify-center items-center"
-      >
-        <GlizzyWorld />
-      </section>
-
-      {/* ===================================================================== */}
       {/*                               FOOTER                                  */}
       {/* ===================================================================== */}
 
@@ -641,7 +627,7 @@ export default function PSXLanding() {
             {
               title: "Quick Access",
               links: [
-                { label: "Glizzy World Casino", href: "#glizzy-world-auth" }, // Link to auth section
+                { label: "Glizzy World Casino", href: "/glizzy-world" }, // Link to Glizzy World Auth Page
                 { label: "Meme Generator", href: "/meme-generator" },
                 { label: "PFP Generator", href: "/pfp-generator" },
                 { label: "Interactive Roadmap", href: "/roadmap" },
