@@ -6,29 +6,6 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Serve static files from public directory
-  async headers() {
-    return [
-      {
-        source: '/game/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, must-revalidate',
-          },
-        ],
-      },
-    ];
-  },
-  // Handle static file serving
-  async rewrites() {
-    return [
-      {
-        source: '/game/:path*',
-        destination: '/game/:path*',
-      },
-    ];
-  },
   images: {
     remotePatterns: [
       {
@@ -116,11 +93,73 @@ const nextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()'
-          }
-        ]
-      }
-    ]
+          },
+          {
+            key: 'Cross-Origin-Embedder-Policy',
+            value: 'require-corp',
+          },
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin',
+          },
+        ],
+      },
+      // Specific headers for game assets
+      {
+        source: '/game/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
   },
+  // Handle static file serving
+  async rewrites() {
+    return [
+      // Serve static files from public/game
+      {
+        source: '/game/:path*',
+        destination: '/game/:path*',
+      },
+    ];
+  },
+  // Webpack configuration to handle static files
+  webpack: (config, { isServer }) => {
+    // Important: return the modified config
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+        os: false,
+      };
+    }
+    // Enable WebAssembly support
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: true,
+      layers: true,
+    };
+
+    // Handle .wasm files
+    config.module.rules.push({
+      test: /\.wasm$/,
+      type: 'webassembly/async',
+    });
+
+    return config;
+  },
+  // Disable static optimization for the game route
+  experimental: {
+    serverComponentsExternalPackages: ['fs', 'path'],
+  },
+  // Configure output to support static exports if needed
+  output: 'standalone',
+  // Add support for wasm files
+  webpack5: true,
   // Redirects for SEO
   async redirects() {
     return [
