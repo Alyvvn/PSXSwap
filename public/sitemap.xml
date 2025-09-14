@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  
+  <!-- Homepage -->
+  <url>
+    <loc>https://psxonbase.com/</loc>
+    <lastmod>2024-12-17</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://psxonbase.com/images/psx-logo-character.png</image:loc>
+      <image:title>PSX Logo Character</image:title>
+    </image:image>
+  </url>
+
+  <!-- Game Authentication -->
+  <url>
+    <loc>https://psxonbase.com/game-auth</loc>
+    <lastmod>2024-12-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Game -->
+  <url>
+    <loc>https://psxonbase.com/game</loc>
+    <lastmod>2024-12-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- PFP Maker -->
+  <url>
+    <loc>https://psxonbase.com/pfp-maker</loc>
+    <lastmod>2024-12-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Meme Generator -->
+  <url>
+    <loc>https://psxonbase.com/meme-generator</loc>
+    <lastmod>2024-12-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Roadmap -->
+  <url>
+    <loc>https://psxonbase.com/roadmap</loc>
+    <lastmod>2024-12-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Auth Page -->
+  <url>
+    <loc>https://psxonbase.com/auth</loc>
+    <lastmod>2024-12-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+</urlset>

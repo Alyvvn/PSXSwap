@@ -1,0 +1,29 @@
+# Production Environment Variables for Vercel
+# Copy these to Vercel dashboard environment variables
+
+# CMS Access Control
+ALLOWED_CMS_USERS=dev1@psx.com,dev2@psx.com,creative@psx.com
+
+# File Upload Settings
+MAX_FILE_SIZE=10485760
+ALLOWED_IMAGE_TYPES=image/png,image/jpeg,image/jpg,image/webp
+UPLOAD_PATH=/public/uploads/pfp-assets
+
+# Security
+NODE_ENV=production
+DEBUG_PFP_MAKER=false
+
+# Database (for future use)
+# DATABASE_URL=postgresql://username:password@host:port/database
+# DATABASE_TYPE=postgresql
+
+# External Storage (recommended for production)
+# STORAGE_TYPE=vercel-blob
+# BLOB_READ_WRITE_TOKEN=your_vercel_blob_token
+
+# Alternative: AWS S3
+# STORAGE_TYPE=s3
+# AWS_ACCESS_KEY_ID=your_access_key
+# AWS_SECRET_ACCESS_KEY=your_secret_key
+# AWS_REGION=us-east-1
+# AWS_S3_BUCKET=your-bucket-name
